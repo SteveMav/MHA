@@ -1,0 +1,38 @@
+{% extends 'accounts/base_auth.html' %}
+
+{% block title %}Connexion - Magic Hoops Academy{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-primary">Connexion</h3>
+        <p class="text-muted">Accédez à votre espace membre</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Nom d'utilisateur ou mot de passe incorrect.
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="mb-4">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Se connecter</button>
+    </form>
+
+    <div class="text-center mt-4">
+        <p class="small text-muted">Pas encore membre ? <a href="{% url 'register' %}"
+                class="text-primary fw-bold text-decoration-none">S'inscrire</a></p>
+    </div>
+</div>
+{% endblock %}
