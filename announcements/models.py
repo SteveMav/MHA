@@ -12,7 +12,12 @@ class Annonce(models.Model):
         choices=[('tous', 'Tous les membres'), ('categorie', 'Par catégorie'), ('individuel', 'Membres sélectionnés')],
         default='tous'
     )
-    membres_cibles = models.ManyToManyField(User, blank=True)
+    image = models.ImageField(upload_to='announcements/', blank=True, null=True)
+    auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    membres_cibles = models.ManyToManyField(User, blank=True, related_name='annonces_ciblees')
+
+    class Meta:
+        ordering = ['-date_publication']
 
     def __str__(self):
         return self.titre

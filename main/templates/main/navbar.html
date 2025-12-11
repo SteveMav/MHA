@@ -12,16 +12,29 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Accueil</a>
+                    <a class="nav-link" href="{% url 'index' %}">Accueil</a>
                 </li>
+                {% if user.is_staff %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="announcementsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Actualités
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="announcementsDropdown">
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}">Actualités</a></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}">Ajouter actualité</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'announcements:announcement_list' %}">Actualités</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="#about">À propos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#programmes">Programmes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">Contact</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown ms-lg-3">

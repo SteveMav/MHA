@@ -1,0 +1,17 @@
+<form method="post" action="{% url 'announcements:announcement_delete' announcement.pk %}"
+    class="js-announcement-delete-form">
+    {% csrf_token %}
+    <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title fw-bold">Confirmer la suppression</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body p-4">
+        <p class="lead">Êtes-vous sûr de vouloir supprimer l'annonce <strong>"{{ announcement.titre }}"</strong> ?</p>
+        <p class="text-danger small mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Cette action est irréversible.
+        </p>
+    </div>
+    <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-danger rounded-pill px-4">Supprimer</button>
+    </div>
+</form>

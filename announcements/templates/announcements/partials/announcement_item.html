@@ -1,0 +1,49 @@
+<div class="col-md-4">
+    <div class="card h-100 hover-card border-0 shadow-sm">
+        {% if announcement.image %}
+        <div class="ratio ratio-16x9">
+            <img src="{{ announcement.image.url }}" class="card-img-top object-fit-cover"
+                alt="{{ announcement.titre }}">
+        </div>
+        {% else %}
+        <div class="ratio ratio-16x9 bg-light text-center d-flex align-items-center justify-content-center text-muted">
+            <i class="bi bi-newspaper fs-1"></i>
+        </div>
+        {% endif %}
+
+        <div class="card-body d-flex flex-column">
+            <div class="mb-2">
+                <span class="badge bg-primary-subtle text-primary rounded-pill">{{ announcement.date_publication|date:"d
+                    M Y" }}</span>
+                {% if announcement.cible != 'tous' %}
+                <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">{{
+                    announcement.get_cible_display }}</span>
+                {% endif %}
+            </div>
+
+            <h5 class="card-title fw-bold mb-3">{{ announcement.titre }}</h5>
+
+            <p class="card-text text-muted small flex-grow-1">
+                {{ announcement.message|striptags|truncatechars:100 }}
+            </p>
+
+            <div class="mt-3 d-flex justify-content-between align-items-center">
+                <a href="{% url 'announcements:announcement_detail' announcement.pk %}"
+                    class="btn btn-outline-primary btn-sm rounded-pill stretched-link">Lire la suite</a>
+
+                {% if user.is_staff %}
+                <div class="position-relative" style="z-index: 2;"> <!-- z-index to stay above stretched-link -->
+                    <button type="button" class="btn btn-sm btn-light text-primary js-update-announcement"
+                        data-url="{% url 'announcements:announcement_update' announcement.pk %}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light text-danger js-delete-announcement"
+                        data-url="{% url 'announcements:announcement_delete' announcement.pk %}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

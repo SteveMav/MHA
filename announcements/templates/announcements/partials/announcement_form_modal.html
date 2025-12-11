@@ -1,0 +1,24 @@
+<form method="post" action="{% url 'announcements:announcement_update' form.instance.pk %}"
+    class="js-announcement-update-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold">Modifier l'annonce</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body p-4">
+        {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-uppercase text-muted">{{
+                field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary rounded-pill px-4">Enregistrer</button>
+    </div>
+</form>
