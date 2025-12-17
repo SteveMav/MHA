@@ -260,6 +260,56 @@
         </div>
     </section>
 
+    <!-- Schedule Section -->
+    <section id="schedule" class="py-5 bg-light-alt position-relative overflow-hidden">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <div class="section-title">
+                    <h2 class="fw-bold text-primary">Nos Horaires</h2>
+                </div>
+                <p class="text-muted">Retrouvez-nous sur le terrain</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                {% for schedule in schedules %}
+                <div class="col-md-5 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 hover-card">
+                        <div class="card-body p-4 text-center">
+                            <!-- Helper for icon color -->
+
+                            <div class="icon-box {% if schedule.day == 'Vendredi' %}bg-secondary text-white{% else %}bg-primary-subtle text-primary{% endif %} mx-auto mb-4 rounded-circle"
+                                style="width: 80px; height: 80px; {% if schedule.day == 'Vendredi' %}background-color: var(--secondary-color);{% endif %}">
+                                <i class="bi bi-calendar-event fs-2"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">{{ schedule.day }}</h4>
+                            <div class="d-flex justify-content-center align-items-center mb-3">
+                                <i
+                                    class="bi bi-clock {% if schedule.day == 'Vendredi' %}text-secondary{% else %}text-primary{% endif %} me-2"></i>
+                                <span class="fs-5 fw-bold text-dark">{{ schedule.start_time|time:"H:i" }} - {{schedule.end_time|time:"H:i" }}</span>
+                            </div>
+                            <p class="text-muted small mb-0">{{ schedule.description }}</p>
+
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun horaire disponible.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Additional Info -->
+            <div class="text-center mt-5">
+                <div class="d-inline-block px-4 py-2 bg-white rounded-pill shadow-sm border border-light">
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    <span class="text-muted small">Les entraînements ont lieu au terrain principal. Présence requise
+                        15min avant.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Philosophy Section -->
     <section class="py-5 bg-dark text-white position-relative overflow-hidden">
         <div class="position-absolute top-0 start-0 w-100 h-100"
