@@ -1,0 +1,7 @@
+# Fichiers d'environnement
+.env
+*.env
+
+# Fichiers de base de données
+db.sqlite3
+*.sqlite3

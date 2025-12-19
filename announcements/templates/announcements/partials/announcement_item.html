@@ -13,11 +13,9 @@
 
         <div class="card-body d-flex flex-column">
             <div class="mb-2">
-                <span class="badge bg-primary-subtle text-primary rounded-pill">{{ announcement.date_publication|date:"d
-                    M Y" }}</span>
+                <span class="badge bg-primary-subtle text-primary rounded-pill">{{ announcement.date_publication|date:"d M Y" }}</span>
                 {% if announcement.cible != 'tous' %}
-                <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">{{
-                    announcement.get_cible_display }}</span>
+                <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">{{ announcement.get_cible_display }}</span>
                 {% endif %}
             </div>
 
