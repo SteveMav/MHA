@@ -37,6 +37,7 @@ class Abonnement(models.Model):
         choices=[('mpesa', 'M-Pesa'), ('orange', 'Orange Money'), ('airtel', 'Airtel Money')],
         null=True, blank=True
     )
+    telephone_paiement = models.CharField(max_length=20, null=True, blank=True)
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):

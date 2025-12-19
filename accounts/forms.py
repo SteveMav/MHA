@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Profile
+from .models import Profile, Abonnement
 
 class UserRegistrationForm(forms.ModelForm):
     first_name = forms.CharField(label="Prénom", widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -78,4 +78,17 @@ class ProfileUpdateForm(forms.ModelForm):
             'poste_prefer': forms.TextInput(attrs={'class': 'form-control'}),
             'contact_parent': forms.TextInput(attrs={'class': 'form-control'}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class AbonnementForm(forms.ModelForm):
+    class Meta:
+        model = Abonnement
+        fields = ['moyen_paiement', 'telephone_paiement']
+        widgets = {
+            'moyen_paiement': forms.Select(attrs={'class': 'form-select'}),
+            'telephone_paiement': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: +243...'}),
+        }
+        labels = {
+            'moyen_paiement': 'Moyen de paiement',
+            'telephone_paiement': 'Numéro pour le paiement'
         }

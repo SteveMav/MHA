@@ -44,12 +44,26 @@
                         <div class="d-grid gap-2">
                             <div class="p-3 bg-light rounded-3 text-start">
                                 <small class="text-muted d-block mb-1">Statut</small>
-                                <span class="badge bg-success rounded-pill">Actif</span>
+                                {% if subscription and subscription.statut == 'payé' %}
+                                <span class="badge bg-success rounded-pill">Abonnement Actif</span>
+                                <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">Expire le {{
+                                    subscription.date_fin|date:"d M Y" }}</small>
+                                {% elif subscription and subscription.statut == 'en_attente' %}
+                                <span class="badge bg-warning text-dark rounded-pill">En attente de validation</span>
+                                {% else %}
+                                <span class="badge bg-danger rounded-pill">Abonnement Inactif/Expiré</span>
+                                {% endif %}
                             </div>
                             <div class="p-3 bg-light rounded-3 text-start">
                                 <small class="text-muted d-block mb-1">Membre depuis</small>
                                 <span class="fw-bold">{{ user.date_joined|date:"d M Y" }}</span>
                             </div>
+
+                            <!-- Subscription Button -->
+                            <button type="button" class="btn btn-primary rounded-pill fw-bold shadow-sm mt-2"
+                                data-bs-toggle="modal" data-bs-target="#subscriptionModal">
+                                <i class="bi bi-credit-card me-2"></i> Payer mon abonnement
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -64,6 +78,7 @@
                     <div class="card-body p-5">
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
+                            <input type="hidden" name="update_profile" value="1">
 
                             <h5 class="mb-4 text-muted border-bottom pb-2">Informations Personnelles</h5>
                             <div class="row g-3 mb-4">
@@ -136,6 +151,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Subscription Modal -->
+    <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-labelledby="subscriptionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="subscriptionModalLabel">Payer mon abonnement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="pay_subscription" value="1">
+
+                        <div class="mb-4 text-center">
+                            <p class="text-muted mb-2">Montant à payer</p>
+                            <h2 class="fw-bold text-primary">10.00 $</h2>
+                            <span class="badge bg-light text-dark border">Mensuel</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">{{ a_form.moyen_paiement.label }}</label>
+                            {{ a_form.moyen_paiement }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">{{ a_form.telephone_paiement.label
+                                }}</label>
+                            {{ a_form.telephone_paiement }}
+                            <div class="form-text">Entrez le numéro qui effectuera le paiement.
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2">
+                                Confirmer le paiement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     {% include 'main/footer.html' %}
 
