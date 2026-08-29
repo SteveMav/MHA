@@ -1,9 +1,9 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top site-navbar">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="{% url 'index' %}">
-            <img src="{% static 'images/mha_logo.jpeg' %}" alt="MHA Logo" height="40" class="me-2">
-            Magic Hoops Academy
+            <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy" height="42" class="me-2">
+            <span>Magic Hoops Academy</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,28 +14,31 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}">Accueil</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'programmes' %}">Programmes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'methode' %}">Méthode</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'staff' %}">Staff</a>
+                </li>
                 {% if user.is_staff %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="announcementsDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        Actualités
+                        Sessions
                     </a>
                     <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="announcementsDropdown">
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}">Actualités</a></li>
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}">Ajouter actualité</a></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}">Sessions et actualités</a></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}">Ajouter une annonce</a></li>
                     </ul>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'announcements:announcement_list' %}">Actualités</a>
+                    <a class="nav-link" href="{% url 'announcements:announcement_list' %}">Sessions</a>
                 </li>
                 {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#about">À propos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#programmes">Programmes</a>
-                </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown ms-lg-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
@@ -55,12 +58,12 @@
                 </li>
                 {% else %}
                 <li class="nav-item ms-lg-3">
-                    <a class="btn btn-outline-primary rounded-pill px-4 me-2" href="{% url 'login' %}">
+                    <a class="btn btn-outline-primary rounded-pill px-4 me-2 nav-auth-btn" href="{% url 'login' %}">
                         <i class="bi bi-box-arrow-in-right me-2"></i>Connexion
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-primary rounded-pill px-4" href="{% url 'register' %}">
+                    <a class="btn btn-primary rounded-pill px-4 nav-join-btn" href="{% url 'inscription' %}">
                         <i class="bi bi-person-plus me-2"></i>Rejoindre
                     </a>
                 </li>

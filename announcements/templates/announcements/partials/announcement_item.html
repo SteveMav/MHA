@@ -1,47 +1,54 @@
-<div class="col-md-4">
-    <div class="card h-100 hover-card border-0 shadow-sm">
+<article class="announcement-card">
+    <a class="announcement-card-link" href="{{ announcement.get_absolute_url }}" aria-label="Lire {{ announcement.titre }}">
         {% if announcement.image %}
-        <div class="ratio ratio-16x9">
-            <img src="{{ announcement.image.url }}" class="card-img-top object-fit-cover"
-                alt="{{ announcement.titre }}">
-        </div>
+        <img src="{{ announcement.image.url }}" alt="{{ announcement.titre }}" class="announcement-card-image">
         {% else %}
-        <div class="ratio ratio-16x9 bg-light text-center d-flex align-items-center justify-content-center text-muted">
-            <i class="bi bi-newspaper fs-1"></i>
+        <div class="announcement-card-image announcement-card-placeholder">
+            <i class="bi bi-newspaper"></i>
         </div>
         {% endif %}
+    </a>
 
-        <div class="card-body d-flex flex-column">
-            <div class="mb-2">
-                <span class="badge bg-primary-subtle text-primary rounded-pill">{{ announcement.date_publication|date:"d M Y" }}</span>
-                {% if announcement.cible != 'tous' %}
-                <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">{{ announcement.get_cible_display }}</span>
-                {% endif %}
+    <div class="announcement-card-body">
+        <div class="announcement-meta">
+            <span>{{ announcement.get_type_annonce_display }}</span>
+            <time datetime="{{ announcement.date_publication|date:'c' }}">{{ announcement.date_publication|date:"d M Y" }}</time>
+        </div>
+        <h2><a href="{{ announcement.get_absolute_url }}">{{ announcement.titre }}</a></h2>
+        <p>{{ announcement.resume_seo|default:announcement.message|striptags|truncatechars:145 }}</p>
+
+        {% if announcement.date_debut or announcement.lieu %}
+        <dl class="announcement-facts">
+            {% if announcement.date_debut %}
+            <div>
+                <dt>Date</dt>
+                <dd>{{ announcement.date_debut|date:"d F Y" }}{% if announcement.date_debut|time:"H:i" != "00:00" %} à {{ announcement.date_debut|time:"H:i" }}{% endif %}</dd>
             </div>
-
-            <h5 class="card-title fw-bold mb-3">{{ announcement.titre }}</h5>
-
-            <p class="card-text text-muted small flex-grow-1">
-                {{ announcement.message|striptags|truncatechars:100 }}
-            </p>
-
-            <div class="mt-3 d-flex justify-content-between align-items-center">
-                <a href="{% url 'announcements:announcement_detail' announcement.pk %}"
-                    class="btn btn-outline-primary btn-sm rounded-pill stretched-link">Lire la suite</a>
-
-                {% if user.is_staff %}
-                <div class="position-relative" style="z-index: 2;"> <!-- z-index to stay above stretched-link -->
-                    <button type="button" class="btn btn-sm btn-light text-primary js-update-announcement"
-                        data-url="{% url 'announcements:announcement_update' announcement.pk %}">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-light text-danger js-delete-announcement"
-                        data-url="{% url 'announcements:announcement_delete' announcement.pk %}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-                {% endif %}
+            {% endif %}
+            {% if announcement.lieu %}
+            <div>
+                <dt>Lieu</dt>
+                <dd>{{ announcement.lieu }}</dd>
             </div>
+            {% endif %}
+        </dl>
+        {% endif %}
+
+        <div class="announcement-card-actions">
+            <a href="{{ announcement.get_absolute_url }}" class="btn btn-outline-primary btn-sm rounded-pill">Lire l'annonce</a>
+
+            {% if user.is_staff %}
+            <div class="staff-actions">
+                <button type="button" class="btn btn-sm btn-light text-primary js-update-announcement"
+                    data-url="{% url 'announcements:announcement_update' announcement.pk %}" aria-label="Modifier {{ announcement.titre }}">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-light text-danger js-delete-announcement"
+                    data-url="{% url 'announcements:announcement_delete' announcement.pk %}" aria-label="Supprimer {{ announcement.titre }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+            {% endif %}
         </div>
     </div>
-</div>
+</article>

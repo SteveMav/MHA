@@ -1,56 +1,64 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr-CD">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actualités - Magic Hoops Academy</title>
-    <!-- Bootstrap 5 CSS -->
+    {% include 'main/seo_head.html' %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script type="application/ld+json">{{ collection_schema|safe }}</script>
 </head>
 
 <body>
 
     {% include 'main/navbar.html' %}
 
-    <div class="container py-5" style="margin-top: 80px;">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <h1 class="fw-bold text-primary">Actualités</h1>
-            {% if user.is_staff %}
-            <a href="{% url 'announcements:announcement_create' %}" class="btn btn-primary rounded-pill">
-                <i class="bi bi-plus-lg me-2"></i>Nouvelle Annonce
-            </a>
-            {% endif %}
-        </div>
-
-        <div class="row g-4" id="announcement-list">
-            {% for announcement in announcements %}
-            {% include 'announcements/partials/announcement_item.html' %}
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-muted fs-4">Aucune actualité pour le moment.</p>
+    <main class="page-shell">
+        <section class="archive-hero">
+            <div class="container">
+                <p class="eyebrow text-primary">Actualités Magic Hoops</p>
+                <div class="section-row-header">
+                    <div>
+                        <h1 class="section-heading">Sessions, parcours et annonces basket à Kinshasa.</h1>
+                        <p class="text-muted mb-0">Suivez les nouvelles sessions d'entraînement, événements, informations membres et parcours de formation de Magic Hoops Academy.</p>
+                    </div>
+                    {% if user.is_staff %}
+                    <a href="{% url 'announcements:announcement_create' %}" class="btn btn-primary rounded-pill px-4 py-3">
+                        <i class="bi bi-plus-lg me-2"></i>Nouvelle annonce
+                    </a>
+                    {% endif %}
+                </div>
             </div>
-            {% endfor %}
-        </div>
-    </div>
+        </section>
+
+        <section class="section-block pt-0">
+            <div class="container">
+                <div class="announcement-grid" id="announcement-list">
+                    {% for announcement in announcements %}
+                    {% include 'announcements/partials/announcement_item.html' %}
+                    {% empty %}
+                    <div class="empty-state">
+                        <h2>Aucune actualité pour le moment.</h2>
+                        <p>Les prochaines sessions de basket et informations importantes seront publiées ici.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
 
     {% include 'main/footer.html' %}
 
-    <!-- Modals -->
     <div class="modal fade" id="modal-announcement" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content"></div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/announcements.js' %}"></script>

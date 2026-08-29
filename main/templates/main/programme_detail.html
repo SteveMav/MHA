@@ -1,0 +1,102 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="subpage-hero program-detail-hero">
+        <div class="container">
+            <nav aria-label="Fil d'Ariane" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-white-50">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'programmes' %}" class="text-white-50">Programmes</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">{{ program.name }}</li>
+                </ol>
+            </nav>
+            <div class="program-detail-grid">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge-poster-orange">{{ program.age }}</span>
+                        <span class="hero-kicker mb-0">Parcours de formation</span>
+                    </div>
+                    <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
+                    <h1>{{ program.name }}</h1>
+                    <p>{{ program.description }}</p>
+                    <div class="hero-action-row">
+                        <a href="{% url 'inscription' %}" class="btn btn-primary btn-lg rounded-pill px-4">
+                            <i class="bi bi-person-check-fill me-2"></i>{{ program.cta }}
+                        </a>
+                        <a href="{% url 'announcements:announcement_list' %}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            Voir les sessions ouvertes
+                        </a>
+                    </div>
+                </div>
+                <aside class="program-promise-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="card-label"><i class="bi bi-shield-check me-1"></i> Engagement MHA</span>
+                        <span class="badge-age-pill">{{ program.age }}</span>
+                    </div>
+                    <h2>{{ program.promise }}</h2>
+                    <p>Le travail reste parfaitement adapté à la tranche d'âge, mais le cadre d'exigence est concret : présence, discipline d'écoute, progrès technique et fair-play.</p>
+                    <hr class="my-3 border-secondary">
+                    <div class="small text-muted">
+                        <i class="bi bi-geo-alt-fill text-primary me-1"></i> Entraînements à la Gombe, Av. de la Science n°5
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ruban des Valeurs -->
+    <div class="values-ribbon-bar" aria-label="Valeurs">
+        <div class="container">
+            <div class="values-ribbon-content">
+                <span><span class="star">★</span> TRAVAIL</span>
+                <span><span class="star">★</span> RESPECT</span>
+                <span><span class="star">★</span> SOLIDARITÉ</span>
+                <span><span class="star">★</span> PERSÉVÉRANCE</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="section-block">
+        <div class="container">
+            <div class="detail-columns">
+                <div>
+                    <p class="eyebrow text-primary">Objectifs & Pédagogie</p>
+                    <h2 class="section-heading">Ce que le joueur construit à travers ce parcours.</h2>
+                    <p class="text-muted">Chaque niveau valide des compétences concrètes avant le passage à la catégorie supérieure.</p>
+                </div>
+                <div class="outcome-list">
+                    {% for outcome in program.outcomes %}
+                    <article>
+                        <span>0{{ forloop.counter }}</span>
+                        <p>{{ outcome }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Focus points -->
+            <div class="contact-panel mt-5">
+                <div>
+                    <p class="eyebrow text-primary mb-1">Axes d'entraînement</p>
+                    <h2 class="section-heading mb-3">Fondamentaux travaillés</h2>
+                    <ul class="program-feature-list mb-0">
+                        {% for item in program.focus %}
+                        <li><i class="bi bi-check-circle-fill"></i> {{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="contact-actions">
+                    <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill w-100">
+                        Inscrire mon enfant à {{ program.name }}
+                    </a>
+                    <a href="{% url 'programmes' %}" class="btn btn-outline-primary rounded-pill w-100">
+                        Explorer les autres parcours
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

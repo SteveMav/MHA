@@ -1,0 +1,64 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="subpage-hero compact-hero">
+        <div class="container">
+            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                <span class="badge-poster-orange"><i class="bi bi-bullseye me-1"></i> Pédagogie & Formation</span>
+                <span class="hero-kicker mb-0">Méthode MHA</span>
+            </div>
+            <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
+            <h1>Former le joueur complet, pas seulement le scoreur.</h1>
+            <p>La progression durable repose sur un équilibre répété : rigueur technique, développement athlétique, intelligence tactique et mental d'acier.</p>
+        </div>
+    </section>
+
+    <!-- Ruban des Valeurs -->
+    <div class="values-ribbon-bar" aria-label="Valeurs">
+        <div class="container">
+            <div class="values-ribbon-content">
+                <span><span class="star">★</span> TRAVAIL</span>
+                <span><span class="star">★</span> RESPECT</span>
+                <span><span class="star">★</span> SOLIDARITÉ</span>
+                <span><span class="star">★</span> PERSÉVÉRANCE</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="section-block method-page">
+        <div class="container">
+            <div class="method-deep-grid">
+                {% for pillar in method_pillars %}
+                <article>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>0{{ forloop.counter }}</span>
+                        <i class="bi bi-dribbble fs-4 text-primary"></i>
+                    </div>
+                    <h2>{{ pillar.title }}</h2>
+                    <p>{{ pillar.text }}</p>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Philosophie du club -->
+            <div class="contact-panel mt-5">
+                <div>
+                    <span class="badge-poster-orange mb-2">Discipline & Respect</span>
+                    <h2 class="section-heading mb-2">Le cadre fait la différence</h2>
+                    <p class="text-muted mb-0">Au-delà du basketball, nous inculquons la ponctualité, l'effort collectif et le dépassement de soi. C'est ce qui transforme des jeunes passionnés en adultes exemplaires.</p>
+                </div>
+                <div class="contact-actions">
+                    <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill w-100">
+                        Inscrire mon enfant
+                    </a>
+                    <a href="{% url 'staff' %}" class="btn btn-outline-primary rounded-pill w-100">
+                        Rencontrer le staff
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

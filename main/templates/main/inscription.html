@@ -1,0 +1,110 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="subpage-hero registration-hero">
+        <div class="container">
+            <div class="program-detail-grid">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge-poster-orange"><i class="bi bi-pencil-square me-1"></i> Inscriptions Ouvertes</span>
+                        <span class="hero-kicker mb-0">Kinshasa • Gombe</span>
+                    </div>
+                    <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
+                    <h1>Rejoindre Magic Hoops Academy.</h1>
+                    <p>Choisissez le parcours adapté à l'âge de votre enfant. Consultez les prochaines sessions ou créez un compte membre pour valider sa place sur le terrain.</p>
+                    <div class="hero-action-row">
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg rounded-pill px-4">
+                            <i class="bi bi-person-plus-fill me-2"></i>Créer un compte membre
+                        </a>
+                        <a href="https://wa.me/243900824429" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            <i class="bi bi-whatsapp me-2"></i>Contacter via WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <aside class="next-session-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="card-label"><i class="bi bi-calendar-check me-1"></i> Prochaine session</span>
+                        <span class="badge-age-pill">Gombe</span>
+                    </div>
+                    {% if featured_session %}
+                    <h2>{{ featured_session.titre }}</h2>
+                    <p>{{ featured_session.resume_seo|default:featured_session.message|striptags|truncatechars:100 }}</p>
+                    <a href="{{ featured_session.get_absolute_url }}" class="btn btn-primary rounded-pill w-100">
+                        Voir les détails de la session
+                    </a>
+                    {% else %}
+                    <h2>Séances régulières</h2>
+                    <p>Mercredi et Samedi sur le terrain de l'Avenue de la Science n°5.</p>
+                    <a href="{% url 'announcements:announcement_list' %}" class="btn btn-primary rounded-pill w-100">
+                        Voir toutes les sessions
+                    </a>
+                    {% endif %}
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ruban des Valeurs -->
+    <div class="values-ribbon-bar" aria-label="Valeurs">
+        <div class="container">
+            <div class="values-ribbon-content">
+                <span><span class="star">★</span> TRAVAIL</span>
+                <span><span class="star">★</span> RESPECT</span>
+                <span><span class="star">★</span> SOLIDARITÉ</span>
+                <span><span class="star">★</span> PERSÉVÉRANCE</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="section-block">
+        <div class="container">
+            <div class="registration-grid">
+                <div>
+                    <p class="eyebrow text-primary">Démarche d'inscription</p>
+                    <h2 class="section-heading">4 étapes simples pour fouler le parquet.</h2>
+                    <p class="text-muted">L'académie privilégie un accueil personnalisé et une intégration progressive de chaque joueur dans son groupe de niveau.</p>
+                </div>
+                <div class="step-list">
+                    {% for step in registration_steps %}
+                    <article>
+                        <span>0{{ forloop.counter }}</span>
+                        <p>{{ step }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="program-choice-strip mt-5">
+                {% for program in programs %}
+                <a href="{% url 'programme_detail' program.slug %}">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong>{{ program.name }}</strong>
+                        <span class="badge-age-pill">{{ program.age }}</span>
+                    </div>
+                    <span class="small text-muted">{{ program.short|truncatechars:70 }}</span>
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Contact d'assistance inscription -->
+            <div class="contact-panel mt-5">
+                <div>
+                    <span class="badge-poster-orange mb-2">Besoin d'aide ?</span>
+                    <h2 class="section-heading mb-2">Une question sur les équipements ou les formalités ?</h2>
+                    <p class="text-muted mb-0">Notre équipe est disponible pour vous renseigner sur les tenues, les créneaux exacts et les modalités d'inscription.</p>
+                </div>
+                <div class="contact-actions">
+                    <a href="tel:+243900824429" class="btn btn-primary rounded-pill w-100">
+                        <i class="bi bi-telephone-fill me-1"></i> Appeler (+243 900 824 429)
+                    </a>
+                    <a href="mailto:info@magichoops.cd" class="btn btn-outline-primary rounded-pill w-100">
+                        <i class="bi bi-envelope-fill me-1"></i> Envoyer un e-mail
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

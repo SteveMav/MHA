@@ -5,3 +5,14 @@
 # Fichiers de base de données
 db.sqlite3
 *.sqlite3
+
+# Fichiers de médias
+media/
+
+# Caches Python
+__pycache__/
+*.py[cod]
+
+# Artefacts locaux de vérification
+output/
+runserver-*.log
