@@ -14,6 +14,8 @@
                     <li><a href="{% url 'programmes' %}" class="text-white-50 text-decoration-none">Programmes</a></li>
                     <li><a href="{% url 'methode' %}" class="text-white-50 text-decoration-none">Méthode MHA</a></li>
                     <li><a href="{% url 'staff' %}" class="text-white-50 text-decoration-none">Coach et staff</a></li>
+                    <li><a href="{% url 'gallery:gallery_list' %}" class="text-white-50 text-decoration-none">Galerie photos</a></li>
+                    <li><a href="{% url 'shop:product_list' %}" class="text-white-50 text-decoration-none">Boutique officielle</a></li>
                     <li><a href="{% url 'announcements:announcement_list' %}" class="text-white-50 text-decoration-none">Sessions</a></li>
                     <li><a href="{% url 'inscription' %}" class="text-white-50 text-decoration-none">Inscription</a></li>
                 </ul>
@@ -28,7 +30,7 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <h6 class="text-white mb-3">Pour les moteurs et assistants</h6>
-                <p class="small text-white-50 mb-2">Les annonces publiques, sessions et pages clés sont exposées via sitemap et données structurées.</p>
+                <p class="small text-white-50 mb-2">Les annonces publiques, sessions, albums photos et produits sont exposés via sitemap et données structurées.</p>
                 <a href="{% url 'llms_txt' %}" class="small text-white-50 text-decoration-none">Lire llms.txt</a>
             </div>
         </div>

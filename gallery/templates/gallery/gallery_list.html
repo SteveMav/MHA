@@ -1,0 +1,310 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+.gallery-hero {
+    background: radial-gradient(circle at 10% 20%, rgba(255, 94, 20, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(12, 24, 41, 0.12), transparent 45%),
+                var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 3.5rem 0 2.5rem;
+}
+.album-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.album-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 94, 20, 0.3);
+}
+.album-cover-wrapper {
+    position: relative;
+    padding-top: 65%;
+    overflow: hidden;
+    background: var(--secondary-deep);
+}
+.album-cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.album-card:hover .album-cover-img {
+    transform: scale(1.05);
+}
+.album-badge-count {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(12, 24, 41, 0.85);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.category-filter-btn {
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+.photo-stream-item {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--secondary-deep);
+    aspect-ratio: 4/3;
+}
+.photo-stream-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+.photo-stream-item:hover img {
+    transform: scale(1.06);
+}
+.photo-stream-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(12, 24, 41, 0.8) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    color: white;
+}
+.photo-stream-item:hover .photo-stream-overlay {
+    opacity: 1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Section Hero Galerie -->
+<section class="gallery-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-primary text-white rounded-pill px-3 py-2 text-uppercase mb-3 fw-bold tracking-wide">
+                    <i class="bi bi-camera-fill me-1"></i> Galerie Officielle MHA
+                </span>
+                <h1 class="display-5 fw-extrabold text-secondary mb-2">
+                    L'ÉNERGIE DU TERRAIN EN IMAGES
+                </h1>
+                <p class="brand-slogan-script text-primary fs-3 mb-3">
+                    Revivez nos entraînements, tournois, remises de brevets et stages
+                </p>
+                <p class="text-muted lead fs-6 mb-0">
+                    Découvrez les moments forts de Magic Hoops Academy à Kinshasa. Chaque cliché raconte le travail, la discipline et la passion de nos jeunes athlètes.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                <div class="d-inline-flex align-items-center bg-white p-3 rounded-4 shadow-sm border">
+                    <div class="bg-primary-subtle text-primary p-3 rounded-circle me-3">
+                        <i class="bi bi-images fs-3"></i>
+                    </div>
+                    <div class="text-start">
+                        <div class="fw-bold fs-4 text-secondary">{{ albums.count }} Albums</div>
+                        <div class="small text-muted">Événements immortalisés</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres par catégories -->
+        <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top">
+            <a href="{% url 'gallery:gallery_list' %}" class="btn {% if not selected_category %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} category-filter-btn">
+                <i class="bi bi-grid-fill me-1"></i> Tous les événements
+            </a>
+            {% for cat in categories %}
+            <a href="{% url 'gallery:gallery_list' %}?cat={{ cat.slug }}" class="btn {% if selected_category.slug == cat.slug %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} category-filter-btn">
+                {{ cat.nom }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Albums Section -->
+<section class="py-5 bg-paper">
+    <div class="container">
+        {% if selected_category %}
+        <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-bold">Catégorie filtrée</span>
+                    <h2 class="h3 fw-bold text-secondary mb-1">{{ selected_category.nom }}</h2>
+                    {% if selected_category.description %}
+                    <p class="text-muted mb-0 small">{{ selected_category.description }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'gallery:gallery_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                    <i class="bi bi-x-circle me-1"></i> Réinitialiser
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if albums %}
+        <div class="row g-4">
+            {% for album in albums %}
+            <div class="col-md-6 col-lg-4">
+                <div class="album-card">
+                    <a href="{{ album.get_absolute_url }}" class="text-decoration-none">
+                        <div class="album-cover-wrapper">
+                            {% if album.couverture %}
+                            <img src="{{ album.couverture.url }}" alt="{{ album.titre }}" class="album-cover-img" loading="lazy">
+                            {% elif album.first_photo %}
+                            <img src="{{ album.first_photo.image.url }}" alt="{{ album.titre }}" class="album-cover-img" loading="lazy">
+                            {% else %}
+                            <img src="{% static 'images/basketball.jpeg' %}" alt="{{ album.titre }}" class="album-cover-img" loading="lazy">
+                            {% endif %}
+                            
+                            {% if album.est_en_vedette %}
+                            <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill fw-bold shadow-sm">
+                                <i class="bi bi-star-fill text-dark me-1"></i> Événement Phare
+                            </span>
+                            {% endif %}
+
+                            <span class="album-badge-count">
+                                <i class="bi bi-camera me-1"></i> {{ album.photos_count }} photos
+                            </span>
+                        </div>
+                    </a>
+                    
+                    <div class="p-4 d-flex flex-column flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            {% if album.categorie %}
+                            <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1 fw-bold small">
+                                {{ album.categorie.nom }}
+                            </span>
+                            {% endif %}
+                            {% if album.date_evenement %}
+                            <span class="text-muted small">
+                                <i class="bi bi-calendar3 me-1"></i> {{ album.date_evenement|date:"d M Y" }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="h5 fw-bold text-secondary mb-2">
+                            <a href="{{ album.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                {{ album.titre }}
+                            </a>
+                        </h3>
+
+                        {% if album.description %}
+                        <p class="text-muted small mb-3 flex-grow-1">
+                            {{ album.description|truncatewords:20 }}
+                        </p>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                            <span class="small text-muted">
+                                <i class="bi bi-geo-alt me-1 text-primary"></i> {{ album.lieu }}
+                            </span>
+                            <a href="{{ album.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+                                Voir l'album <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 bg-white rounded-4 border p-5">
+            <div class="text-primary mb-3">
+                <i class="bi bi-images display-3"></i>
+            </div>
+            <h3 class="fw-bold text-secondary">Aucun album disponible</h3>
+            <p class="text-muted mb-4">De nouveaux clichés de nos entraînements et événements seront publiés très bientôt.</p>
+            {% if selected_category %}
+            <a href="{% url 'gallery:gallery_list' %}" class="btn btn-primary rounded-pill px-4">
+                Voir tous les albums
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Flux Récent de Photos & Clichés en vrac -->
+{% if recent_photos %}
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+            <div>
+                <span class="text-primary fw-bold text-uppercase small tracking-wide">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Clichés Instantanés
+                </span>
+                <h2 class="h3 fw-bold text-secondary mb-0">Dernières photos du terrain</h2>
+            </div>
+            <span class="text-muted small">Cliquez sur une photo pour l'agrandir</span>
+        </div>
+
+        <div class="row g-3" id="galleryPhotoGrid">
+            {% for photo in recent_photos %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="photo-stream-item mha-lightbox-trigger" 
+                     data-full="{{ photo.image.url }}" 
+                     data-caption="{{ photo.titre|default:photo.album.titre }}"
+                     data-album="{{ photo.album.titre }}"
+                     data-album-url="{{ photo.album.get_absolute_url }}"
+                     data-date="{{ photo.album.date_evenement|date:'d F Y' }}">
+                    <img src="{{ photo.image.url }}" alt="{{ photo.titre|default:photo.album.titre }}" loading="lazy">
+                    <div class="photo-stream-overlay">
+                        <div>
+                            <div class="fw-bold small">{{ photo.titre|default:photo.album.titre }}</div>
+                            <div class="small opacity-75" style="font-size: 0.75rem;">
+                                <i class="bi bi-folder2-open me-1"></i> {{ photo.album.titre }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Lightbox Modal -->
+<div id="mhaLightbox" class="mha-lightbox-modal" aria-hidden="true" role="dialog">
+    <button class="mha-lightbox-close" aria-label="Fermer la vue plein écran">&times;</button>
+    <button class="mha-lightbox-prev" aria-label="Photo précédente"><i class="bi bi-chevron-left"></i></button>
+    <button class="mha-lightbox-next" aria-label="Photo suivante"><i class="bi bi-chevron-right"></i></button>
+    
+    <div class="mha-lightbox-content">
+        <img id="mhaLightboxImg" src="" alt="" class="mha-lightbox-image">
+        <div class="mha-lightbox-info">
+            <h4 id="mhaLightboxTitle" class="mha-lightbox-title"></h4>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <span id="mhaLightboxAlbum" class="mha-lightbox-meta"></span>
+                <span id="mhaLightboxCounter" class="badge bg-secondary rounded-pill px-3"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/gallery_lightbox.js' %}"></script>
+{% endblock %}

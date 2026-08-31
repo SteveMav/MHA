@@ -12,7 +12,11 @@ from .models import Annonce
 def send_announcement_email(sender, instance, created, **kwargs):
     """
     Sends an email to members when a new announcement is created.
+    Disabled by default via settings.ENABLE_ANNOUNCEMENT_EMAILS.
     """
+    if not getattr(settings, 'ENABLE_ANNOUNCEMENT_EMAILS', False):
+        return
+
     if created:
         subject = f"Nouvelle Annonce : {instance.titre}"
         from_email = settings.DEFAULT_FROM_EMAIL

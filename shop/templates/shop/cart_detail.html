@@ -1,0 +1,163 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-5 bg-paper">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Panier d'achat</li>
+            </ol>
+        </nav>
+
+        <h1 class="display-6 fw-extrabold text-secondary mb-4">
+            <i class="bi bi-cart3 text-primary me-2"></i> Votre Panier d'Achat
+        </h1>
+
+        {% if messages %}
+        <div class="mb-4">
+            {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if cart_count > 0 %}
+        <div class="row g-4">
+            <!-- Liste des articles du panier -->
+            <div class="col-lg-8">
+                <div class="bg-white rounded-4 border shadow-sm p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="text-muted small text-uppercase">
+                                <tr>
+                                    <th style="width: 45%;">Article</th>
+                                    <th style="width: 15%;">Prix unit.</th>
+                                    <th style="width: 20%;">Quantité</th>
+                                    <th style="width: 15%;">Total</th>
+                                    <th style="width: 5%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-3 overflow-hidden me-3 border" style="width: 60px; height: 60px; flex-shrink: 0; background: var(--surface-alt);">
+                                                {% if item.product.image_principale %}
+                                                <img src="{{ item.product.image_principale.url }}" alt="{{ item.product.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {% else %}
+                                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ item.product.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h5 class="h6 fw-bold mb-1">
+                                                    <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                                        {{ item.product.nom }}
+                                                    </a>
+                                                </h5>
+                                                {% if item.variant_name %}
+                                                <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">
+                                                    {{ item.variant_name }}
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">{{ item.unit_price }} $</div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'shop:cart_update' %}" class="d-flex align-items-center gap-1">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                            <input type="hidden" name="variant_id" value="{{ item.variant_id|default:0 }}">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="50" class="form-control form-control-sm text-center fw-bold" style="width: 55px;" onchange="this.form.submit()">
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-primary">{{ item.total_price }} $</div>
+                                        <div class="text-muted small" style="font-size: 0.75rem;">~ {{ item.total_price_cdf }} FC</div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'shop:cart_remove' item.product.id item.variant_id|default:0 %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Supprimer cet article">
+                                                <i class="bi bi-trash3 fs-5"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left me-1"></i> Continuer mes achats
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Récapitulatif de Commande -->
+            <div class="col-lg-4">
+                <div class="bg-white rounded-4 border shadow-sm p-4 sticky-top" style="top: 100px;">
+                    <h2 class="h5 fw-bold text-secondary mb-4 pb-2 border-bottom">
+                        Récapitulatif de la commande
+                    </h2>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Articles ({{ cart_count }})</span>
+                        <span class="fw-semibold">{{ cart.get_total_price }} $</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Retrait au Terrain Gombe</span>
+                        <span class="text-success fw-bold">Gratuit</span>
+                    </div>
+
+                    <div class="pt-3 border-top mb-4">
+                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                            <span class="fw-bold fs-5 text-secondary">Total à payer :</span>
+                            <span class="display-6 fw-extrabold text-primary">{{ cart.get_total_price }} $</span>
+                        </div>
+                        <div class="text-end text-muted small">
+                            Soit environ <strong class="text-secondary">{{ cart.formatted_cdf }}</strong>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'shop:checkout' %}" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center">
+                        Valider la commande <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+
+                    <div class="mt-4 pt-3 border-top text-center text-muted small">
+                        <div class="mb-2"><i class="bi bi-shield-check text-success me-1"></i> Commande sécurisée Magic Hoops</div>
+                        <div>Paiement par Mobile Money (M-Pesa, Orange, Airtel) ou Cash au terrain</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Panier Vide -->
+        <div class="text-center py-5 bg-white rounded-4 border shadow-sm p-5 my-4">
+            <div class="text-muted mb-3">
+                <i class="bi bi-cart-x display-1 text-primary-subtle"></i>
+            </div>
+            <h3 class="fw-bold text-secondary mb-2">Votre panier est actuellement vide</h3>
+            <p class="text-muted mb-4">Découvrez nos maillots officiels, t-shirts d'entraînement et accessoires de l'académie.</p>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm fw-bold">
+                <i class="bi bi-bag-plus me-2"></i> Découvrir la boutique
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

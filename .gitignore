@@ -14,5 +14,7 @@ __pycache__/
 *.py[cod]
 
 # Artefacts locaux de vérification
+staticfiles/
 output/
 runserver-*.log
+

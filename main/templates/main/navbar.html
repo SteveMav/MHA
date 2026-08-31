@@ -1,16 +1,16 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light sticky-top site-navbar">
     <div class="container">
-        <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="{% url 'index' %}">
-            <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy" height="42" class="me-2">
+        <a class="navbar-brand d-flex align-items-center me-lg-4" href="{% url 'index' %}">
+            <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy" height="38" class="me-2">
             <span>Magic Hoops Academy</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Basculer la navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}">Accueil</a>
                 </li>
@@ -23,15 +23,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'staff' %}">Staff</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gallery:gallery_list' %}">Galerie</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'shop:product_list' %}">Boutique</a>
+                </li>
                 {% if user.is_staff %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="announcementsDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Sessions
                     </a>
-                    <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="announcementsDropdown">
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}">Sessions et actualités</a></li>
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}">Ajouter une annonce</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="announcementsDropdown">
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}"><i class="bi bi-calendar-check me-2 text-primary"></i>Sessions & actualités</a></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}"><i class="bi bi-plus-circle me-2 text-primary"></i>Ajouter une annonce</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>Administration</a></li>
                     </ul>
                 </li>
                 {% else %}
@@ -39,32 +47,45 @@
                     <a class="nav-link" href="{% url 'announcements:announcement_list' %}">Sessions</a>
                 </li>
                 {% endif %}
+
+                <!-- Panier d'achat -->
+                <li class="nav-item ms-lg-2">
+                    <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier">
+                        <i class="bi bi-cart3"></i>
+                        {% if cart_count and cart_count > 0 %}
+                        <span class="nav-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                            {{ cart_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
+
                 {% if user.is_authenticated %}
-                <li class="nav-item dropdown ms-lg-3">
+                <li class="nav-item dropdown ms-lg-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle fs-5 me-2"></i>
-                        {{ user.first_name|default:user.username }}
+                        <i class="bi bi-person-circle fs-5 me-1 text-primary"></i>
+                        <span>{{ user.first_name|default:user.username }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon
-                                Profil</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
-                                    class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
+                        <li><a class="dropdown-item" href="{% url 'shop:order_tracking' %}"><i class="bi bi-box-seam me-2"></i>Mes commandes</a></li>
+                        {% if user.is_staff %}
+                        <li><a class="dropdown-item" href="/admin/"><i class="bi bi-speedometer2 me-2"></i>Tableau de bord Admin</a></li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
                     </ul>
                 </li>
                 {% else %}
-                <li class="nav-item ms-lg-3">
-                    <a class="btn btn-outline-primary rounded-pill px-4 me-2 nav-auth-btn" href="{% url 'login' %}">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Connexion
+                <li class="nav-item ms-lg-2">
+                    <a class="nav-link nav-auth-link" href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="btn btn-primary rounded-pill px-4 nav-join-btn" href="{% url 'inscription' %}">
-                        <i class="bi bi-person-plus me-2"></i>Rejoindre
+                <li class="nav-item ms-lg-1">
+                    <a class="btn btn-primary rounded-pill nav-join-btn" href="{% url 'inscription' %}">
+                        <i class="bi bi-person-plus-fill me-1"></i>Rejoindre
                     </a>
                 </li>
                 {% endif %}

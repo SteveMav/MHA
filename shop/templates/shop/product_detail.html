@@ -1,0 +1,304 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+.product-main-view {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+}
+.product-main-img-container {
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-alt);
+}
+.product-main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.product-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.product-thumb.active, .product-thumb:hover {
+    border-color: var(--primary-color);
+}
+.size-pill-radio input[type="radio"] {
+    display: none;
+}
+.size-pill-radio label {
+    display: inline-block;
+    padding: 8px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: var(--surface);
+    color: var(--secondary-color);
+}
+.size-pill-radio input[type="radio"]:checked + label {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+.size-pill-radio label:hover {
+    border-color: var(--primary-color);
+}
+.qty-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.qty-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.qty-input {
+    width: 60px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-4 bg-paper border-bottom">
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique MHA</a></li>
+                {% if product.categorie %}
+                <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}?cat={{ product.categorie.slug }}" class="text-decoration-none text-muted">{{ product.categorie.nom }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">{{ product.nom }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4 g-lg-5">
+            <!-- Galerie Photos Produit -->
+            <div class="col-lg-6">
+                <div class="product-main-view shadow-sm mb-3">
+                    <div class="product-main-img-container">
+                        {% if product.image_principale %}
+                        <img id="mainProductImage" src="{{ product.image_principale.url }}" alt="{{ product.nom }}" class="product-main-img">
+                        {% else %}
+                        <img id="mainProductImage" src="{% static 'images/basketball.jpeg' %}" alt="{{ product.nom }}" class="product-main-img">
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if product.images.all %}
+                <div class="d-flex gap-2 flex-wrap">
+                    {% if product.image_principale %}
+                    <img src="{{ product.image_principale.url }}" alt="{{ product.nom }}" class="product-thumb active" onclick="switchProductImage(this.src)">
+                    {% endif %}
+                    {% for p_img in product.images.all %}
+                    <img src="{{ p_img.image.url }}" alt="{{ product.nom }}" class="product-thumb" onclick="switchProductImage(this.src)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Fiche Achat & Description -->
+            <div class="col-lg-6">
+                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        {% if product.categorie %}
+                        <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1 fw-bold small">
+                            {{ product.categorie.nom }}
+                        </span>
+                        {% endif %}
+
+                        {% if product.en_stock %}
+                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-bold small">
+                            <i class="bi bi-check-circle me-1"></i> En Stock
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 fw-bold small">
+                            <i class="bi bi-x-circle me-1"></i> Rupture de stock
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="display-6 fw-extrabold text-secondary mb-3">
+                        {{ product.nom }}
+                    </h1>
+
+                    <div class="d-flex align-items-baseline gap-3 mb-4 pb-3 border-bottom">
+                        <div class="display-6 fw-bold text-primary">{{ product.prix_usd }} $</div>
+                        <div class="text-muted fw-semibold fs-6">~ {{ product.formatted_cdf }}</div>
+                    </div>
+
+                    <!-- Formulaire d'Ajout au Panier -->
+                    <form method="POST" action="{% url 'shop:cart_add' product.id %}">
+                        {% csrf_token %}
+
+                        <!-- Variantes / Tailles -->
+                        {% if product.variants.all %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary d-flex justify-content-between">
+                                <span>Choisir la taille / déclinaison :</span>
+                                {% if product.guide_tailles %}
+                                <a href="#guideTailles" class="small text-primary text-decoration-none" data-bs-toggle="collapse">
+                                    <i class="bi bi-rulers me-1"></i> Guide des tailles
+                                </a>
+                                {% endif %}
+                            </label>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for variant in product.variants.all %}
+                                <div class="size-pill-radio">
+                                    <input type="radio" name="variant_id" id="variant_{{ variant.id }}" value="{{ variant.id }}" {% if forloop.first %}checked{% endif %}>
+                                    <label for="variant_{{ variant.id }}">
+                                        {{ variant.nom_variante }}
+                                        {% if variant.prix_supplementaire > 0 %}
+                                        (+{{ variant.prix_supplementaire }} $)
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if product.guide_tailles %}
+                        <div class="collapse mb-4" id="guideTailles">
+                            <div class="p-3 bg-light rounded-3 small text-muted border">
+                                <div class="fw-bold text-secondary mb-1"><i class="bi bi-info-circle me-1 text-primary"></i> Guide des tailles :</div>
+                                {{ product.guide_tailles|linebreaks }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Sélecteur de Quantité & Bouton Ajouter -->
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-auto">
+                                <label class="form-label fw-bold text-secondary mb-1 small d-block">Quantité :</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="qty-btn" onclick="decrementQty()">&minus;</button>
+                                    <input type="number" name="quantity" id="productQty" value="1" min="1" max="50" class="qty-input py-2">
+                                    <button type="button" class="qty-btn" onclick="incrementQty()">&plus;</button>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label d-none d-md-block mb-1">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm">
+                                    <i class="bi bi-cart-plus-fill me-2 fs-5"></i> Ajouter au panier
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Description et Caractéristiques -->
+                    <div class="pt-3 border-top">
+                        <h4 class="h6 fw-bold text-secondary text-uppercase mb-2">Description du produit</h4>
+                        <p class="text-muted small mb-3">{{ product.description|linebreaks }}</p>
+
+                        {% if product.details_matiere %}
+                        <div class="p-3 bg-paper rounded-3 border small mb-3">
+                            <div class="fw-bold text-secondary mb-1"><i class="bi bi-patch-check-fill text-primary me-1"></i> Caractéristiques techniques :</div>
+                            <div class="text-muted">{{ product.details_matiere }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex flex-wrap gap-4 text-muted small mt-3">
+                            <div><i class="bi bi-truck text-primary me-1"></i> Retrait immédiat à Gombe</div>
+                            <div><i class="bi bi-shield-check text-primary me-1"></i> 100% Officiel MHA</div>
+                            <div><i class="bi bi-phone text-primary me-1"></i> Support WhatsApp direct</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Articles Similaires -->
+{% if related_products %}
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <h3 class="h4 fw-bold text-secondary mb-4">Dans la même catégorie</h3>
+        <div class="row g-4">
+            {% for r_prod in related_products %}
+            <div class="col-6 col-md-3">
+                <div class="card h-100 border rounded-4 overflow-hidden shadow-sm">
+                    <a href="{{ r_prod.get_absolute_url }}">
+                        <div style="aspect-ratio: 1/1; overflow: hidden; background: var(--surface-alt);">
+                            {% if r_prod.image_principale %}
+                            <img src="{{ r_prod.image_principale.url }}" alt="{{ r_prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <img src="{% static 'images/basketball.jpeg' %}" alt="{{ r_prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    </a>
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <h5 class="fw-bold fs-6 mb-1">
+                            <a href="{{ r_prod.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                {{ r_prod.nom }}
+                            </a>
+                        </h5>
+                        <div class="mt-auto pt-2 d-flex justify-content-between align-items-center border-top">
+                            <span class="fw-bold text-primary">{{ r_prod.prix_usd }} $</span>
+                            <a href="{{ r_prod.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                Voir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<script>
+function switchProductImage(src) {
+    document.getElementById('mainProductImage').src = src;
+    document.querySelectorAll('.product-thumb').forEach(t => {
+        t.classList.remove('active');
+        if (t.src === src) t.classList.add('active');
+    });
+}
+
+function incrementQty() {
+    const input = document.getElementById('productQty');
+    input.value = parseInt(input.value || 1) + 1;
+}
+
+function decrementQty() {
+    const input = document.getElementById('productQty');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+</script>
+{% endblock %}

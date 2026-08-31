@@ -11,14 +11,13 @@
     <div class="container home-hero-content">
         <div class="home-hero-copy">
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                <span class="badge-poster-orange"><i class="bi bi-dribbble me-1"></i> Kinshasa • Gombe</span>
+                <span class="badge-poster-orange"><i class="bi bi-geo-alt-fill me-1"></i> Kinshasa • Gombe</span>
                 <span class="hero-kicker mb-0">Académie de basketball jeunesse</span>
             </div>
             <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
-            <h1>Former les jeunes joueurs, cadrer l'ambition.</h1>
+            <h1>Former les jeunes joueurs, forger les champions.</h1>
             <p>
-                Magic Hoops Academy accompagne les jeunes basketteurs U10 à U18+ à la Gombe avec une méthode simple et exigeante :
-                fondamentaux techniques, discipline sportive, progression mesurable et esprit d'équipe.
+                L'académie de référence à Kinshasa (Gombe) pour développer les fondamentaux techniques, la discipline sportive et l'esprit d'équipe des U10 à U18+.
             </p>
             <div class="home-proof-strip" aria-label="Repères Magic Hoops Academy">
                 <span>
@@ -27,10 +26,10 @@
                 </span>
                 <span>
                     <strong>U10 à U18+</strong>
-                    <small>3 catégories d'âge</small>
+                    <small>Filles & Garçons</small>
                 </span>
                 <span>
-                    <strong>3 parcours</strong>
+                    <strong>3 Niveaux</strong>
                     <small>Mini, Junior, Elite</small>
                 </span>
             </div>
@@ -51,7 +50,7 @@
             </div>
             {% if featured_session %}
             <h2>{{ featured_session.titre }}</h2>
-            <p>{{ featured_session.resume_seo|default:featured_session.message|striptags|truncatechars:112 }}</p>
+            <p class="mb-3">{{ featured_session.resume_seo|default:featured_session.message|striptags|truncatechars:110 }}</p>
             <dl>
                 {% if featured_session.date_debut %}
                 <div>
@@ -61,36 +60,36 @@
                 {% endif %}
                 {% if featured_session.lieu %}
                 <div>
-                    <dt>Lieu du terrain</dt>
+                    <dt>Lieu</dt>
                     <dd>{{ featured_session.lieu }}</dd>
                 </div>
                 {% endif %}
             </dl>
-            <a href="{{ featured_session.get_absolute_url }}" class="btn btn-primary rounded-pill w-100">
-                Voir les détails de la session
+            <a href="{{ featured_session.get_absolute_url }}" class="btn btn-primary rounded-pill w-100 mt-2">
+                Voir la session <i class="bi bi-arrow-right ms-1"></i>
             </a>
             {% else %}
             <h2>Inscriptions ouvertes</h2>
-            <p>Choisis un programme adapté, consulte les horaires et rejoins l'académie pour la prochaine session à la Gombe.</p>
+            <p class="mb-3">Rejoins l'académie pour la prochaine session sur notre terrain à la Gombe.</p>
             <dl>
                 <div>
-                    <dt>Terrain officiel</dt>
+                    <dt>Terrain</dt>
                     <dd>Avenue de la Science n°5, Gombe</dd>
                 </div>
                 <div>
-                    <dt>Catégories encadrées</dt>
+                    <dt>Catégories</dt>
                     <dd>U10 à U18+ (Filles & Garçons)</dd>
                 </div>
             </dl>
-            <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill w-100">
-                Préparer mon inscription
+            <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill w-100 mt-2">
+                Préparer mon inscription <i class="bi bi-arrow-right ms-1"></i>
             </a>
             {% endif %}
         </aside>
     </div>
 </header>
 
-<!-- Ruban des Valeurs Fondamentales (Directement issu de l'Affiche) -->
+<!-- Ruban des Valeurs Fondamentales -->
 <div class="values-ribbon-bar" aria-label="Valeurs officielles de Magic Hoops Academy">
     <div class="container">
         <div class="values-ribbon-content">
@@ -103,33 +102,22 @@
 </div>
 
 <main>
-    <section class="mobile-priority-strip" aria-label="Informations clés">
-        <a href="{% url 'programmes' %}">
-            <strong>3 parcours de formation</strong>
-            <span>Mini (U10-13), Junior (U14-17), Elite (U18+)</span>
-        </a>
-        <a href="{% url 'index' %}#schedule">
-            <strong>Terrain & Horaires</strong>
-            <span>Gombe, Av. de la Science n°5</span>
-        </a>
-        <a href="{% url 'inscription' %}">
-            <strong>Comment s'inscrire</strong>
-            <span>4 étapes simples et directes</span>
-        </a>
-    </section>
-
     <!-- Parcours de formation -->
     <section class="section-block journey-section">
         <div class="container">
-            <div class="section-split-heading">
-                <p class="eyebrow text-primary">Parcours joueur</p>
-                <h2 class="section-heading">Un chemin clair, adapté à chaque étape de croissance.</h2>
-                <p>Chaque programme répond à un âge, un rythme d'entraînement et une ambition sportive. Le joueur avance avec des repères techniques clairs, visibles par les parents et suivis par les coachs.</p>
+            <div class="section-row-header">
+                <div>
+                    <p class="eyebrow text-primary">Parcours Joueur</p>
+                    <h2 class="section-heading mb-0">3 parcours adaptés à chaque étape.</h2>
+                </div>
+                <a href="{% url 'programmes' %}" class="btn btn-outline-primary rounded-pill px-4">
+                    Tous les programmes <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
             <div class="journey-rail">
                 {% for program in programs %}
                 <article class="journey-card">
-                    <div class="d-flex justify-content-between align-items-center mb-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="journey-age">{{ program.age }}</span>
                         <i class="bi bi-dribbble fs-4 text-primary"></i>
                     </div>
@@ -150,10 +138,10 @@
             <div class="method-panel">
                 <div>
                     <p class="eyebrow">Méthode MHA</p>
-                    <h2 class="section-heading">Technique, physique, jeu & mentalité.</h2>
-                    <p>La formation ne se limite pas aux exercices répétés. Chaque entraînement apprend au joueur à comprendre son corps, son rôle sur le terrain et ses responsabilités dans un collectif.</p>
-                    <a href="{% url 'methode' %}" class="btn btn-primary rounded-pill px-4 mt-2">
-                        Découvrir toute la méthode
+                    <h2 class="section-heading">L'art du jeu en 4 piliers.</h2>
+                    <p class="mb-4">Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique et culture de la gagne.</p>
+                    <a href="{% url 'methode' %}" class="btn btn-primary rounded-pill px-4">
+                        Découvrir toute la méthode <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
                 <div class="method-pillar-grid">
@@ -161,7 +149,7 @@
                     <article>
                         <span>0{{ forloop.counter }}</span>
                         <h3>{{ pillar.title }}</h3>
-                        <p>{{ pillar.text }}</p>
+                        <p class="mb-0">{{ pillar.text }}</p>
                     </article>
                     {% endfor %}
                 </div>
@@ -175,10 +163,10 @@
             <div class="section-row-header">
                 <div>
                     <p class="eyebrow text-primary">Horaires & Terrain</p>
-                    <h2 class="section-heading">Des repères fiables pour les familles.</h2>
+                    <h2 class="section-heading mb-0">Créneaux d'entraînement</h2>
                 </div>
                 <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill px-4">
-                    Préparer l'inscription
+                    S'inscrire <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
             <div class="schedule-grid">
@@ -186,18 +174,18 @@
                 <article class="schedule-card">
                     <span class="schedule-day"><i class="bi bi-calendar3 me-1"></i> {{ schedule.day }}</span>
                     <strong>{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}</strong>
-                    <p>{{ schedule.description }}</p>
+                    <p class="mb-0">{{ schedule.description }}</p>
                 </article>
                 {% empty %}
                 <div class="empty-state">
-                    <h3>Séances d'entraînement régulières</h3>
-                    <p>Mercredi et Samedi sur notre terrain habituel à la Gombe.</p>
+                    <h3>Séances régulières</h3>
+                    <p class="mb-0">Mercredi et Samedi sur notre terrain habituel à la Gombe.</p>
                 </div>
                 {% endfor %}
             </div>
-            <div class="schedule-note">
+            <div class="schedule-note mt-4">
                 <i class="bi bi-geo-alt-fill text-primary fs-5"></i>
-                <span><strong>Terrain habituel :</strong> Avenue de la Science numéro 5, Commune de la Gombe, Kinshasa. Présence recommandée 15 minutes avant le début de séance.</span>
+                <span><strong>Terrain officiel :</strong> Avenue de la Science numéro 5, Gombe, Kinshasa. Présence requise 15 min avant le début de séance.</span>
             </div>
         </div>
     </section>
@@ -209,12 +197,13 @@
                 <div class="staff-mark">MHA</div>
                 <div>
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge-poster-orange">Encadrement</span>
-                        <p class="eyebrow text-primary mb-0">Coach & Fondateur</p>
+                        <span class="badge-poster-orange">Direction Technique</span>
                     </div>
-                    <h2 class="section-heading">Bruno Lobaya Nkoy, alias Magic, porte le cadre.</h2>
-                    <p>Le basket attire par le jeu, mais la confiance d'une famille grandit quand elle sait qui forme son enfant. À Magic Hoops Academy, l'exigence technique s'accompagne d'une formation humaine intransigeante sur le respect et la discipline.</p>
-                    <div class="d-flex flex-wrap gap-2 mt-3">
+                    <h2 class="section-heading">Bruno Lobaya Nkoy, alias Coach Magic.</h2>
+                    <p class="mb-3">
+                        « Le talent ouvre la voie, mais seule la discipline forge les champions. » À Magic Hoops Academy, l'exigence sur le parquet s'accompagne d'une transmission sans compromis du respect et du dépassement de soi.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
                         <a href="{% url 'staff' %}" class="btn btn-primary rounded-pill px-4">
                             Découvrir le staff
                         </a>
@@ -233,7 +222,7 @@
             <div class="section-row-header">
                 <div>
                     <p class="eyebrow text-primary">Sessions & Actualités</p>
-                    <h2 class="section-heading">Les informations qui font vivre l'académie.</h2>
+                    <h2 class="section-heading mb-0">La vie de l'académie en direct.</h2>
                 </div>
                 <a href="{% url 'announcements:announcement_list' %}" class="btn btn-outline-primary rounded-pill px-4">
                     Toutes les annonces <i class="bi bi-arrow-right ms-1"></i>
@@ -243,11 +232,11 @@
                 {% for announcement in recent_announcements %}
                 <article class="announcement-preview-card">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span>{{ announcement.get_type_annonce_display }}</span>
-                        <time datetime="{{ announcement.date_publication|date:'c' }}">{{ announcement.date_publication|date:"d M Y" }}</time>
+                        <span class="badge bg-primary-light text-primary rounded-pill px-2 py-1 small fw-bold">{{ announcement.get_type_annonce_display }}</span>
+                        <time class="small text-muted" datetime="{{ announcement.date_publication|date:'c' }}">{{ announcement.date_publication|date:"d M Y" }}</time>
                     </div>
                     <h3><a href="{{ announcement.get_absolute_url }}">{{ announcement.titre }}</a></h3>
-                    <p>{{ announcement.resume_seo|default:announcement.message|striptags|truncatechars:135 }}</p>
+                    <p>{{ announcement.resume_seo|default:announcement.message|striptags|truncatechars:120 }}</p>
                     <a href="{{ announcement.get_absolute_url }}" class="fw-bold text-primary text-decoration-none mt-auto">
                         Lire la suite <i class="bi bi-chevron-right small"></i>
                     </a>
@@ -262,13 +251,133 @@
         </div>
     </section>
 
+    <!-- Galerie & Événements Récents -->
+    {% if featured_albums %}
+    <section class="section-block bg-white border-top border-bottom">
+        <div class="container">
+            <div class="section-row-header">
+                <div>
+                    <p class="eyebrow text-primary"><i class="bi bi-camera-fill me-1"></i> Galerie & Événements</p>
+                    <h2 class="section-heading mb-0">L'énergie du terrain en images.</h2>
+                </div>
+                <a href="{% url 'gallery:gallery_list' %}" class="btn btn-outline-primary rounded-pill px-4">
+                    Voir toute la galerie <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="row g-4">
+                {% for album in featured_albums %}
+                <div class="col-md-4">
+                    <div class="card h-100 border rounded-4 overflow-hidden shadow-sm d-flex flex-column">
+                        <a href="{{ album.get_absolute_url }}" class="text-decoration-none position-relative">
+                            <div style="height: 220px; overflow: hidden; background: var(--secondary-deep);">
+                                {% if album.couverture %}
+                                <img src="{{ album.couverture.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;" class="hover-zoom">
+                                {% elif album.first_photo %}
+                                <img src="{{ album.first_photo.image.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% endif %}
+                            </div>
+                            <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1">
+                                <i class="bi bi-camera me-1"></i> {{ album.photos_count }} photos
+                            </span>
+                        </a>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                {% if album.categorie %}
+                                <span class="badge bg-primary-light text-primary rounded-pill px-2 py-1 small fw-bold">{{ album.categorie.nom }}</span>
+                                {% endif %}
+                                {% if album.date_evenement %}
+                                <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{{ album.date_evenement|date:"d M Y" }}</span>
+                                {% endif %}
+                            </div>
+                            <h3 class="h5 fw-bold text-secondary mb-2">
+                                <a href="{{ album.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                    {{ album.titre }}
+                                </a>
+                            </h3>
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                <span class="small text-muted"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ album.lieu }}</span>
+                                <a href="{{ album.get_absolute_url }}" class="small fw-bold text-primary text-decoration-none">
+                                    Voir l'album <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Boutique Officielle MHA -->
+    {% if featured_products %}
+    <section class="section-block bg-paper">
+        <div class="container">
+            <div class="section-row-header">
+                <div>
+                    <p class="eyebrow text-primary"><i class="bi bi-bag-fill me-1"></i> Boutique Officielle</p>
+                    <h2 class="section-heading mb-0">Portez les couleurs de l'académie.</h2>
+                </div>
+                <a href="{% url 'shop:product_list' %}" class="btn btn-primary rounded-pill px-4">
+                    Accéder à la boutique <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="row g-4">
+                {% for prod in featured_products %}
+                <div class="col-sm-6 col-md-3">
+                    <div class="card h-100 border rounded-4 overflow-hidden shadow-sm d-flex flex-column bg-white">
+                        <a href="{{ prod.get_absolute_url }}" class="text-decoration-none">
+                            <div style="aspect-ratio: 1/1; overflow: hidden; background: var(--surface-alt);" class="position-relative">
+                                {% if prod.image_principale %}
+                                <img src="{{ prod.image_principale.url }}" alt="{{ prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% endif %}
+
+                                {% if prod.badge %}
+                                <span class="position-absolute top-0 start-0 m-2 badge bg-primary text-white rounded-pill px-2 py-1 small fw-bold">
+                                    {{ prod.get_badge_display }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            {% if prod.categorie %}
+                            <span class="text-muted small mb-1" style="font-size: 0.75rem;">{{ prod.categorie.nom }}</span>
+                            {% endif %}
+                            <h3 class="h6 fw-bold text-secondary mb-2" style="min-height: 2.2rem;">
+                                <a href="{{ prod.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                    {{ prod.nom }}
+                                </a>
+                            </h3>
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold text-primary">{{ prod.prix_usd }} $</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ prod.formatted_cdf }}</div>
+                                </div>
+                                <a href="{{ prod.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    Commander
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <!-- FAQ Parents -->
     <section class="section-block faq-section">
         <div class="container">
-            <div class="section-split-heading">
-                <p class="eyebrow text-primary">FAQ Parents</p>
-                <h2 class="section-heading">Les réponses avant la première séance.</h2>
-                <p>Toutes les informations pratiques pour inscrire votre enfant en toute sérénité et comprendre l'organisation des entraînements à Kinshasa.</p>
+            <div class="section-row-header">
+                <div>
+                    <p class="eyebrow text-primary">FAQ Parents</p>
+                    <h2 class="section-heading mb-0">Questions fréquentes</h2>
+                </div>
             </div>
             <div class="faq-list">
                 {% for item in faqs %}
@@ -282,3 +391,4 @@
     </section>
 </main>
 {% endblock %}
+

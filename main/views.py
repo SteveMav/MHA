@@ -1,5 +1,7 @@
 from .models import Schedule
 from announcements.models import Annonce
+from gallery.models import GalleryAlbum, GalleryPhoto
+from shop.models import Product
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -148,6 +150,11 @@ def index(request):
     schedules = Schedule.objects.all()
     recent_announcements = Annonce.objects.all()[:3]
     featured_session = get_featured_session()
+    featured_albums = GalleryAlbum.objects.filter(est_publie=True).select_related('categorie').prefetch_related('photos')[:3]
+    featured_products = Product.objects.filter(est_actif=True, est_en_vedette=True).select_related('categorie')[:4]
+    if not featured_products.exists():
+        featured_products = Product.objects.filter(est_actif=True).select_related('categorie')[:4]
+
     canonical_url = absolute_url(request, '/')
     hero_image_url = absolute_static_url(request, 'images/basketball.jpeg')
     logo_url = absolute_static_url(request, 'images/mha_logo.jpeg')
@@ -211,6 +218,8 @@ def index(request):
         'schedules': schedules,
         'recent_announcements': recent_announcements,
         'featured_session': featured_session,
+        'featured_albums': featured_albums,
+        'featured_products': featured_products,
         'programs': PROGRAMS,
         'method_pillars': METHOD_PILLARS,
         'staff_members': STAFF_MEMBERS,
@@ -420,6 +429,8 @@ Magic Hoops Academy Kinshasa est une academie de basketball jeunesse situee a la
 - Programmes: {absolute_url(request, '/programmes/')}
 - Methode MHA: {absolute_url(request, '/methode/')}
 - Coach et staff: {absolute_url(request, '/staff/')}
+- Galerie photos et événements: {absolute_url(request, '/galerie/')}
+- Boutique officielle et accessoires: {absolute_url(request, '/boutique/')}
 - Inscription: {absolute_url(request, '/inscription/')}
 - Actualites et sessions: {absolute_url(request, '/news/')}
 - Sitemap XML: {absolute_url(request, '/sitemap.xml')}
@@ -428,6 +439,6 @@ Magic Hoops Academy Kinshasa est une academie de basketball jeunesse situee a la
 
 {ACADEMY_DESCRIPTION}
 
-Les annonces publiees dans la rubrique Actualites peuvent concerner des sessions de basket, des parcours de formation, des evenements et des informations importantes pour les familles.
+L'académie organise des événements sportifs majeurs dont les clichés sont exposés dans la Galerie. La Boutique officielle permet de commander les tenues de match, t-shirts, ballons et accessoires avec retrait direct au terrain ou livraison à Kinshasa. Les annonces publiées dans la rubrique Actualités concernent les sessions de basket, les parcours de formation et les informations pour les familles.
 """
     return HttpResponse(content, content_type='text/plain; charset=utf-8')

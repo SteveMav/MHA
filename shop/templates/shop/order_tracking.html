@@ -1,0 +1,89 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-5 bg-paper">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Suivi de commande</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5 mb-4">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-flex mb-3">
+                            <i class="bi bi-search fs-3"></i>
+                        </div>
+                        <h1 class="h3 fw-bold text-secondary mb-2">Suivre l'état de votre commande</h1>
+                        <p class="text-muted small mb-0">Renseignez votre numéro de commande et votre numéro de téléphone pour voir l'état de préparation ou de retrait.</p>
+                    </div>
+
+                    <form method="GET" action="{% url 'shop:order_tracking' %}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-secondary">Numéro de commande *</label>
+                            {{ form.numero_commande }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-secondary">Numéro de téléphone *</label>
+                            {{ form.telephone }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm">
+                            <i class="bi bi-search me-2"></i> Vérifier le statut
+                        </button>
+                    </form>
+                </div>
+
+                {% if searched %}
+                    {% if order %}
+                    <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 fw-bold text-secondary mb-0">Commande #{{ order.numero_commande }}</h2>
+                            <span class="badge {% if order.statut_commande == 'prete' or order.statut_commande == 'livree' %}bg-success{% else %}bg-primary{% endif %} rounded-pill px-3 py-2 fw-bold">
+                                {{ order.get_statut_commande_display }}
+                            </span>
+                        </div>
+
+                        <div class="p-3 bg-light rounded-3 mb-3 small">
+                            <div class="row g-2">
+                                <div class="col-6"><strong>Client :</strong> {{ order.nom_complet }}</div>
+                                <div class="col-6"><strong>Date :</strong> {{ order.date_creation|date:"d M Y" }}</div>
+                                <div class="col-6"><strong>Montant :</strong> {{ order.total_usd }} $ ({{ order.formatted_cdf }})</div>
+                                <div class="col-6"><strong>Paiement :</strong> {{ order.get_statut_paiement_display }}</div>
+                            </div>
+                        </div>
+
+                        <h3 class="h6 fw-bold text-secondary mb-2">Articles :</h3>
+                        <ul class="list-group list-group-flush mb-4 small">
+                            {% for item in order.items.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>{{ item.quantite }}x {{ item.produit.nom }} ({{ item.variante_label|default:"Standard" }})</span>
+                                <span class="fw-bold">{{ item.total_ligne_usd }} $</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="text-center pt-2">
+                            <a href="{% url 'shop:order_confirmation' order.numero_commande %}" class="btn btn-outline-primary rounded-pill px-4">
+                                Voir le reçu complet
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning rounded-4 shadow-sm p-4 text-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-3 text-warning mb-2 d-block"></i>
+                        <h4 class="h6 fw-bold mb-1">Aucune commande trouvée</h4>
+                        <p class="small mb-0">Vérifiez l'exactitude de votre numéro de commande (ex: <code>MHA-XXXXXX</code>) et de votre numéro de téléphone.</p>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
