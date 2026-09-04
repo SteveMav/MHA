@@ -12,19 +12,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}">Accueil</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}#programmes">Programmes</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}#methode">Méthode</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}#schedule">Horaires</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}#coach">Staff</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'gallery:gallery_list' %}">Galerie</a>
@@ -32,24 +23,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'shop:product_list' %}">Boutique</a>
                 </li>
-                {% if user.is_staff %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="announcementsDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Sessions
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="announcementsDropdown">
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}"><i class="bi bi-calendar-check me-2 text-primary"></i>Sessions & actualités</a></li>
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}"><i class="bi bi-plus-circle me-2 text-primary"></i>Ajouter une annonce</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>Administration</a></li>
-                    </ul>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'announcements:announcement_list' %}">Sessions</a>
-                </li>
-                {% endif %}
 
                 <!-- Panier d'achat -->
                 <li class="nav-item ms-lg-2">
@@ -74,6 +47,10 @@
                         <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
                         <li><a class="dropdown-item" href="{% url 'shop:order_tracking' %}"><i class="bi bi-box-seam me-2"></i>Mes commandes</a></li>
                         {% if user.is_staff %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header text-uppercase small">Administration</h6></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}"><i class="bi bi-calendar-check me-2 text-primary"></i>Sessions & annonces</a></li>
+                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}"><i class="bi bi-plus-circle me-2 text-primary"></i>Ajouter une annonce</a></li>
                         <li><a class="dropdown-item" href="/admin/"><i class="bi bi-speedometer2 me-2"></i>Tableau de bord Admin</a></li>
                         {% endif %}
                         <li><hr class="dropdown-divider"></li>
