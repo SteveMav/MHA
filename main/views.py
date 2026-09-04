@@ -3,7 +3,7 @@ from announcements.models import Annonce
 from gallery.models import GalleryAlbum, GalleryPhoto
 from shop.models import Product
 from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from .seo import (
@@ -148,9 +148,12 @@ def get_featured_session():
 
 def index(request):
     schedules = Schedule.objects.all()
-    recent_announcements = Annonce.objects.all()[:3]
+    recent_announcements = Annonce.objects.all()[:4]
+    latest_announcement = Annonce.objects.order_by('-date_publication').first()
     featured_session = get_featured_session()
     featured_albums = GalleryAlbum.objects.filter(est_publie=True).select_related('categorie').prefetch_related('photos')[:3]
+    recent_photos = GalleryPhoto.objects.filter(album__est_publie=True).select_related('album').order_by('-date_ajout')[:6]
+    total_photos_count = GalleryPhoto.objects.filter(album__est_publie=True).count()
     featured_products = Product.objects.filter(est_actif=True, est_en_vedette=True).select_related('categorie')[:4]
     if not featured_products.exists():
         featured_products = Product.objects.filter(est_actif=True).select_related('categorie')[:4]
@@ -217,8 +220,11 @@ def index(request):
     return render(request, 'main/index.html', {
         'schedules': schedules,
         'recent_announcements': recent_announcements,
+        'latest_announcement': latest_announcement,
         'featured_session': featured_session,
         'featured_albums': featured_albums,
+        'recent_photos': recent_photos,
+        'total_photos_count': total_photos_count,
         'featured_products': featured_products,
         'programs': PROGRAMS,
         'method_pillars': METHOD_PILLARS,
@@ -308,41 +314,11 @@ def programme_detail(request, slug):
 
 
 def methode(request):
-    canonical_url = absolute_url(request, '/methode/')
-    return render(request, 'main/methode.html', {
-        'method_pillars': METHOD_PILLARS,
-        'seo_title': "Méthode MHA | Formation basket, discipline et progression",
-        'seo_description': "La méthode Magic Hoops Academy combine technique, physique, lecture du jeu et mentalité pour former les jeunes basketteurs à Kinshasa.",
-        'canonical_url': canonical_url,
-        'og_type': 'website',
-        'og_image': absolute_static_url(request, 'images/basketball.jpeg'),
-        'page_schema': schema_json({
-            "@context": "https://schema.org",
-            "@graph": [
-                organization_node(request),
-                breadcrumb_node(request, [('Accueil', '/'), ('Méthode MHA', '/methode/')]),
-            ],
-        }),
-    })
+    return redirect('/#methode')
 
 
 def staff(request):
-    canonical_url = absolute_url(request, '/staff/')
-    return render(request, 'main/staff.html', {
-        'staff_members': STAFF_MEMBERS,
-        'seo_title': "Coach et staff | Magic Hoops Academy Kinshasa",
-        'seo_description': "Découvrez le fondateur Bruno Lobaya Nkoy, alias Magic, et l'encadrement Magic Hoops Academy à Kinshasa.",
-        'canonical_url': canonical_url,
-        'og_type': 'website',
-        'og_image': absolute_static_url(request, 'images/mha_logo.jpeg'),
-        'page_schema': schema_json({
-            "@context": "https://schema.org",
-            "@graph": [
-                organization_node(request),
-                breadcrumb_node(request, [('Accueil', '/'), ('Staff', '/staff/')]),
-            ],
-        }),
-    })
+    return redirect('/#coach')
 
 
 def inscription(request):
@@ -426,9 +402,9 @@ Magic Hoops Academy Kinshasa est une academie de basketball jeunesse situee a la
 ## Pages importantes
 
 - Accueil: {base_url}
-- Programmes: {absolute_url(request, '/programmes/')}
-- Methode MHA: {absolute_url(request, '/methode/')}
-- Coach et staff: {absolute_url(request, '/staff/')}
+- Programmes: {base_url}#programmes
+- Methode MHA: {base_url}#methode
+- Coach et staff: {base_url}#coach
 - Galerie photos et événements: {absolute_url(request, '/galerie/')}
 - Boutique officielle et accessoires: {absolute_url(request, '/boutique/')}
 - Inscription: {absolute_url(request, '/inscription/')}

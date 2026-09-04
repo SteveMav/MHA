@@ -35,6 +35,7 @@
 
 html {
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -71,7 +72,7 @@ aside {
 
 a {
     color: var(--secondary-color);
-    transition: color 220ms var(--ease-out), transform 220ms var(--ease-out), border-color 220ms var(--ease-out), background 220ms var(--ease-out);
+    transition: color 180ms var(--ease-out), background 180ms var(--ease-out), border-color 180ms var(--ease-out);
 }
 
 a:hover {
@@ -1907,6 +1908,28 @@ footer a {
 }
 
 @media (max-width: 991.98px) {
+    /* Mobile Performance: Remove heavy fullscreen fixed overlay repaints */
+    body::before {
+        display: none !important;
+    }
+
+    /* Mobile Performance: Remove expensive GPU backdrop-filter on sticky nav */
+    .site-navbar {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: #FFFFFF !important;
+        box-shadow: 0 2px 10px rgba(12, 24, 41, 0.08) !important;
+    }
+
+    /* Mobile Performance: Defer layout of offscreen sections */
+    .schedule-section,
+    .staff-preview,
+    .announcements-preview,
+    .faq-section {
+        content-visibility: auto;
+        contain-intrinsic-size: 500px;
+    }
+
     .home-hero-content,
     .method-panel,
     .section-split-heading,
@@ -2174,17 +2197,18 @@ footer a {
         max-width: 420px;
         gap: 0.45rem;
         padding: 0.45rem;
-        border: 1px solid rgba(12, 24, 41, 0.12);
+        border: 1px solid rgba(12, 24, 41, 0.14);
         border-radius: 999px;
-        background: rgba(255, 253, 248, 0.94);
-        box-shadow: 0 12px 30px rgba(6, 13, 23, 0.2);
-        backdrop-filter: blur(12px);
+        background: #FFFFFF;
+        box-shadow: 0 8px 26px rgba(6, 13, 23, 0.16);
         transform: translateX(-50%);
+        will-change: transform;
     }
 
     .mobile-cta-bar .btn {
         padding: 0.62rem 0.7rem;
         font-size: 0.84rem;
+        font-weight: 700;
     }
 }
 
@@ -2283,6 +2307,91 @@ footer a {
     place-items: center;
     font-size: 1.5rem;
     flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Photo Grid & Cartes Photos - Magic Hoops Academy
+   ========================================================================== */
+.album-photo-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--secondary-deep);
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
+    aspect-ratio: 4/3;
+    display: block;
+}
+
+.album-photo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.album-photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.album-photo-card:hover img {
+    transform: scale(1.05);
+}
+
+.album-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(12, 24, 41, 0.88) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    color: white;
+}
+
+.album-photo-card:hover .album-photo-overlay {
+    opacity: 1;
+}
+
+.zoom-icon-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 94, 20, 0.92);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.22s ease;
+}
+
+.album-photo-card:hover .zoom-icon-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (max-width: 768px) {
+    .album-photo-card:hover {
+        transform: none;
+    }
+    .album-photo-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(12, 24, 41, 0.75) 0%, transparent 70%);
+        padding: 0.65rem;
+    }
+    .zoom-icon-badge {
+        opacity: 0.9;
+        transform: scale(0.85);
+    }
 }
 
 /* ==========================================================================

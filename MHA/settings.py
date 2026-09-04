@@ -101,10 +101,11 @@ WSGI_APPLICATION = 'MHA.wsgi.application'
 # 3. Local fallback to SQLite (db.sqlite3)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+USE_SQLITE = config('USE_SQLITE', default=False, cast=bool)
 DATABASE_URL = config('DATABASE_URL', default=None)
 DB_NAME = config('DB_NAME', default=config('PGDATABASE', default=None))
 
-if DATABASE_URL:
+if DATABASE_URL and not USE_SQLITE:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -112,7 +113,7 @@ if DATABASE_URL:
             conn_health_checks=True,
         )
     }
-elif DB_NAME:
+elif DB_NAME and not USE_SQLITE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

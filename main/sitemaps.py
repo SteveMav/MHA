@@ -15,8 +15,6 @@ class StaticViewSitemap(Sitemap):
         static_routes = [
             ('index', None),
             ('programmes', None),
-            ('methode', None),
-            ('staff', None),
             ('inscription', None),
             ('announcements:announcement_list', None),
             ('gallery:gallery_list', None),

@@ -101,9 +101,29 @@
     </div>
 </div>
 
+{% if latest_announcement %}
+<!-- Bandeau Dernière Annonce Flash Info -->
+<div class="announcement-spotlight-bar py-3" style="background: rgba(12, 24, 41, 0.04); border-bottom: 1px solid var(--line);">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-4 shadow-sm" style="background: linear-gradient(135deg, var(--secondary-deep) 0%, var(--secondary-color) 100%); border-left: 5px solid var(--primary-color);">
+            <div class="d-flex align-items-center gap-3 flex-wrap flex-grow-1">
+                <span class="badge-poster-orange text-nowrap"><i class="bi bi-megaphone-fill me-1"></i> Dernière Annonce</span>
+                <div class="text-white">
+                    <strong class="d-block d-md-inline me-md-2" style="font-size: 1.05rem;">{{ latest_announcement.titre }}</strong>
+                    <span class="text-white-50 small d-none d-sm-inline">{{ latest_announcement.resume_seo|default:latest_announcement.message|striptags|truncatechars:100 }}</span>
+                </div>
+            </div>
+            <a href="{{ latest_announcement.get_absolute_url }}" class="btn btn-primary rounded-pill btn-sm px-4 text-nowrap">
+                Voir l'annonce <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <main>
     <!-- Parcours de formation -->
-    <section class="section-block journey-section">
+    <section id="programmes" class="section-block journey-section">
         <div class="container">
             <div class="section-row-header">
                 <div>
@@ -122,9 +142,14 @@
                         <i class="bi bi-dribbble fs-4 text-primary"></i>
                     </div>
                     <h3>{{ program.name }}</h3>
-                    <p>{{ program.short }}</p>
+                    <p class="mb-3">{{ program.short }}</p>
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        {% for item in program.focus %}
+                        <span class="badge bg-light text-secondary border rounded-pill small py-1 px-2">{{ item }}</span>
+                        {% endfor %}
+                    </div>
                     <a href="{% url 'programme_detail' program.slug %}" class="btn btn-outline-primary rounded-pill mt-auto w-100 text-center">
-                        Découvrir le parcours <i class="bi bi-arrow-right ms-1"></i>
+                        Détails du parcours <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </article>
                 {% endfor %}
@@ -132,22 +157,39 @@
         </div>
     </section>
 
-    <!-- Méthode d'entraînement MHA -->
-    <section class="section-block method-preview">
+    <!-- Méthode d'entraînement MHA complète -->
+    <section id="methode" class="section-block method-preview">
         <div class="container">
             <div class="method-panel">
                 <div>
-                    <p class="eyebrow">Méthode MHA</p>
-                    <h2 class="section-heading">L'art du jeu en 4 piliers.</h2>
-                    <p class="mb-4">Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique et culture de la gagne.</p>
-                    <a href="{% url 'methode' %}" class="btn btn-primary rounded-pill px-4">
-                        Découvrir toute la méthode <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge-poster-orange"><i class="bi bi-bullseye me-1"></i> Pédagogie & Formation</span>
+                    </div>
+                    <span class="brand-slogan-script mb-2 text-white">Formons les champions de demain !</span>
+                    <h2 class="section-heading">Former le joueur complet, pas seulement le scoreur.</h2>
+                    <p class="mb-4">Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique, intelligence tactique et mental d'acier.</p>
+                    
+                    <div class="p-3 rounded-4 mb-4" style="background: rgba(255, 253, 248, 0.08); border: 1px solid rgba(255, 253, 248, 0.15);">
+                        <h4 class="h6 fw-bold text-white mb-2"><i class="bi bi-shield-check text-primary me-2"></i>Le cadre fait la différence</h4>
+                        <p class="small mb-0 text-white-50">Au-delà du basketball, nous inculquons la ponctualité, le respect, l'effort collectif et le dépassement de soi. C'est ce qui transforme de jeunes passionnés en adultes exemplaires.</p>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-person-plus-fill me-1"></i> Inscrire mon enfant
+                        </a>
+                        <a href="tel:+243900824429" class="btn btn-outline-light rounded-pill px-4">
+                            <i class="bi bi-whatsapp me-1"></i> Nous contacter
+                        </a>
+                    </div>
                 </div>
                 <div class="method-pillar-grid">
                     {% for pillar in method_pillars %}
                     <article>
-                        <span>0{{ forloop.counter }}</span>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>0{{ forloop.counter }}</span>
+                            <i class="bi bi-dribbble text-primary"></i>
+                        </div>
                         <h3>{{ pillar.title }}</h3>
                         <p class="mb-0">{{ pillar.text }}</p>
                     </article>
@@ -190,25 +232,37 @@
         </div>
     </section>
 
-    <!-- Coach et Vision -->
-    <section class="section-block staff-preview">
+    <!-- Coach et Staff MHA -->
+    <section id="coach" class="section-block staff-preview">
         <div class="container">
             <div class="staff-preview-card">
                 <div class="staff-mark">MHA</div>
                 <div>
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge-poster-orange">Direction Technique</span>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge-poster-orange">Direction Technique & Staff</span>
+                        <span class="badge bg-light text-secondary border rounded-pill small px-2 py-1">Terrain Gombe</span>
                     </div>
                     <h2 class="section-heading">Bruno Lobaya Nkoy, alias Coach Magic.</h2>
                     <p class="mb-3">
                         « Le talent ouvre la voie, mais seule la discipline forge les champions. » À Magic Hoops Academy, l'exigence sur le parquet s'accompagne d'une transmission sans compromis du respect et du dépassement de soi.
                     </p>
+                    <div class="row g-3 mb-3">
+                        {% for member in staff_members %}
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-white border rounded-3 h-100 shadow-sm">
+                                <span class="badge bg-primary-light text-primary rounded-pill small fw-bold mb-1">{{ member.role }}</span>
+                                <h4 class="h6 fw-bold mb-1 text-secondary">{{ member.name }}</h4>
+                                <p class="small text-muted mb-0">{{ member.bio|truncatechars:120 }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     <div class="d-flex flex-wrap gap-2 mt-2">
-                        <a href="{% url 'staff' %}" class="btn btn-primary rounded-pill px-4">
-                            Découvrir le staff
-                        </a>
-                        <a href="tel:+243900824429" class="btn btn-outline-primary rounded-pill px-4">
+                        <a href="tel:+243900824429" class="btn btn-primary rounded-pill px-4">
                             <i class="bi bi-telephone-fill me-1"></i> +243 900 824 429
+                        </a>
+                        <a href="mailto:info@magichoops.cd" class="btn btn-outline-primary rounded-pill px-4">
+                            <i class="bi bi-envelope-fill me-1"></i> info@magichoops.cd
                         </a>
                     </div>
                 </div>
@@ -217,7 +271,7 @@
     </section>
 
     <!-- Sessions et Annonces -->
-    <section class="section-block announcements-preview">
+    <section id="annonces" class="section-block announcements-preview">
         <div class="container">
             <div class="section-row-header">
                 <div>
@@ -252,68 +306,120 @@
     </section>
 
     <!-- Galerie & Événements Récents -->
-    {% if featured_albums %}
-    <section class="section-block bg-white border-top border-bottom">
+    <section id="galerie" class="section-block bg-white border-top border-bottom">
         <div class="container">
             <div class="section-row-header">
                 <div>
                     <p class="eyebrow text-primary"><i class="bi bi-camera-fill me-1"></i> Galerie & Événements</p>
-                    <h2 class="section-heading mb-0">L'énergie du terrain en images.</h2>
+                    <h2 class="section-heading mb-0">L'énergie du terrain en photos.</h2>
                 </div>
                 <a href="{% url 'gallery:gallery_list' %}" class="btn btn-outline-primary rounded-pill px-4">
-                    Voir toute la galerie <i class="bi bi-arrow-right ms-1"></i>
+                    Voir toute la galerie {% if total_photos_count %}({{ total_photos_count }} photos){% endif %} <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
-            <div class="row g-4">
-                {% for album in featured_albums %}
-                <div class="col-md-4">
-                    <div class="card h-100 border rounded-4 overflow-hidden shadow-sm d-flex flex-column">
-                        <a href="{{ album.get_absolute_url }}" class="text-decoration-none position-relative">
-                            <div style="height: 220px; overflow: hidden; background: var(--secondary-deep);">
-                                {% if album.couverture %}
-                                <img src="{{ album.couverture.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;" class="hover-zoom">
-                                {% elif album.first_photo %}
-                                <img src="{{ album.first_photo.image.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                {% else %}
-                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                {% endif %}
+
+            {% if recent_photos %}
+            <!-- Photos récentes en accès direct avec Lightbox plein écran -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                    <span class="small fw-bold text-muted text-uppercase tracking-wider">
+                        <i class="bi bi-images text-primary me-1"></i> Derniers clichés (cliquez pour agrandir)
+                    </span>
+                    <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1 small fw-bold">
+                        <i class="bi bi-arrows-fullscreen me-1"></i> Plein écran disponible
+                    </span>
+                </div>
+                <div class="row g-3">
+                    {% for photo in recent_photos %}
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="album-photo-card mha-lightbox-trigger"
+                             data-full="{{ photo.image.url }}"
+                             data-caption="{{ photo.titre|default:photo.album.titre }}"
+                             data-album="{{ photo.album.titre }}"
+                             data-date="{{ photo.date_ajout|date:'d M Y' }}"
+                             title="Cliquer pour voir en plein écran">
+                            <img src="{{ photo.image.url }}" alt="{{ photo.titre|default:photo.album.titre }}" loading="lazy" decoding="async">
+                            <div class="album-photo-overlay">
+                                <span class="small text-truncate w-100">{{ photo.album.titre }}</span>
                             </div>
-                            <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1">
-                                <i class="bi bi-camera me-1"></i> {{ album.photos_count }} photos
-                            </span>
-                        </a>
-                        <div class="p-4 d-flex flex-column flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                {% if album.categorie %}
-                                <span class="badge bg-primary-light text-primary rounded-pill px-2 py-1 small fw-bold">{{ album.categorie.nom }}</span>
-                                {% endif %}
-                                {% if album.date_evenement %}
-                                <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{{ album.date_evenement|date:"d M Y" }}</span>
-                                {% endif %}
-                            </div>
-                            <h3 class="h5 fw-bold text-secondary mb-2">
-                                <a href="{{ album.get_absolute_url }}" class="text-decoration-none text-secondary">
-                                    {{ album.titre }}
-                                </a>
-                            </h3>
-                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-                                <span class="small text-muted"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ album.lieu }}</span>
-                                <a href="{{ album.get_absolute_url }}" class="small fw-bold text-primary text-decoration-none">
-                                    Voir l'album <i class="bi bi-arrow-right"></i>
-                                </a>
+                            <div class="zoom-icon-badge">
+                                <i class="bi bi-arrows-fullscreen"></i>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+            {% endif %}
+
+            <!-- Albums & Événements -->
+            {% if featured_albums %}
+            <div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="small fw-bold text-muted text-uppercase tracking-wider">
+                        <i class="bi bi-folder2-open text-primary me-1"></i> Albums & Événements récents
+                    </span>
+                </div>
+                <div class="row g-4">
+                    {% for album in featured_albums %}
+                    <div class="col-md-4">
+                        <div class="card h-100 border rounded-4 overflow-hidden shadow-sm d-flex flex-column">
+                            <a href="{{ album.get_absolute_url }}" class="text-decoration-none position-relative">
+                                <div style="height: 200px; overflow: hidden; background: var(--secondary-deep);">
+                                    {% if album.couverture %}
+                                    <img src="{{ album.couverture.url }}" alt="{{ album.titre }}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;" class="hover-zoom">
+                                    {% elif album.first_photo %}
+                                    <img src="{{ album.first_photo.image.url }}" alt="{{ album.titre }}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                    <img src="{% static 'images/basketball.jpeg' %}" alt="{{ album.titre }}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                                <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1">
+                                    <i class="bi bi-camera me-1"></i> {{ album.photos_count }} photos
+                                </span>
+                            </a>
+                            <div class="p-4 d-flex flex-column flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    {% if album.categorie %}
+                                    <span class="badge bg-primary-light text-primary rounded-pill px-2 py-1 small fw-bold">{{ album.categorie.nom }}</span>
+                                    {% endif %}
+                                    {% if album.date_evenement %}
+                                    <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{{ album.date_evenement|date:"d M Y" }}</span>
+                                    {% endif %}
+                                </div>
+                                <h3 class="h5 fw-bold text-secondary mb-2">
+                                    <a href="{{ album.get_absolute_url }}" class="text-decoration-none text-secondary">
+                                        {{ album.titre }}
+                                    </a>
+                                </h3>
+                                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ album.lieu }}</span>
+                                    <a href="{{ album.get_absolute_url }}" class="small fw-bold text-primary text-decoration-none">
+                                        Voir l'album <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-camera fs-1 text-primary mb-2"></i>
+                <h3>Galerie photos de l'académie</h3>
+                <p class="text-muted mb-3">Les clichés des entraînements, tournois et remises de brevets sont consultables dans la galerie.</p>
+                <a href="{% url 'gallery:gallery_list' %}" class="btn btn-primary rounded-pill px-4">
+                    Accéder à la galerie
+                </a>
+            </div>
+            {% endif %}
         </div>
     </section>
-    {% endif %}
 
     <!-- Boutique Officielle MHA -->
     {% if featured_products %}
-    <section class="section-block bg-paper">
+    <section id="boutique" class="section-block bg-paper">
         <div class="container">
             <div class="section-row-header">
                 <div>
@@ -331,9 +437,9 @@
                         <a href="{{ prod.get_absolute_url }}" class="text-decoration-none">
                             <div style="aspect-ratio: 1/1; overflow: hidden; background: var(--surface-alt);" class="position-relative">
                                 {% if prod.image_principale %}
-                                <img src="{{ prod.image_principale.url }}" alt="{{ prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ prod.image_principale.url }}" alt="{{ prod.nom }}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
                                 {% else %}
-                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ prod.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{% static 'images/basketball.jpeg' %}" alt="{{ prod.nom }}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
                                 {% endif %}
 
                                 {% if prod.badge %}
@@ -371,7 +477,7 @@
     {% endif %}
 
     <!-- FAQ Parents -->
-    <section class="section-block faq-section">
+    <section id="faq" class="section-block faq-section">
         <div class="container">
             <div class="section-row-header">
                 <div>
@@ -390,5 +496,27 @@
         </div>
     </section>
 </main>
+
+<!-- Lightbox Modal Plein Écran -->
+<div id="mhaLightbox" class="mha-lightbox-modal" aria-hidden="true" role="dialog">
+    <button class="mha-lightbox-close" aria-label="Fermer la vue plein écran">&times;</button>
+    <button class="mha-lightbox-prev" aria-label="Photo précédente"><i class="bi bi-chevron-left"></i></button>
+    <button class="mha-lightbox-next" aria-label="Photo suivante"><i class="bi bi-chevron-right"></i></button>
+    
+    <div class="mha-lightbox-content">
+        <img id="mhaLightboxImg" src="" alt="" class="mha-lightbox-image">
+        <div class="mha-lightbox-info">
+            <h4 id="mhaLightboxTitle" class="mha-lightbox-title"></h4>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <span id="mhaLightboxAlbum" class="mha-lightbox-meta"></span>
+                <span id="mhaLightboxCounter" class="badge bg-secondary rounded-pill px-3"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/gallery_lightbox.js' %}"></script>
 {% endblock %}
 
