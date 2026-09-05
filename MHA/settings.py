@@ -93,6 +93,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'MHA.wsgi.application'
 
+AUTHENTICATION_BACKENDS = ['accounts.backends.UsernameOrEmailBackend']
+
+# Railway captures stderr. Keep tracebacks available with DEBUG=False.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'server': {'format': '{asctime} {levelname} {name} {message}', 'style': '{'},
+    },
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'server'},
+    },
+    'loggers': {
+        'django': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
+    },
+}
+
 
 # Database
 # Supports:

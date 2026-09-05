@@ -47,7 +47,7 @@ class UserRegistrationForm(forms.ModelForm):
         return user
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(label="Email", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(label="Email ou nom d’utilisateur", widget=forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'username'}))
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 class UserUpdateForm(forms.ModelForm):

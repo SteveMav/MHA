@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseBadRequest
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, LoginForm, UserUpdateForm, ProfileUpdateForm, AbonnementForm
+from .models import Profile
 from django.utils import timezone
 from datetime import timedelta
 import uuid
@@ -19,13 +21,13 @@ def register_view(request):
 
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(data=request.POST)
+        form = LoginForm(request=request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect('profile') # Redirect to profile after login
     else:
-        form = LoginForm()
+        form = LoginForm(request=request)
     return render(request, 'accounts/login.html', {'form': form})
 
 def logout_view(request):
@@ -35,6 +37,13 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     user = request.user
+    if request.method == 'POST' and not (
+        'update_profile' in request.POST or 'pay_subscription' in request.POST
+    ):
+        return HttpResponseBadRequest('Action de profil invalide.')
+
+    # Accounts created through createsuperuser/admin may have no member profile.
+    profile, _ = Profile.objects.get_or_create(user=user)
     
     # Get current active or last subscription
     current_subscription = user.abonnements.order_by('-date_fin').first()
@@ -42,7 +51,7 @@ def profile_view(request):
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             u_form = UserUpdateForm(request.POST, instance=user)
-            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=user.profile)
+            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
             a_form = AbonnementForm() # Empty form if just updating profile
             
             if u_form.is_valid() and p_form.is_valid():
@@ -52,7 +61,7 @@ def profile_view(request):
                 
         elif 'pay_subscription' in request.POST:
             u_form = UserUpdateForm(instance=user)
-            p_form = ProfileUpdateForm(instance=user.profile)
+            p_form = ProfileUpdateForm(instance=profile)
             a_form = AbonnementForm(request.POST)
             
             if a_form.is_valid():
@@ -69,7 +78,7 @@ def profile_view(request):
 
     else:
         u_form = UserUpdateForm(instance=user)
-        p_form = ProfileUpdateForm(instance=user.profile)
+        p_form = ProfileUpdateForm(instance=profile)
         a_form = AbonnementForm()
 
     context = {
