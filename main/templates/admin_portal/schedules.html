@@ -1,0 +1,171 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestion des Horaires d'Entraînement{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Horaires & Créneaux d'Entraînement</h1>
+        <p class="text-muted mb-0">Gérez les créneaux hebdomadaires affichés sur le site public de Magic Hoops Academy.</p>
+    </div>
+    <div>
+        <a href="{% url 'index' %}#schedule" target="_blank" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Voir sur le site
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Formulaire d'Ajout d'un Créneau -->
+    <div class="col-lg-4">
+        <div class="admin-card p-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                <div class="metric-icon-box bg-primary bg-opacity-10 text-primary" style="width: 36px; height: 36px; font-size: 1.1rem;">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <h2 class="h5 fw-bold mb-0">Ajouter un Créneau</h2>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create">
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Jour de la semaine</label>
+                    <select name="day" class="form-select" required>
+                        {% for code, name in days_choices %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Heure de début</label>
+                        <input type="time" name="start_time" class="form-control" value="09:00" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Heure de fin</label>
+                        <input type="time" name="end_time" class="form-control" value="11:00" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Description / Groupe</label>
+                    <input type="text" name="description" class="form-control" value="Entraînement régulier" placeholder="Ex: Entraînement U10-U14, Tir & Fondamentaux">
+                </div>
+
+                <button type="submit" class="btn btn-mha-primary w-100 py-2">
+                    <i class="bi bi-check-circle me-1"></i> Enregistrer le créneau
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des Créneaux Existants -->
+    <div class="col-lg-8">
+        <div class="admin-card overflow-hidden">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
+                <h2 class="h5 fw-bold mb-0">Créneaux Configurés ({{ schedules|length }})</h2>
+                <span class="badge bg-light text-secondary">Ordre chronologique</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Jour</th>
+                            <th>Plage Horaire</th>
+                            <th>Description</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in schedules %}
+                        <tr>
+                            <td>
+                                <strong class="text-dark"><i class="bi bi-calendar-event text-primary me-2"></i>{{ s.day }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border px-2 py-1 fw-bold">
+                                    {{ s.start_time|time:"H:i" }} - {{ s.end_time|time:"H:i" }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-muted small">{{ s.description }}</span>
+                            </td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill me-1" 
+                                        data-bs-toggle="modal" data-bs-target="#editScheduleModal{{ s.id }}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a href="{% url 'admin_schedule_delete' s.id %}" 
+                                   class="btn btn-sm btn-outline-danger rounded-pill" 
+                                   onclick="return confirm('Confirmer la suppression du créneau du {{ s.day }} ?');"
+                                   title="Supprimer">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+
+                                <!-- Modal Modification Créneau -->
+                                <div class="modal fade text-start" id="editScheduleModal{{ s.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content rounded-4 border-0 shadow">
+                                            <form method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="update">
+                                                <input type="hidden" name="pk" value="{{ s.id }}">
+                                                <div class="modal-header border-bottom">
+                                                    <h5 class="modal-title fw-bold">Modifier le créneau</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body p-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">Jour</label>
+                                                        <select name="day" class="form-select" required>
+                                                            {% for code, name in days_choices %}
+                                                            <option value="{{ code }}" {% if s.day == code %}selected{% endif %}>{{ name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-6">
+                                                            <label class="form-label small fw-bold">Heure début</label>
+                                                            <input type="time" name="start_time" class="form-control" value="{{ s.start_time|time:'H:i' }}" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label small fw-bold">Heure fin</label>
+                                                            <input type="time" name="end_time" class="form-control" value="{{ s.end_time|time:'H:i' }}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">Description</label>
+                                                        <input type="text" name="description" class="form-control" value="{{ s.description }}">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-top">
+                                                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-primary rounded-pill px-4">Enregistrer</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-calendar-x fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                                <h5>Aucun créneau d'entraînement configuré</h5>
+                                <p class="small mb-0">Utilisez le formulaire à gauche pour ajouter vos premiers horaires.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

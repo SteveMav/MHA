@@ -34,7 +34,12 @@ class Abonnement(models.Model):
     )
     moyen_paiement = models.CharField(
         max_length=20,
-        choices=[('mpesa', 'M-Pesa'), ('orange', 'Orange Money'), ('airtel', 'Airtel Money')],
+        choices=[
+            ('mpesa', 'M-Pesa'),
+            ('orange', 'Orange Money'),
+            ('airtel', 'Airtel Money'),
+            ('cash', 'Cash / Espèces'),
+        ],
         null=True, blank=True
     )
     telephone_paiement = models.CharField(max_length=20, null=True, blank=True)

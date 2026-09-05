@@ -48,10 +48,14 @@
                         <li><a class="dropdown-item" href="{% url 'shop:order_tracking' %}"><i class="bi bi-box-seam me-2"></i>Mes commandes</a></li>
                         {% if user.is_staff %}
                         <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header text-uppercase small">Administration</h6></li>
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_list' %}"><i class="bi bi-calendar-check me-2 text-primary"></i>Sessions & annonces</a></li>
-                        <li><a class="dropdown-item" href="{% url 'announcements:announcement_create' %}"><i class="bi bi-plus-circle me-2 text-primary"></i>Ajouter une annonce</a></li>
-                        <li><a class="dropdown-item" href="/admin/"><i class="bi bi-speedometer2 me-2"></i>Tableau de bord Admin</a></li>
+                        <li><h6 class="dropdown-header text-uppercase small fw-bold text-primary"><i class="bi bi-shield-lock-fill me-1"></i> Portail Gérant</h6></li>
+                        <li><a class="dropdown-item fw-bold text-primary bg-primary-light" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Espace Administration</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin_users_list' %}"><i class="bi bi-people-fill me-2 text-secondary"></i>Membres & Abonnements</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin_schedules' %}"><i class="bi bi-calendar3 me-2 text-secondary"></i>Gestion Horaires</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin_gallery' %}"><i class="bi bi-images me-2 text-secondary"></i>Gestion Galerie</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin_announcements' %}"><i class="bi bi-megaphone-fill me-2 text-secondary"></i>Gestion Annonces</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin_site_content' %}"><i class="bi bi-pencil-square me-2 text-secondary"></i>Textes & Méthode</a></li>
+                        <li><a class="dropdown-item text-muted small" href="/admin/"><i class="bi bi-gear me-2"></i>Django Admin natif</a></li>
                         {% endif %}
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>

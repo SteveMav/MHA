@@ -1,0 +1,201 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestion des Utilisateurs & Abonnements{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Membres & Abonnements</h1>
+        <p class="text-muted mb-0">Suivez l'état des cotisations, les profils des joueurs et les paiements.</p>
+    </div>
+</div>
+
+<!-- Filtres par statut d'abonnement (Onglets rapides) -->
+<div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+    <a href="?statut=tous{% if query %}&q={{ query }}{% endif %}{% if role_filter != 'tous' %}&role={{ role_filter }}{% endif %}" 
+       class="btn btn-sm {% if statut_filter == 'tous' or not statut_filter %}btn-dark{% else %}btn-outline-secondary bg-white{% endif %} rounded-pill">
+        Tous <span class="badge bg-secondary ms-1">{{ stats_counts.tous }}</span>
+    </a>
+    <a href="?statut=paye{% if query %}&q={{ query }}{% endif %}{% if role_filter != 'tous' %}&role={{ role_filter }}{% endif %}" 
+       class="btn btn-sm {% if statut_filter == 'paye' %}btn-success{% else %}btn-outline-success bg-white{% endif %} rounded-pill">
+        <i class="bi bi-check-circle-fill me-1"></i> Payé / Actif <span class="badge bg-success ms-1">{{ stats_counts.paye }}</span>
+    </a>
+    <a href="?statut=en_attente{% if query %}&q={{ query }}{% endif %}{% if role_filter != 'tous' %}&role={{ role_filter }}{% endif %}" 
+       class="btn btn-sm {% if statut_filter == 'en_attente' %}btn-warning text-dark{% else %}btn-outline-warning text-dark bg-white{% endif %} rounded-pill">
+        <i class="bi bi-clock-history me-1"></i> En attente <span class="badge bg-warning text-dark ms-1">{{ stats_counts.en_attente }}</span>
+    </a>
+    <a href="?statut=expire{% if query %}&q={{ query }}{% endif %}{% if role_filter != 'tous' %}&role={{ role_filter }}{% endif %}" 
+       class="btn btn-sm {% if statut_filter == 'expire' %}btn-danger{% else %}btn-outline-danger bg-white{% endif %} rounded-pill">
+        <i class="bi bi-exclamation-octagon-fill me-1"></i> Expiré <span class="badge bg-danger ms-1">{{ stats_counts.expire }}</span>
+    </a>
+    <a href="?statut=aucun{% if query %}&q={{ query }}{% endif %}{% if role_filter != 'tous' %}&role={{ role_filter }}{% endif %}" 
+       class="btn btn-sm {% if statut_filter == 'aucun' %}btn-secondary{% else %}btn-outline-secondary bg-white{% endif %} rounded-pill">
+        <i class="bi bi-dash-circle me-1"></i> Sans abonnement <span class="badge bg-secondary ms-1">{{ stats_counts.aucun }}</span>
+    </a>
+</div>
+
+<!-- Barre de Recherche et Filtres Secondaires -->
+<div class="admin-card p-3 mb-4">
+    <form method="GET" class="row g-2 align-items-center">
+        <input type="hidden" name="statut" value="{{ statut_filter }}">
+        
+        <div class="col-md-6 col-lg-5">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Rechercher par nom, username, email ou tél...">
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg-3">
+            <select name="role" class="form-select" onchange="this.form.submit()">
+                <option value="tous" {% if role_filter == 'tous' %}selected{% endif %}>Tous les rôles</option>
+                <option value="membre" {% if role_filter == 'membre' %}selected{% endif %}>Membres uniquement</option>
+                <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff & Admins</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 col-lg-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary rounded-3 px-3">
+                <i class="bi bi-filter me-1"></i> Filtrer
+            </button>
+            {% if query or statut_filter != 'tous' or role_filter != 'tous' %}
+            <a href="{% url 'admin_users_list' %}" class="btn btn-outline-secondary rounded-3" title="Réinitialiser les filtres">
+                <i class="bi bi-x-circle"></i> Réinitialiser
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Tableau des Membres -->
+<div class="admin-card overflow-hidden">
+    <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
+        <span class="fw-bold text-dark">
+            Résultats : <span class="text-primary">{{ total_count }} membre(s) trouvé(s)</span>
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table mb-0">
+            <thead>
+                <tr>
+                    <th>Membre</th>
+                    <th>Coordonnées</th>
+                    <th>Inscription</th>
+                    <th>Statut Abonnement</th>
+                    <th>Échéance</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users_page %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if u.profile.photo %}
+                            <img src="{{ u.profile.photo.url }}" alt="{{ u.username }}" class="rounded-circle border" width="40" height="40" style="object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary border border-primary-subtle d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px; font-size: 0.95rem;">
+                                {{ u.first_name|first|default:u.username|first|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <a href="{% url 'admin_user_detail' u.id %}" class="fw-bold text-dark text-decoration-none">
+                                    {{ u.get_full_name|default:u.username }}
+                                </a>
+                                <div class="small text-muted">@{{ u.username }} {% if u.is_staff %}<span class="badge bg-danger ms-1" style="font-size: 0.65rem;">STAFF</span>{% endif %}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div><i class="bi bi-envelope text-muted me-1 small"></i>{{ u.email|default:"—" }}</div>
+                        <div class="small text-muted"><i class="bi bi-telephone text-muted me-1 small"></i>{{ u.profile.telephone|default:"Non renseigné" }}</div>
+                    </td>
+                    <td class="small text-muted">
+                        {{ u.date_joined|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        <span class="badge {{ u.sub_status.badge_class }} py-2 px-3">
+                            {% if u.sub_status.code == 'paye' %}
+                                <i class="bi bi-check-circle me-1"></i> Payé (Actif)
+                            {% elif u.sub_status.code == 'en_attente' %}
+                                <i class="bi bi-hourglass-split me-1"></i> En attente
+                            {% elif u.sub_status.code == 'expire' %}
+                                <i class="bi bi-exclamation-circle me-1"></i> Expiré
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i> Aucun abonnement
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if u.sub_status.active_sub %}
+                            <div class="fw-semibold text-success small">Jusqu'au {{ u.sub_status.active_sub.date_fin|date:"d/m/Y" }}</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">{{ u.sub_status.active_sub.montant }} $ • {{ u.sub_status.active_sub.get_moyen_paiement_display|default:"Paiement direct" }}</div>
+                        {% elif u.sub_status.latest_sub %}
+                            <div class="text-muted small">Dernier : {{ u.sub_status.latest_sub.date_fin|date:"d/m/Y" }}</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Statut : {{ u.sub_status.latest_sub.get_statut_display }}</div>
+                        {% else %}
+                            <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a href="{% url 'admin_user_detail' u.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                <i class="bi bi-person-bounding-box me-1"></i> Fiche Membre
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-search fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                        <h5>Aucun membre ne correspond aux critères</h5>
+                        <p class="small mb-0">Essayez d'ajuster votre recherche ou vos filtres.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if users_page.has_other_pages %}
+    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2 bg-white">
+        <div class="small text-muted">
+            Page {{ users_page.number }} sur {{ users_page.paginator.num_pages }}
+        </div>
+        <nav aria-label="Navigation pagination">
+            <ul class="pagination pagination-sm mb-0">
+                {% if users_page.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ users_page.previous_page_number }}&statut={{ statut_filter }}&q={{ query }}&role={{ role_filter }}">Précédent</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">Précédent</span></li>
+                {% endif %}
+
+                {% for p in users_page.paginator.page_range %}
+                    {% if p == users_page.number %}
+                    <li class="page-item active"><span class="page-link bg-primary border-primary">{{ p }}</span></li>
+                    {% elif p >= users_page.number|add:"-2" and p <= users_page.number|add:"2" %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ p }}&statut={{ statut_filter }}&q={{ query }}&role={{ role_filter }}">{{ p }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if users_page.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ users_page.next_page_number }}&statut={{ statut_filter }}&q={{ query }}&role={{ role_filter }}">Suivant</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">Suivant</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

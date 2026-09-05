@@ -1,0 +1,388 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr-CD">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %} | Magic Hoops Academy</title>
+    <link rel="icon" href="{% static 'images/mha_logo.jpeg' %}" type="image/jpeg">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mha-orange: #FF5E14;
+            --mha-orange-hover: #E04800;
+            --mha-orange-subtle: rgba(255, 94, 20, 0.12);
+            --mha-navy: #0C1829;
+            --mha-navy-dark: #060D17;
+            --mha-navy-light: #16263D;
+            --mha-gray-bg: #F4F6F9;
+            --mha-card-border: rgba(12, 24, 41, 0.08);
+            --font-display: 'Montserrat', system-ui, sans-serif;
+            --font-body: 'Outfit', system-ui, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--mha-gray-bg);
+            color: #1A2533;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, h6, .fw-display {
+            font-family: var(--font-display);
+        }
+
+        /* Admin Navbar */
+        .admin-navbar {
+            background: linear-gradient(135deg, var(--mha-navy-dark) 0%, var(--mha-navy) 100%);
+            border-bottom: 2px solid var(--mha-orange);
+            box-shadow: 0 4px 20px rgba(6, 13, 23, 0.25);
+        }
+
+        .admin-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #FFFFFF !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-brand-badge {
+            background-color: var(--mha-orange);
+            color: #FFFFFF;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .admin-nav-link {
+            color: rgba(255, 255, 255, 0.82) !important;
+            font-weight: 500;
+            font-size: 0.92rem;
+            padding: 8px 14px !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-nav-link:hover {
+            color: #FFFFFF !important;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-nav-link.active {
+            color: #FFFFFF !important;
+            background: var(--mha-orange);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(255, 94, 20, 0.35);
+        }
+
+        .admin-badge-staff {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #FFFFFF;
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Subnav on mobile / small screens */
+        .admin-subnav {
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--mha-card-border);
+            padding: 8px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .admin-subnav .btn {
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 20px;
+            padding: 5px 14px;
+        }
+
+        /* Modern Cards */
+        .admin-card {
+            background: #FFFFFF;
+            border: 1px solid var(--mha-card-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(12, 24, 41, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 26px rgba(12, 24, 41, 0.08);
+        }
+
+        .metric-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        /* Status Badges */
+        .badge-sub-paye {
+            background-color: #198754;
+            color: #FFFFFF;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-sub-en_attente {
+            background-color: #FFC107;
+            color: #212529;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-sub-expire {
+            background-color: #DC3545;
+            color: #FFFFFF;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-sub-aucun {
+            background-color: #6C757D;
+            color: #FFFFFF;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .btn-mha-primary {
+            background-color: var(--mha-orange);
+            border-color: var(--mha-orange);
+            color: #FFFFFF;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mha-primary:hover {
+            background-color: var(--mha-orange-hover);
+            border-color: var(--mha-orange-hover);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(255, 94, 20, 0.35);
+        }
+
+        .btn-mha-outline {
+            border: 1px solid var(--mha-orange);
+            color: var(--mha-orange);
+            font-weight: 600;
+            border-radius: 10px;
+            background: transparent;
+        }
+
+        .btn-mha-outline:hover {
+            background-color: var(--mha-orange);
+            color: #FFFFFF;
+        }
+
+        /* Table styling */
+        .admin-table th {
+            background-color: #F8FAFC;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 12px 16px;
+        }
+
+        .admin-table td {
+            padding: 14px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #EDF2F7;
+        }
+
+        .admin-table tr:hover td {
+            background-color: #F8FAFC;
+        }
+
+        /* Footer */
+        .admin-footer {
+            margin-top: auto;
+            background: #FFFFFF;
+            border-top: 1px solid var(--mha-card-border);
+            padding: 18px 0;
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Barre Principale Navigation Administration -->
+    <header class="admin-navbar sticky-top">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex align-items-center justify-content-between py-2">
+                
+                <!-- Logo & Titre -->
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{% url 'admin_dashboard' %}" class="admin-brand text-decoration-none">
+                        <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo MHA" width="36" height="36" class="rounded-circle border border-2 border-white">
+                        <span>Magic Hoops</span>
+                    </a>
+                    <span class="admin-brand-badge d-none d-sm-inline">Portail Gestion</span>
+                </div>
+
+                <!-- Navigation Liens Desktop -->
+                <nav class="d-none d-xl-flex align-items-center gap-1">
+                    <a href="{% url 'admin_dashboard' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                        <i class="bi bi-speedometer2"></i> Tableau de bord
+                    </a>
+                    <a href="{% url 'admin_users_list' %}" class="admin-nav-link {% if 'utilisateurs' in request.path %}active{% endif %}">
+                        <i class="bi bi-people-fill"></i> Utilisateurs & Abonnements
+                    </a>
+                    <a href="{% url 'admin_schedules' %}" class="admin-nav-link {% if 'horaires' in request.path %}active{% endif %}">
+                        <i class="bi bi-calendar3"></i> Horaires
+                    </a>
+                    <a href="{% url 'admin_gallery' %}" class="admin-nav-link {% if 'galerie' in request.path %}active{% endif %}">
+                        <i class="bi bi-images"></i> Galerie
+                    </a>
+                    <a href="{% url 'admin_announcements' %}" class="admin-nav-link {% if 'annonces' in request.path %}active{% endif %}">
+                        <i class="bi bi-megaphone-fill"></i> Annonces
+                    </a>
+                    <a href="{% url 'admin_site_content' %}" class="admin-nav-link {% if 'contenu' in request.path %}active{% endif %}">
+                        <i class="bi bi-pencil-square"></i> Textes & Méthode
+                    </a>
+                </nav>
+
+                <!-- Actions Droite (Staff, Site public, Déconnexion) -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{% url 'index' %}" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-none d-md-inline-flex align-items-center gap-1">
+                        <i class="bi bi-box-arrow-up-right"></i> Voir le site
+                    </a>
+
+                    <!-- Profil Admin Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm text-white d-flex align-items-center gap-2 p-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="admin-badge-staff d-none d-sm-inline">
+                                <i class="bi bi-shield-check me-1 text-warning"></i>{{ request.user.username }}
+                            </span>
+                            <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px;">
+                                {{ request.user.first_name|first|default:request.user.username|first|upper }}
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="fw-bold">{{ request.user.get_full_name|default:request.user.username }}</div>
+                                <small class="text-muted">{{ request.user.email }}</small>
+                                <span class="badge bg-danger d-block mt-1">Staff Administrateur</span>
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
+                            <li><a class="dropdown-item" href="/admin/" target="_blank"><i class="bi bi-gear me-2"></i>Django Admin natif</a></li>
+                            <li><a class="dropdown-item" href="{% url 'index' %}"><i class="bi bi-globe me-2"></i>Site Public MHA</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Sous-barre de navigation mobile / tablettes -->
+    <div class="admin-subnav d-xl-none">
+        <div class="container-fluid px-3 d-flex gap-2">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'admin_dashboard' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{% url 'admin_users_list' %}" class="btn btn-sm {% if 'utilisateurs' in request.path %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-people-fill"></i> Utilisateurs
+            </a>
+            <a href="{% url 'admin_schedules' %}" class="btn btn-sm {% if 'horaires' in request.path %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-calendar3"></i> Horaires
+            </a>
+            <a href="{% url 'admin_gallery' %}" class="btn btn-sm {% if 'galerie' in request.path %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-images"></i> Galerie
+            </a>
+            <a href="{% url 'admin_announcements' %}" class="btn btn-sm {% if 'annonces' in request.path %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-megaphone-fill"></i> Annonces
+            </a>
+            <a href="{% url 'admin_site_content' %}" class="btn btn-sm {% if 'contenu' in request.path %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-pencil-square"></i> Textes & Méthode
+            </a>
+            <a href="{% url 'index' %}" class="btn btn-sm btn-outline-dark" target="_blank">
+                <i class="bi bi-box-arrow-up-right"></i> Site public
+            </a>
+        </div>
+    </div>
+
+    <!-- Alertes & Messages Flash -->
+    <div class="container-fluid px-lg-4 mt-3">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show rounded-4 shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+                {% if message.tags == 'success' %}
+                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                    <i class="bi bi-x-circle-fill text-danger fs-5"></i>
+                {% else %}
+                    <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                {% endif %}
+                <div class="flex-grow-1">{{ message }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Contenu Principal -->
+    <main class="container-fluid px-lg-4 py-3 flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="admin-footer">
+        <div class="container-fluid px-lg-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <strong>Magic Hoops Academy</strong> &copy; {% now "Y" %} — Espace Administration Sécurisé.
+            </div>
+            <div class="d-flex gap-3 text-muted small">
+                <span>Gombe, Kinshasa</span>
+                <span>•</span>
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil public</a>
+                <span>•</span>
+                <a href="/admin/" target="_blank" class="text-decoration-none text-muted">Admin natif</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

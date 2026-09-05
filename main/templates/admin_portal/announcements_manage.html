@@ -1,0 +1,262 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestion des Annonces & Sessions{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Sessions & Annonces du Club</h1>
+        <p class="text-muted mb-0">Publiez les sessions d'entraînement, les tournois et les communications pour les familles.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'announcements:announcement_list' %}" target="_blank" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Voir les actus publiques
+        </a>
+        <button type="button" class="btn btn-mha-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
+            <i class="bi bi-plus-circle me-1"></i> Nouvelle Annonce
+        </button>
+    </div>
+</div>
+
+<!-- Liste des Annonces -->
+<div class="admin-card overflow-hidden mb-4">
+    <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
+        <h2 class="h5 fw-bold mb-0">Toutes les Annonces ({{ annonces.count }})</h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table mb-0">
+            <thead>
+                <tr>
+                    <th>Titre & Type</th>
+                    <th>Date Publication</th>
+                    <th>Période / Événement</th>
+                    <th>Cible</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in annonces %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            {% if a.image %}
+                            <img src="{{ a.image.url }}" alt="{{ a.titre }}" class="rounded-3 border" width="48" height="48" style="object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-3 bg-light border text-muted d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                <i class="bi bi-megaphone fs-5"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <a href="{{ a.get_absolute_url }}" target="_blank" class="fw-bold text-dark text-decoration-none">
+                                    {{ a.titre }}
+                                </a>
+                                <div class="mt-1">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle small">
+                                        {{ a.get_type_annonce_display }}
+                                    </span>
+                                    {% if a.lieu %}
+                                    <span class="text-muted small ms-1"><i class="bi bi-geo-alt"></i> {{ a.lieu }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="small text-muted">
+                        {{ a.date_publication|date:"d/m/Y H:i" }}
+                        {% if a.auteur %}
+                        <div class="text-muted" style="font-size: 0.75rem;">Par {{ a.auteur.username }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="small">
+                        {% if a.date_debut %}
+                            <strong class="text-dark">{{ a.date_debut|date:"d/m/Y H:i" }}</strong>
+                            {% if a.date_fin %}
+                            <div class="text-muted">au {{ a.date_fin|date:"d/m/Y H:i" }}</div>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-secondary border">
+                            {{ a.get_cible_display }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a href="{{ a.get_absolute_url }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill" title="Aperçu public">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill ms-1" data-bs-toggle="modal" data-bs-target="#editAnnouncementModal{{ a.id }}" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <a href="{% url 'admin_announcement_delete' a.id %}" class="btn btn-sm btn-outline-danger rounded-pill ms-1" onclick="return confirm('Supprimer cette annonce ?');" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Modal Modification Annonce -->
+                <div class="modal fade text-start" id="editAnnouncementModal{{ a.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="pk" value="{{ a.id }}">
+                                <div class="modal-header border-bottom">
+                                    <h5 class="modal-title fw-bold">Modifier l'annonce : {{ a.titre }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="row g-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label small fw-bold">Titre de l'annonce</label>
+                                            <input type="text" name="titre" class="form-control" value="{{ a.titre }}" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Type d'annonce</label>
+                                            <select name="type_annonce" class="form-select">
+                                                {% for code, label in types_annonce %}
+                                                <option value="{{ code }}" {% if a.type_annonce == code %}selected{% endif %}>{{ label }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Résumé SEO & Flash Info (Court)</label>
+                                            <input type="text" name="resume_seo" class="form-control" value="{{ a.resume_seo }}" placeholder="Court texte d'aperçu...">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Message complet</label>
+                                            <textarea name="message" class="form-control" rows="4" required>{{ a.message }}</textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Date & Heure de début (Optionnel)</label>
+                                            <input type="datetime-local" name="date_debut" class="form-control" value="{{ a.date_debut|date:'Y-m-d\TH:i' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Date & Heure de fin (Optionnel)</label>
+                                            <input type="datetime-local" name="date_fin" class="form-control" value="{{ a.date_fin|date:'Y-m-d\TH:i' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Lieu</label>
+                                            <input type="text" name="lieu" class="form-control" value="{{ a.lieu }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Lien d'inscription / Contact</label>
+                                            <input type="url" name="inscription_url" class="form-control" value="{{ a.inscription_url }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Cible des membres</label>
+                                            <select name="cible" class="form-select">
+                                                <option value="tous" {% if a.cible == 'tous' %}selected{% endif %}>Tous les membres</option>
+                                                <option value="categorie" {% if a.cible == 'categorie' %}selected{% endif %}>Par catégorie</option>
+                                                <option value="individuel" {% if a.cible == 'individuel' %}selected{% endif %}>Membres sélectionnés</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Remplacer l'image d'illustration</label>
+                                            <input type="file" name="image" class="form-control" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top">
+                                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-megaphone fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                        <h5>Aucune annonce publiée pour le moment</h5>
+                        <p class="small mb-3">Créez votre première annonce pour informer les joueurs et parents.</p>
+                        <button type="button" class="btn btn-mha-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
+                            <i class="bi bi-plus-lg me-1"></i> Créer une annonce
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Création Annonce -->
+<div class="modal fade" id="createAnnouncementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold">Créer une nouvelle session ou actualité</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold">Titre</label>
+                            <input type="text" name="titre" class="form-control" placeholder="Ex: Reprise des entraînements & Match amical" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Type d'annonce</label>
+                            <select name="type_annonce" class="form-select">
+                                {% for code, label in types_annonce %}
+                                <option value="{{ code }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Résumé court (SEO / Spotlight)</label>
+                            <input type="text" name="resume_seo" class="form-control" placeholder="Phrase d'accroche pour la page d'accueil...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Message complet</label>
+                            <textarea name="message" class="form-control" rows="4" placeholder="Détails du programme, consignes, tenue requise..." required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Date & Heure début (Pour session/événement)</label>
+                            <input type="datetime-local" name="date_debut" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Date & Heure fin (Optionnel)</label>
+                            <input type="datetime-local" name="date_fin" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Lieu</label>
+                            <input type="text" name="lieu" class="form-control" value="Terrain principal, Gombe, Kinshasa">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Lien d'inscription ou contact externe</label>
+                            <input type="url" name="inscription_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Public cible</label>
+                            <select name="cible" class="form-select">
+                                <option value="tous" selected>Tous les membres</option>
+                                <option value="categorie">Par catégorie</option>
+                                <option value="individuel">Membres sélectionnés</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Image d'illustration (Optionnelle)</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-mha-primary rounded-pill px-4">Publier l'annonce</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

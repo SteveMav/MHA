@@ -91,8 +91,8 @@ h4,
 h5,
 h6 {
     font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-weight: 700;
+    letter-spacing: -0.015em;
 }
 
 .font-script {
@@ -104,7 +104,7 @@ h6 {
     font-family: var(--font-script);
     font-weight: 700;
     color: var(--primary-color);
-    font-size: clamp(1.3rem, 2.8vw, 1.85rem);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
     letter-spacing: 0.01em;
     display: inline-block;
     transform: rotate(-1deg);
@@ -116,16 +116,16 @@ h6 {
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
-    padding: 0.55rem 1.35rem;
+    padding: 0.45rem 1.25rem;
     border-radius: var(--radius-pill);
     background: var(--secondary-color);
     color: #FFFFFF;
     font-family: var(--font-display);
-    font-size: 0.82rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    border: 1px solid rgba(255, 94, 20, 0.35);
+    border: 1px solid rgba(255, 94, 20, 0.28);
     box-shadow: var(--shadow-soft);
 }
 
@@ -138,14 +138,14 @@ h6 {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.35rem 0.85rem;
+    padding: 0.32rem 0.8rem;
     border-radius: var(--radius-pill);
     background: var(--primary-color);
     color: #FFFFFF;
     font-family: var(--font-display);
     font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.06em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
@@ -193,9 +193,9 @@ p {
 
 .navbar-brand {
     font-family: var(--font-display);
-    font-weight: 900;
+    font-weight: 700;
     color: var(--secondary-color) !important;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.015em;
     font-size: 1.12rem;
     white-space: nowrap;
     text-decoration: none;
@@ -211,12 +211,12 @@ p {
 
 .nav-link {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.92rem;
     color: var(--secondary-color) !important;
     position: relative;
     padding: 0.45rem 0.75rem !important;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
@@ -253,19 +253,19 @@ p {
 
 .nav-cart-badge {
     font-size: 0.68rem;
-    font-weight: 800;
+    font-weight: 700;
     padding: 0.2em 0.5em;
 }
 
 .nav-auth-link {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.92rem;
     color: var(--secondary-color) !important;
 }
 
 .nav-join-btn {
     font-size: 0.88rem;
-    font-weight: 800;
+    font-weight: 700;
     padding: 0.42rem 1.15rem !important;
     box-shadow: var(--shadow-orange);
     white-space: nowrap;
@@ -278,8 +278,8 @@ p {
 /* Buttons */
 .btn {
     font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    letter-spacing: 0.005em;
     border-radius: var(--radius-pill);
     transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), background 220ms var(--ease-out), border-color 220ms var(--ease-out);
 }
@@ -353,18 +353,21 @@ p {
 }
 
 .hero-title {
-    font-size: clamp(3.4rem, 9vw, 7.8rem);
-    line-height: 0.88;
-    max-width: 9ch;
-    margin-bottom: 1.5rem;
+    font-size: clamp(2.2rem, 4.2vw, 3.25rem);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+    margin-bottom: 1.25rem;
     text-wrap: balance;
 }
 
 .hero-lead {
-    font-size: clamp(1.15rem, 2.2vw, 1.55rem);
-    color: rgba(255, 253, 248, 0.84);
-    max-width: 680px;
-    margin-bottom: 2rem;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: rgba(255, 253, 248, 0.9);
+    line-height: 1.6;
+    max-width: 650px;
+    margin-bottom: 1.75rem;
 }
 
 .hero-actions {
@@ -385,10 +388,10 @@ p {
 .hero-info-label {
     display: inline-flex;
     color: var(--primary-color);
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     font-size: 0.76rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
 }
 
@@ -414,17 +417,17 @@ p {
     border-radius: 999px;
     background: var(--accent-color);
     color: var(--secondary-color);
-    font-weight: 900;
+    font-weight: 600;
     font-size: 0.84rem;
 }
 
 .eyebrow {
     font-family: var(--font-display);
     margin-bottom: 0.8rem;
-    font-size: 0.82rem;
-    font-weight: 900;
+    font-size: 0.8rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
 }
 
 .section-block {
@@ -437,8 +440,10 @@ p {
 }
 
 .section-heading {
-    font-size: clamp(2rem, 4.2vw, 4rem);
-    line-height: 1.02;
+    font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     margin-bottom: 1rem;
     text-wrap: balance;
 }
@@ -566,14 +571,16 @@ p {
 
 .value-tile span {
     color: var(--primary-color);
-    font-size: 0.82rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
 .value-tile h3 {
     margin: auto 0 0.75rem;
-    font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+    font-size: clamp(1.3rem, 2vw, 1.65rem);
+    line-height: 1.25;
+    font-weight: 700;
 }
 
 .value-tile p {
@@ -625,8 +632,9 @@ p {
 
 .program-card-top span {
     color: var(--primary-color);
-    font-weight: 900;
-    letter-spacing: 0.06em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
 .program-card-top i {
@@ -635,8 +643,10 @@ p {
 }
 
 .program-card h3 {
-    margin-top: 3rem;
-    font-size: 2rem;
+    margin-top: 2rem;
+    font-size: 1.45rem;
+    line-height: 1.25;
+    font-weight: 700;
 }
 
 .program-card p {
@@ -677,32 +687,35 @@ p {
     border-radius: var(--radius-lg);
     background: var(--surface);
     border: 1px solid var(--line);
-    box-shadow: 0 10px 28px rgba(12, 24, 41, 0.06);
+    box-shadow: 0 8px 24px rgba(12, 24, 41, 0.05);
 }
 
 .schedule-day {
     font-family: var(--font-display);
     display: inline-flex;
-    margin-bottom: 1.2rem;
-    padding: 0.42rem 0.8rem;
+    margin-bottom: 1rem;
+    padding: 0.32rem 0.75rem;
     border-radius: 999px;
-    background: rgba(255, 94, 20, 0.10);
+    background: rgba(255, 94, 20, 0.09);
     color: var(--primary-color);
-    font-weight: 900;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
 }
 
 .schedule-card strong {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 700;
     display: block;
     color: var(--secondary-color);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     margin-bottom: 0.45rem;
 }
 
 .schedule-card p {
     color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
     margin: 0;
 }
 
@@ -735,30 +748,32 @@ p {
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--surface);
-    box-shadow: 0 10px 30px rgba(12, 24, 41, 0.06);
+    box-shadow: 0 8px 24px rgba(12, 24, 41, 0.05);
 }
 
 .announcement-preview-card {
-    padding: 1.4rem;
+    padding: 1.35rem;
 }
 
 .announcement-preview-card span,
 .announcement-meta span {
     font-family: var(--font-display);
     display: inline-flex;
-    padding: 0.35rem 0.7rem;
+    padding: 0.3rem 0.65rem;
     border-radius: 999px;
-    background: rgba(255, 94, 20, 0.10);
+    background: rgba(255, 94, 20, 0.09);
     color: var(--primary-color);
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.06em;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
 .announcement-preview-card h3 {
-    margin: 1rem 0 0.75rem;
-    font-size: 1.4rem;
+    margin: 0.85rem 0 0.65rem;
+    font-size: 1.18rem;
+    line-height: 1.35;
+    font-weight: 700;
 }
 
 .announcement-preview-card a,
@@ -770,12 +785,14 @@ p {
 .announcement-preview-card p,
 .announcement-card p {
     color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
 }
 
 .announcement-preview-card time {
     color: var(--muted);
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 .archive-hero {
@@ -829,7 +846,7 @@ p {
 .announcement-meta time {
     color: var(--muted);
     font-size: 0.86rem;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .announcement-card h2 {
@@ -855,16 +872,16 @@ p {
     font-family: var(--font-display);
     color: var(--primary-color);
     font-size: 0.72rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
 }
 
 .announcement-facts dd,
 .announcement-side-panel dd {
     margin: 0.25rem 0 0;
     color: var(--secondary-color);
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .announcement-card-actions {
@@ -885,8 +902,8 @@ p {
 }
 
 .announcement-detail-header h1 {
-    font-size: clamp(2.4rem, 5vw, 5rem);
-    line-height: 0.98;
+    font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+    line-height: 1.2;
     margin: 1rem 0;
     text-wrap: balance;
 }
@@ -950,10 +967,10 @@ p {
 }
 
 .philosophy-section p {
-    font-size: clamp(2rem, 5vw, 4.8rem);
-    line-height: 1.02;
-    letter-spacing: -0.05em;
-    font-weight: 800;
+    font-size: clamp(1.65rem, 3.2vw, 2.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    font-weight: 700;
     margin-bottom: 1.4rem;
 }
 
@@ -977,8 +994,8 @@ p {
 .faq-list summary {
     cursor: pointer;
     color: var(--secondary-color);
-    font-weight: 900;
-    font-size: 1.1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
 }
 
 .faq-list p {
@@ -1013,7 +1030,7 @@ p {
     padding-top: 1.25rem;
     border-top: 1px solid var(--line);
     color: var(--secondary-color);
-    font-weight: 800;
+    font-weight: 600;
 }
 
 /* Forms */
@@ -1226,8 +1243,10 @@ footer a {
     }
 
     .hero-title {
-        max-width: 7.2ch;
-        font-size: clamp(2.85rem, 13.6vw, 3.7rem);
+        max-width: 100%;
+        font-size: clamp(1.85rem, 6.5vw, 2.35rem);
+        line-height: 1.2;
+        font-weight: 700;
     }
 
     .hero-lead,
@@ -1373,12 +1392,13 @@ footer a {
 
 .home-hero-copy h1,
 .subpage-hero h1 {
-    max-width: 12.5ch;
+    max-width: 14ch;
     margin-bottom: 1.2rem;
     color: var(--surface);
-    font-size: clamp(3.1rem, 7.2vw, 6.35rem);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
+    font-size: clamp(2.2rem, 4.2vw, 3.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
     text-wrap: balance;
     overflow-wrap: break-word;
 }
@@ -1386,9 +1406,11 @@ footer a {
 .home-hero-copy > p:not(.hero-kicker),
 .compact-hero .container > p:not(.hero-kicker),
 .program-detail-grid > div > p:not(.hero-kicker) {
-    max-width: 700px;
-    color: rgba(255, 253, 248, 0.82);
-    font-size: clamp(1.05rem, 2vw, 1.32rem);
+    max-width: 650px;
+    color: rgba(255, 253, 248, 0.9);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    font-weight: 400;
+    line-height: 1.6;
     overflow-wrap: break-word;
 }
 
@@ -1396,10 +1418,10 @@ footer a {
     font-family: var(--font-display);
     display: inline-flex;
     margin-bottom: 0.95rem;
-    color: rgba(255, 253, 248, 0.86);
-    font-size: 0.82rem;
-    font-weight: 900;
-    letter-spacing: 0.1em;
+    color: rgba(255, 253, 248, 0.9);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
@@ -1434,9 +1456,9 @@ footer a {
 .home-proof-strip strong {
     font-family: var(--font-display);
     color: var(--surface);
-    font-size: 0.98rem;
-    line-height: 1.1;
-    font-weight: 800;
+    font-size: 0.95rem;
+    line-height: 1.15;
+    font-weight: 700;
 }
 
 .home-proof-strip small {
@@ -1451,25 +1473,31 @@ footer a {
     max-width: 100%;
     min-width: 0;
     width: 100%;
-    border: 1px solid rgba(255, 253, 248, 0.42);
-    border-radius: 28px;
-    background: rgba(255, 253, 248, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--secondary-color);
-    padding: clamp(1.25rem, 3vw, 1.75rem);
-    box-shadow: 0 28px 70px rgba(6, 13, 23, 0.26);
+    padding: clamp(1.25rem, 2.5vw, 1.65rem);
+    box-shadow: 0 20px 48px rgba(6, 13, 23, 0.18);
 }
 
 .next-session-card h2,
 .program-promise-card h2 {
-    margin: 0.4rem 0 0.7rem;
-    font-size: clamp(1.55rem, 3vw, 2.25rem);
-    line-height: 1;
+    margin: 0.35rem 0 0.6rem;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     overflow-wrap: break-word;
 }
 
 .next-session-card p,
 .program-promise-card p {
     color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
 }
 
 .card-label,
@@ -1477,20 +1505,20 @@ footer a {
     font-family: var(--font-display);
     display: inline-flex;
     color: var(--primary-color);
-    font-weight: 900;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
 .next-session-card dl {
     display: grid;
-    gap: 0.75rem;
-    margin: 1rem 0 1.2rem;
+    gap: 0.7rem;
+    margin: 0.9rem 0 1.1rem;
 }
 
 .next-session-card dl div {
-    padding-top: 0.7rem;
+    padding-top: 0.65rem;
     border-top: 1px solid var(--line);
 }
 
@@ -1498,15 +1526,16 @@ footer a {
     font-family: var(--font-display);
     color: var(--primary-color);
     font-size: 0.72rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
 }
 
 .next-session-card dd {
     font-family: var(--font-display);
     margin: 0.2rem 0 0;
-    font-weight: 800;
+    font-size: 0.94rem;
+    font-weight: 600;
 }
 
 .mobile-priority-strip {
@@ -1544,14 +1573,15 @@ footer a {
 
 .journey-card {
     min-width: 0;
-    min-height: 330px;
+    min-height: 310px;
     display: flex;
     flex-direction: column;
-    padding: 1.45rem;
+    padding: 1.35rem;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--surface);
-    box-shadow: 0 14px 36px rgba(12, 24, 41, 0.08);
+    box-shadow: 0 8px 24px rgba(12, 24, 41, 0.05);
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
 }
 
 .journey-card:nth-child(2) {
@@ -1570,31 +1600,33 @@ footer a {
     font-family: var(--font-display);
     display: inline-flex;
     width: max-content;
-    padding: 0.35rem 0.75rem;
+    padding: 0.32rem 0.7rem;
     border-radius: 999px;
-    background: rgba(255, 94, 20, 0.10);
+    background: rgba(255, 94, 20, 0.09);
     color: var(--primary-color);
-    font-weight: 900;
-    font-size: 0.82rem;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
 }
 
 .journey-card h3 {
-    margin-top: 0.8rem;
-    margin-bottom: 0.5rem;
-    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    margin-top: 0.75rem;
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.25;
 }
 
 .journey-card p {
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1.55;
     margin-bottom: 1.25rem;
 }
 
 .journey-card a {
     margin-top: auto;
-    font-weight: 900;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -1618,11 +1650,11 @@ footer a {
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
     gap: clamp(1.5rem, 4vw, 3rem);
     align-items: center;
-    border-radius: 34px;
-    padding: clamp(1.4rem, 4vw, 3rem);
+    border-radius: 28px;
+    padding: clamp(1.4rem, 4vw, 2.75rem);
     color: var(--surface);
     background:
-        radial-gradient(circle at 100% 0%, rgba(255, 94, 20, 0.34), transparent 19rem),
+        radial-gradient(circle at 100% 0%, rgba(255, 94, 20, 0.28), transparent 19rem),
         linear-gradient(135deg, var(--secondary-deep), var(--secondary-color));
 }
 
@@ -1632,7 +1664,7 @@ footer a {
 }
 
 .method-panel p {
-    color: rgba(255, 253, 248, 0.78);
+    color: rgba(255, 253, 248, 0.85);
 }
 
 .method-pillar-grid,
@@ -1646,9 +1678,9 @@ footer a {
 .method-deep-grid article {
     min-width: 0;
     padding: 1rem;
-    border: 1px solid rgba(255, 253, 248, 0.18);
+    border: 1px solid rgba(255, 253, 248, 0.16);
     border-radius: 18px;
-    background: rgba(255, 253, 248, 0.08);
+    background: rgba(255, 253, 248, 0.07);
 }
 
 .method-pillar-grid span,
@@ -1656,26 +1688,28 @@ footer a {
 .outcome-list span,
 .step-list span {
     color: var(--primary-color);
-    font-weight: 900;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
 }
 
 .method-pillar-grid h3,
 .method-deep-grid h2 {
-    margin: 0.6rem 0;
-    font-size: 1.35rem;
+    margin: 0.5rem 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 .staff-preview-card {
     display: grid;
-    grid-template-columns: minmax(140px, 260px) minmax(0, 1fr);
-    gap: clamp(1.4rem, 4vw, 3rem);
+    grid-template-columns: minmax(130px, 220px) minmax(0, 1fr);
+    gap: clamp(1.4rem, 3.5vw, 2.5rem);
     align-items: center;
-    padding: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.4rem, 3.5vw, 2.5rem);
     border: 1px solid var(--line);
-    border-radius: 34px;
+    border-radius: 28px;
     background:
-        radial-gradient(circle at 0% 0%, rgba(255, 94, 20, 0.12), transparent 16rem),
+        radial-gradient(circle at 0% 0%, rgba(255, 94, 20, 0.08), transparent 16rem),
         var(--surface);
     box-shadow: var(--shadow-soft);
 }
@@ -1684,14 +1718,14 @@ footer a {
     aspect-ratio: 1;
     display: grid;
     place-items: center;
-    border-radius: 28px;
+    border-radius: 22px;
     color: var(--surface);
     background:
-        radial-gradient(circle at 70% 20%, rgba(255, 94, 20, 0.42), transparent 8rem),
+        radial-gradient(circle at 70% 20%, rgba(255, 94, 20, 0.38), transparent 8rem),
         var(--secondary-color);
-    font-size: clamp(2rem, 6vw, 4.5rem);
-    font-weight: 900;
-    letter-spacing: -0.08em;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
 }
 
 .subpage-hero {
@@ -1765,12 +1799,13 @@ footer a {
 .staff-card > span {
     width: max-content;
     max-width: 100%;
-    padding: 0.42rem 0.7rem;
+    padding: 0.35rem 0.65rem;
     border-radius: 999px;
-    background: rgba(255, 94, 20, 0.1);
+    background: rgba(255, 94, 20, 0.09);
     color: var(--primary-color);
-    font-size: 0.86rem;
-    font-weight: 900;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
 }
 
 .program-route-card:nth-child(2) > span {
@@ -1781,8 +1816,9 @@ footer a {
 .program-route-card h2,
 .staff-card h2 {
     margin-top: auto;
-    font-size: clamp(2rem, 3.2vw, 2.7rem);
-    line-height: 0.95;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.15;
+    font-weight: 700;
 }
 
 .program-route-card p,
@@ -1804,13 +1840,13 @@ footer a {
 }
 
 .program-route-card li {
-    padding: 0.45rem 0.65rem;
-    border: 1px solid rgba(12, 24, 41, 0.12);
+    padding: 0.4rem 0.65rem;
+    border: 1px solid rgba(12, 24, 41, 0.1);
     border-radius: 999px;
-    background: rgba(12, 24, 41, 0.055);
+    background: rgba(12, 24, 41, 0.04);
     color: var(--secondary-color);
-    font-size: 0.88rem;
-    font-weight: 800;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .program-route-card:nth-child(2) li {
@@ -1841,7 +1877,7 @@ footer a {
 .step-list p {
     margin: 0;
     color: var(--secondary-color);
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .method-page {
@@ -1871,8 +1907,8 @@ footer a {
     border-radius: 24px;
     color: var(--surface);
     background: var(--secondary-color);
-    font-size: 2.4rem;
-    font-weight: 900;
+    font-size: 2.2rem;
+    font-weight: 700;
 }
 
 .program-choice-strip {
@@ -2068,8 +2104,10 @@ footer a {
     .home-hero-copy h1,
     .subpage-hero h1 {
         max-width: 100%;
-        font-size: clamp(2.2rem, 10.4vw, 2.95rem);
-        line-height: 0.95;
+        font-size: clamp(1.85rem, 6.5vw, 2.35rem);
+        line-height: 1.2;
+        font-weight: 700;
+        letter-spacing: -0.015em;
         overflow-wrap: normal;
         word-break: normal;
         hyphens: none;
@@ -2137,7 +2175,9 @@ footer a {
     }
 
     .section-heading {
-        font-size: clamp(2rem, 10vw, 3rem);
+        font-size: clamp(1.45rem, 5.2vw, 1.85rem);
+        line-height: 1.25;
+        font-weight: 700;
     }
 
     .section-row-header {
@@ -2160,8 +2200,10 @@ footer a {
     .journey-card h3,
     .program-route-card h2,
     .staff-card h2 {
-        margin-top: 1.4rem;
-        font-size: 1.65rem;
+        margin-top: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.25;
+        font-weight: 700;
     }
 
     .method-panel,
@@ -2208,7 +2250,7 @@ footer a {
     .mobile-cta-bar .btn {
         padding: 0.62rem 0.7rem;
         font-size: 0.84rem;
-        font-weight: 700;
+        font-weight: 600;
     }
 }
 
@@ -2228,9 +2270,9 @@ footer a {
     gap: clamp(0.85rem, 3vw, 2.25rem);
     color: #FFFFFF;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(0.78rem, 1.5vw, 0.92rem);
-    letter-spacing: 0.10em;
+    font-weight: 600;
+    font-size: clamp(0.76rem, 1.4vw, 0.88rem);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
@@ -2243,14 +2285,14 @@ footer a {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.38rem 0.85rem;
+    padding: 0.32rem 0.75rem;
     border-radius: var(--radius-pill);
     background: var(--primary-light);
     color: var(--primary-color);
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 0.82rem;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
     border: 1px solid rgba(255, 94, 20, 0.20);
 }
 

@@ -1,0 +1,406 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Fiche Membre : {{ member.get_full_name|default:member.username }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'admin_users_list' %}" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Retour à la liste des membres
+    </a>
+</div>
+
+<!-- En-tête Profil du Membre -->
+<div class="admin-card p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+            {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="{{ member.username }}" class="rounded-circle border border-3 border-light shadow-sm" width="76" height="76" style="object-fit: cover;">
+            {% else %}
+            <div class="rounded-circle bg-primary bg-opacity-10 text-primary border border-2 border-primary-subtle d-flex align-items-center justify-content-center fw-bold fs-2 shadow-sm" style="width: 76px; height: 76px;">
+                {{ member.first_name|first|default:member.username|first|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <h1 class="h3 fw-bold mb-0">{{ member.get_full_name|default:member.username }}</h1>
+                    {% if member.is_staff %}
+                    <span class="badge bg-danger rounded-pill px-3 py-1">STAFF MHA</span>
+                    {% endif %}
+                </div>
+                <div class="text-muted small mt-1">
+                    <span>@{{ member.username }}</span> • 
+                    <span>Inscrit le {{ member.date_joined|date:"d F Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statut d'abonnement actuel -->
+        <div class="d-flex flex-column align-items-md-end">
+            <span class="text-muted small mb-1">Statut Abonnement</span>
+            <span class="badge {{ sub_status.badge_class }} fs-6 py-2 px-3 shadow-sm">
+                {% if sub_status.code == 'paye' %}
+                    <i class="bi bi-check-circle-fill me-1"></i> Payé (Actif jusqu'au {{ sub_status.active_sub.date_fin|date:"d/m/Y" }})
+                {% elif sub_status.code == 'en_attente' %}
+                    <i class="bi bi-hourglass-split me-1"></i> Paiement en attente
+                {% elif sub_status.code == 'expire' %}
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> Abonnement expiré
+                {% else %}
+                    <i class="bi bi-dash-circle me-1"></i> Aucun abonnement
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Colonne Gauche : Fiche d'Identité Complète & Mensurations -->
+    <div class="col-lg-5">
+        <div class="admin-card mb-4">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-4">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-person-vcard text-primary me-2"></i>Fiche d'Identité</h2>
+                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </button>
+            </div>
+            <div class="p-3">
+                <dl class="row mb-0">
+                    <dt class="col-5 text-muted small">Nom & Prénom</dt>
+                    <dd class="col-7 fw-semibold">{{ member.last_name|default:"—" }} {{ member.first_name }}</dd>
+
+                    <dt class="col-5 text-muted small">Email</dt>
+                    <dd class="col-7">{{ member.email|default:"Non renseigné" }}</dd>
+
+                    <dt class="col-5 text-muted small">Téléphone</dt>
+                    <dd class="col-7 fw-semibold text-dark">{{ profile.telephone|default:"Non renseigné" }}</dd>
+
+                    <dt class="col-5 text-muted small">Date de naissance</dt>
+                    <dd class="col-7">
+                        {% if profile.date_naissance %}
+                            {{ profile.date_naissance|date:"d F Y" }}
+                            {% if age is not None %}<span class="badge bg-light text-secondary ms-1">({{ age }} ans)</span>{% endif %}
+                        {% else %}
+                            <span class="text-muted">Non renseignée</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-5 text-muted small">Adresse / Commune</dt>
+                    <dd class="col-7">{{ profile.adresse|default:"Non renseignée" }}</dd>
+
+                    <dt class="col-5 text-muted small">École fréquentée</dt>
+                    <dd class="col-7">{{ profile.ecole_frequente|default:"Non renseignée" }}</dd>
+
+                    <dt class="col-5 text-muted small">Niveau d'études</dt>
+                    <dd class="col-7">{{ profile.niveau|default:"Non renseigné" }}</dd>
+
+                    <dt class="col-5 text-muted small">Contact Parent / Tuteur</dt>
+                    <dd class="col-7">
+                        {% if profile.contact_parent %}
+                            <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-2 py-1">
+                                <i class="bi bi-telephone-fill me-1"></i>{{ profile.contact_parent }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">Non renseigné</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Fiche Sportive & Mensurations -->
+        <div class="admin-card">
+            <div class="p-3 border-bottom bg-light rounded-top-4">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-dribbble text-primary me-2"></i>Profil Sportif & Athlétique</h2>
+            </div>
+            <div class="p-3">
+                <div class="row text-center g-2 mb-3">
+                    <div class="col-4">
+                        <div class="p-2 border rounded-3 bg-light">
+                            <span class="text-muted d-block" style="font-size: 0.75rem;">TAILLE</span>
+                            <strong class="fs-5 text-dark">{{ profile.taille|default:"—" }}</strong> <small class="text-muted">m</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border rounded-3 bg-light">
+                            <span class="text-muted d-block" style="font-size: 0.75rem;">POIDS</span>
+                            <strong class="fs-5 text-dark">{{ profile.poids|default:"—" }}</strong> <small class="text-muted">kg</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border rounded-3 bg-light">
+                            <span class="text-muted d-block" style="font-size: 0.75rem;">POSTE</span>
+                            <strong class="fs-6 text-primary">{{ profile.poste_prefer|default:"Non défini" }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="small text-muted">
+                    <i class="bi bi-info-circle me-1"></i> Ces données permettent aux coachs d'adapter les charges d'entraînement et le travail physique.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne Droite : Formulaire d'Enregistrement / Renouvellement & Historique -->
+    <div class="col-lg-7">
+        
+        <!-- Formulaire d'Enregistrement Rapide d'Abonnement -->
+        <div class="admin-card mb-4" style="border-top: 4px solid var(--mha-orange);">
+            <div class="p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0 text-dark">
+                    <i class="bi bi-credit-card-2-front text-primary me-2"></i>Enregistrer ou Renouveler un Abonnement
+                </h2>
+                <span class="badge bg-light text-secondary">Manuel staff</span>
+            </div>
+            <div class="p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_subscription">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Montant ($ USD)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" step="0.5" name="montant" class="form-control fw-bold" value="25.00" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Durée de l'abonnement</label>
+                            <select name="duree" class="form-select" id="dureeSelect">
+                                <option value="1_mois" selected>1 Mois (30 jours)</option>
+                                <option value="3_mois">3 Mois (Trimestre - 90 jours)</option>
+                                <option value="6_mois">6 Mois (Semestre - 180 jours)</option>
+                                <option value="1_an">1 An (Année complète - 365 jours)</option>
+                                <option value="custom">Date personnalisée...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Date de début</label>
+                            <input type="date" name="date_debut" class="form-control" value="{{ today|date:'Y-m-d' }}">
+                            <div class="form-text small">Par défaut aujourd'hui ou à la suite du dernier forfait.</div>
+                        </div>
+
+                        <div class="col-md-6" id="customDateFinDiv" style="display: none;">
+                            <label class="form-label small fw-bold">Date de fin personnalisée</label>
+                            <input type="date" name="date_fin" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Moyen de paiement</label>
+                            <select name="moyen_paiement" class="form-select">
+                                <option value="cash" selected>Cash / Espèces direct au terrain</option>
+                                <option value="mpesa">M-Pesa</option>
+                                <option value="orange">Orange Money</option>
+                                <option value="airtel">Airtel Money</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Statut du paiement</label>
+                            <select name="statut" class="form-select">
+                                <option value="payé" selected>Payé (Validé immédiatement)</option>
+                                <option value="en_attente">En attente de paiement</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">N° Téléphone ayant payé (optionnel)</label>
+                            <input type="text" name="telephone_paiement" class="form-control" placeholder="+243 ...">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Référence Transaction (optionnel)</label>
+                            <input type="text" name="transaction_id" class="form-control" placeholder="Ex: TXN-89234">
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <button type="submit" class="btn btn-mha-primary px-4 py-2">
+                                <i class="bi bi-check2-circle me-1"></i> Valider et enregistrer l'abonnement
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Historique des Abonnements du Membre -->
+        <div class="admin-card">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-4">
+                <h2 class="h5 fw-bold mb-0">
+                    <i class="bi bi-clock-history text-secondary me-2"></i>Historique des Abonnements
+                </h2>
+                <span class="badge bg-secondary rounded-pill">{{ abonnements.count }} enregistrement(s)</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Période</th>
+                            <th>Montant</th>
+                            <th>Moyen</th>
+                            <th>Statut</th>
+                            <th class="text-end">Actions rapides</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in abonnements %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">
+                                    Du {{ sub.date_debut|date:"d/m/Y" }} au {{ sub.date_fin|date:"d/m/Y" }}
+                                </div>
+                                <small class="text-muted">Réf: {{ sub.transaction_id|default:"N/A" }}</small>
+                            </td>
+                            <td class="fw-bold text-dark">
+                                {{ sub.montant }} $
+                            </td>
+                            <td class="small">
+                                {{ sub.get_moyen_paiement_display|default:"Cash" }}
+                                {% if sub.telephone_paiement %}
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ sub.telephone_paiement }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.statut == 'payé' %}
+                                    <span class="badge bg-success">Payé</span>
+                                {% elif sub.statut == 'en_attente' %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Expiré</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    {% if sub.statut == 'en_attente' %}
+                                    <form method="POST" action="{% url 'admin_subscription_quick_action' sub.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="valider">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Valider paiement">
+                                            <i class="bi bi-check-lg"></i> Valider
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if sub.statut == 'payé' %}
+                                    <form method="POST" action="{% url 'admin_subscription_quick_action' sub.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="expirer">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning text-dark" title="Marquer comme expiré">
+                                            <i class="bi bi-x-circle"></i> Expirer
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    <form method="POST" action="{% url 'admin_subscription_quick_action' sub.id %}" class="d-inline" onsubmit="return confirm('Supprimer cet enregistrement d\'abonnement ?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="supprimer">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                Aucun abonnement enregistré pour ce membre.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Modification Profil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold" id="editProfileModalLabel">Modifier la fiche de {{ member.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Prénom</label>
+                            <input type="text" name="first_name" class="form-control" value="{{ member.first_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Nom</label>
+                            <input type="text" name="last_name" class="form-control" value="{{ member.last_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ member.email }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Téléphone</label>
+                            <input type="text" name="telephone" class="form-control" value="{{ profile.telephone }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Date de naissance</label>
+                            <input type="date" name="date_naissance" class="form-control" value="{{ profile.date_naissance|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Adresse / Commune</label>
+                            <input type="text" name="adresse" class="form-control" value="{{ profile.adresse|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">École fréquentée</label>
+                            <input type="text" name="ecole_frequente" class="form-control" value="{{ profile.ecole_frequente|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Niveau scolaire</label>
+                            <input type="text" name="niveau" class="form-control" value="{{ profile.niveau|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Taille (m)</label>
+                            <input type="number" step="0.01" name="taille" class="form-control" value="{{ profile.taille|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Poids (kg)</label>
+                            <input type="number" step="0.1" name="poids" class="form-control" value="{{ profile.poids|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Poste préféré</label>
+                            <input type="text" name="poste_prefer" class="form-control" value="{{ profile.poste_prefer|default:'' }}" placeholder="Ex: Meneur, Pivot...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Contact Parent / Tuteur (Urgence)</label>
+                            <input type="text" name="contact_parent" class="form-control" value="{{ profile.contact_parent|default:'' }}" placeholder="Numéro de téléphone du parent">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-mha-primary rounded-pill px-4">Enregistrer les modifications</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('dureeSelect').addEventListener('change', function() {
+    var customDiv = document.getElementById('customDateFinDiv');
+    if (this.value === 'custom') {
+        customDiv.style.display = 'block';
+    } else {
+        customDiv.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

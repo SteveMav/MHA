@@ -14,10 +14,10 @@
                 <span class="badge-poster-orange"><i class="bi bi-geo-alt-fill me-1"></i> Kinshasa • Gombe</span>
                 <span class="hero-kicker mb-0">Académie de basketball jeunesse</span>
             </div>
-            <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
-            <h1>Former les jeunes joueurs, forger les champions.</h1>
+            <span class="brand-slogan-script mb-2">{{ academy_info.slogan_badge|default:"Formons les champions de demain !" }}</span>
+            <h1>{{ academy_info.hero_title|default:"Former les jeunes joueurs, forger les champions." }}</h1>
             <p>
-                L'académie de référence à Kinshasa (Gombe) pour développer les fondamentaux techniques, la discipline sportive et l'esprit d'équipe des U10 à U18+.
+                {{ academy_info.hero_subtitle|default:"L'académie de référence à Kinshasa (Gombe) pour développer les fondamentaux techniques, la discipline sportive et l'esprit d'équipe des U10 à U18+." }}
             </p>
             <div class="home-proof-strip" aria-label="Repères Magic Hoops Academy">
                 <span>
@@ -165,20 +165,20 @@
                     <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                         <span class="badge-poster-orange"><i class="bi bi-bullseye me-1"></i> Pédagogie & Formation</span>
                     </div>
-                    <span class="brand-slogan-script mb-2 text-white">Formons les champions de demain !</span>
-                    <h2 class="section-heading">Former le joueur complet, pas seulement le scoreur.</h2>
-                    <p class="mb-4">Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique, intelligence tactique et mental d'acier.</p>
+                    <span class="brand-slogan-script mb-2 text-white">{{ academy_info.slogan_badge|default:"Formons les champions de demain !" }}</span>
+                    <h2 class="section-heading">{{ academy_info.methode_titre|default:"Former le joueur complet, pas seulement le scoreur." }}</h2>
+                    <p class="mb-4">{{ academy_info.methode_description|default:"Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique, intelligence tactique et mental d'acier." }}</p>
                     
                     <div class="p-3 rounded-4 mb-4" style="background: rgba(255, 253, 248, 0.08); border: 1px solid rgba(255, 253, 248, 0.15);">
                         <h4 class="h6 fw-bold text-white mb-2"><i class="bi bi-shield-check text-primary me-2"></i>Le cadre fait la différence</h4>
-                        <p class="small mb-0 text-white-50">Au-delà du basketball, nous inculquons la ponctualité, le respect, l'effort collectif et le dépassement de soi. C'est ce qui transforme de jeunes passionnés en adultes exemplaires.</p>
+                        <p class="small mb-0 text-white-50">{{ academy_info.methode_cadre_texte|default:"Au-delà du basketball, nous inculquons la ponctualité, le respect, l'effort collectif et le dépassement de soi. C'est ce qui transforme de jeunes passionnés en adultes exemplaires." }}</p>
                     </div>
 
                     <div class="d-flex flex-wrap gap-2">
                         <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill px-4">
                             <i class="bi bi-person-plus-fill me-1"></i> Inscrire mon enfant
                         </a>
-                        <a href="tel:+243900824429" class="btn btn-outline-light rounded-pill px-4">
+                        <a href="tel:{{ academy_info.telephone|default:'+243900824429' }}" class="btn btn-outline-light rounded-pill px-4">
                             <i class="bi bi-whatsapp me-1"></i> Nous contacter
                         </a>
                     </div>
@@ -188,7 +188,7 @@
                     <article>
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span>0{{ forloop.counter }}</span>
-                            <i class="bi bi-dribbble text-primary"></i>
+                            <i class="bi {{ pillar.icone|default:'bi-dribbble' }} text-primary"></i>
                         </div>
                         <h3>{{ pillar.title }}</h3>
                         <p class="mb-0">{{ pillar.text }}</p>
@@ -227,7 +227,7 @@
             </div>
             <div class="schedule-note mt-4">
                 <i class="bi bi-geo-alt-fill text-primary fs-5"></i>
-                <span><strong>Terrain officiel :</strong> Avenue de la Science numéro 5, Gombe, Kinshasa. Présence requise 15 min avant le début de séance.</span>
+                <span><strong>Terrain officiel :</strong> {{ academy_info.adresse_terrain|default:"Avenue de la Science numéro 5, Gombe, Kinshasa" }}. Présence requise 15 min avant le début de séance.</span>
             </div>
         </div>
     </section>
@@ -242,9 +242,9 @@
                         <span class="badge-poster-orange">Direction Technique & Staff</span>
                         <span class="badge bg-light text-secondary border rounded-pill small px-2 py-1">Terrain Gombe</span>
                     </div>
-                    <h2 class="section-heading">Bruno Lobaya Nkoy, alias Coach Magic.</h2>
+                    <h2 class="section-heading">{{ academy_info.coach_magic_titre|default:"Bruno Lobaya Nkoy, alias Coach Magic." }}</h2>
                     <p class="mb-3">
-                        « Le talent ouvre la voie, mais seule la discipline forge les champions. » À Magic Hoops Academy, l'exigence sur le parquet s'accompagne d'une transmission sans compromis du respect et du dépassement de soi.
+                        {{ academy_info.coach_magic_quote|default:"« Le talent ouvre la voie, mais seule la discipline forge les champions. »" }} {{ academy_info.coach_magic_bio|default:"À Magic Hoops Academy, l'exigence sur le parquet s'accompagne d'une transmission sans compromis du respect et du dépassement de soi." }}
                     </p>
                     <div class="row g-3 mb-3">
                         {% for member in staff_members %}
@@ -258,11 +258,11 @@
                         {% endfor %}
                     </div>
                     <div class="d-flex flex-wrap gap-2 mt-2">
-                        <a href="tel:+243900824429" class="btn btn-primary rounded-pill px-4">
-                            <i class="bi bi-telephone-fill me-1"></i> +243 900 824 429
+                        <a href="tel:{{ academy_info.telephone|default:'+243900824429' }}" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-telephone-fill me-1"></i> {{ academy_info.telephone|default:"+243 900 824 429" }}
                         </a>
-                        <a href="mailto:info@magichoops.cd" class="btn btn-outline-primary rounded-pill px-4">
-                            <i class="bi bi-envelope-fill me-1"></i> info@magichoops.cd
+                        <a href="mailto:{{ academy_info.email|default:'info@magichoops.cd' }}" class="btn btn-outline-primary rounded-pill px-4">
+                            <i class="bi bi-envelope-fill me-1"></i> {{ academy_info.email|default:"info@magichoops.cd" }}
                         </a>
                     </div>
                 </div>

@@ -1,0 +1,267 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestion des Textes & Méthode{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Textes du Site & Méthode Pédagogique</h1>
+        <p class="text-muted mb-0">Personnalisez les messages clés, les coordonnées et les 4 piliers affichés sur la page d'accueil.</p>
+    </div>
+    <div>
+        <a href="{% url 'index' %}" target="_blank" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Prévisualiser l'accueil
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Formulaire AcademyInfo -->
+    <div class="col-lg-7">
+        <div class="admin-card mb-4">
+            <div class="p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0 text-dark">
+                    <i class="bi bi-sliders text-primary me-2"></i>Textes Principaux & Coordonnées (AcademyInfo)
+                </h2>
+                <span class="badge bg-light text-secondary">Dynamique</span>
+            </div>
+            
+            <div class="p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_info">
+
+                    <!-- Section En-tête Hero -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h3 class="h6 fw-bold text-uppercase text-primary tracking-wider mb-3">
+                            <i class="bi bi-display me-1"></i> En-tête Hero (Bannière d'accueil)
+                        </h3>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Badge Slogan</label>
+                            <input type="text" name="slogan_badge" class="form-control" value="{{ info.slogan_badge }}">
+                            <div class="form-text small">Ex: Formons les champions de demain !</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Titre Hero Principal</label>
+                            <input type="text" name="hero_title" class="form-control" value="{{ info.hero_title }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Sous-titre / Paragraphe Hero</label>
+                            <textarea name="hero_subtitle" class="form-control" rows="3">{{ info.hero_subtitle }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Section Coordonnées & Terrain -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h3 class="h6 fw-bold text-uppercase text-primary tracking-wider mb-3">
+                            <i class="bi bi-geo-alt-fill me-1"></i> Coordonnées & Terrain Officiel
+                        </h3>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Téléphone de contact (WhatsApp)</label>
+                                <input type="text" name="telephone" class="form-control" value="{{ info.telephone }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Email de contact</label>
+                                <input type="email" name="email" class="form-control" value="{{ info.email }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Adresse du terrain</label>
+                                <input type="text" name="adresse_terrain" class="form-control" value="{{ info.adresse_terrain }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Méthode MHA -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h3 class="h6 fw-bold text-uppercase text-primary tracking-wider mb-3">
+                            <i class="bi bi-bullseye me-1"></i> Section Méthode MHA
+                        </h3>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Titre de la Méthode</label>
+                            <input type="text" name="methode_titre" class="form-control" value="{{ info.methode_titre }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Description de la Méthode</label>
+                            <textarea name="methode_description" class="form-control" rows="3">{{ info.methode_description }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Texte « Le Cadre fait la différence »</label>
+                            <textarea name="methode_cadre_texte" class="form-control" rows="3">{{ info.methode_cadre_texte }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Section Coach Magic -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h3 class="h6 fw-bold text-uppercase text-primary tracking-wider mb-3">
+                            <i class="bi bi-trophy-fill me-1"></i> Direction Technique & Coach Magic
+                        </h3>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Titre / Nom du Coach</label>
+                            <input type="text" name="coach_magic_titre" class="form-control" value="{{ info.coach_magic_titre }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Citation du Coach</label>
+                            <textarea name="coach_magic_quote" class="form-control" rows="2">{{ info.coach_magic_quote }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Bio / Exigence sur le parquet</label>
+                            <textarea name="coach_magic_bio" class="form-control" rows="3">{{ info.coach_magic_bio }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-mha-primary px-4 py-2">
+                            <i class="bi bi-check-circle-fill me-1"></i> Enregistrer tous les textes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Piliers de la Méthode (MethodPillar) -->
+    <div class="col-lg-5">
+        
+        <!-- Formulaire d'Ajout d'un Pilier -->
+        <div class="admin-card p-4 mb-4">
+            <h2 class="h5 fw-bold mb-3 pb-2 border-bottom">
+                <i class="bi bi-plus-circle text-primary me-2"></i>Ajouter un Pilier de Méthode
+            </h2>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_pillar">
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Titre du Pilier</label>
+                    <input type="text" name="titre" class="form-control" placeholder="Ex: Rigueur Défensive" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Description des apprentissages clés..." required></textarea>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Ordre d'affichage</label>
+                        <input type="number" name="ordre" class="form-control" value="{{ pillars.count|add:1 }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Icône (Bootstrap Icons)</label>
+                        <input type="text" name="icone" class="form-control" value="bi-dribbble" placeholder="bi-dribbble">
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="est_actif" id="checkActif" checked>
+                    <label class="form-check-label small fw-bold" for="checkActif">Afficher sur le site public</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-lg me-1"></i> Ajouter le pilier
+                </button>
+            </form>
+        </div>
+
+        <!-- Liste des Piliers Actuels -->
+        <div class="admin-card overflow-hidden">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                <h2 class="h5 fw-bold mb-0">Piliers Existants ({{ pillars.count }})</h2>
+            </div>
+            <div class="p-3">
+                {% for p in pillars %}
+                <div class="p-3 border rounded-3 mb-3 bg-white shadow-sm position-relative">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary rounded-circle p-2">
+                                <i class="bi {{ p.icone|default:'bi-dribbble' }}"></i>
+                            </span>
+                            <h3 class="h6 fw-bold mb-0">{{ p.titre }}</h3>
+                        </div>
+                        <div>
+                            <span class="badge bg-light text-secondary border">Ordre {{ p.ordre }}</span>
+                            {% if p.est_actif %}
+                            <span class="badge bg-success-subtle text-success">Actif</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-muted">Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-3">{{ p.description }}</p>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#editPillarModal{{ p.id }}">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </button>
+                        <a href="{% url 'admin_pillar_delete' p.id %}" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Supprimer ce pilier ?');">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Modal Modification Pilier -->
+                <div class="modal fade" id="editPillarModal{{ p.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded-4 border-0 shadow">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="update_pillar">
+                                <input type="hidden" name="pk" value="{{ p.id }}">
+                                <div class="modal-header border-bottom">
+                                    <h5 class="modal-title fw-bold">Modifier le pilier : {{ p.titre }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Titre</label>
+                                        <input type="text" name="titre" class="form-control" value="{{ p.titre }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Description</label>
+                                        <textarea name="description" class="form-control" rows="3" required>{{ p.description }}</textarea>
+                                    </div>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-6">
+                                            <label class="form-label small fw-bold">Ordre</label>
+                                            <input type="number" name="ordre" class="form-control" value="{{ p.ordre }}">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small fw-bold">Icône Bootstrap</label>
+                                            <input type="text" name="icone" class="form-control" value="{{ p.icone }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="est_actif" id="editActif{{ p.id }}" {% if p.est_actif %}checked{% endif %}>
+                                        <label class="form-check-label small fw-bold" for="editActif{{ p.id }}">Actif sur le site</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top">
+                                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted">
+                    Aucun pilier configuré.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

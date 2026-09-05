@@ -9,10 +9,44 @@ django.setup()
 
 from gallery.models import GalleryCategory, GalleryAlbum, GalleryPhoto
 from shop.models import ProductCategory, Product, ProductVariant, ProductImage
+from main.models import AcademyInfo, MethodPillar
 
 
 def populate():
     print("🏀 Initialisation des données pour la Galerie et la Boutique MHA...")
+
+    # 0. Informations Académie & Piliers Méthode
+    AcademyInfo.objects.get_or_create(
+        nom='Magic Hoops Academy Kinshasa (MHA)',
+        defaults={
+            'slogan': 'Là où le talent rencontre la discipline',
+            'fondateur': 'Bruno Lobaya Nkoy (alias Magic)',
+            'hero_title': 'Former les jeunes joueurs, forger les champions.',
+            'hero_subtitle': "L'académie de référence à Kinshasa (Gombe) pour développer les fondamentaux techniques, la discipline sportive et l'esprit d'équipe des U10 à U18+.",
+            'slogan_badge': 'Formons les champions de demain !',
+            'telephone': '+243 900 824 429',
+            'email': 'info@magichoops.cd',
+            'adresse_terrain': 'Avenue de la Science numéro 5, Gombe, Kinshasa',
+            'methode_titre': 'Former le joueur complet, pas seulement le scoreur.',
+            'methode_description': "Une pédagogie sportive complète qui allie rigueur technique, motricité athlétique, intelligence tactique et mental d'acier.",
+            'methode_cadre_texte': "Au-delà du basketball, nous inculquons la ponctualité, le respect, l'effort collectif et le dépassement de soi.",
+            'coach_magic_titre': 'Bruno Lobaya Nkoy, alias Coach Magic.',
+            'coach_magic_quote': '« Le talent ouvre la voie, mais seule la discipline forge les champions. »',
+            'coach_magic_bio': "À Magic Hoops Academy, l'exigence sur le parquet s'accompagne d'une transmission sans compromis du respect et du dépassement de soi.",
+        }
+    )
+
+    pillars = [
+        ('Technique', 'Dribble, tir, passes, appuis, défense et finition. Les gestes sont répétés jusqu\'à devenir fiables.', 1, 'bi-dribbble'),
+        ('Physique', 'Coordination, vitesse, mobilité et endurance selon l\'âge. On construit un corps prêt pour le jeu.', 2, 'bi-lightning-charge'),
+        ('Lecture du jeu', 'Comprendre l\'espace, les décisions, le timing et le rôle de chaque joueur dans le collectif.', 3, 'bi-compass'),
+        ('Mentalité', 'Discipline, respect, ponctualité, résilience et ambition. Le cadre compte autant que le talent.', 4, 'bi-shield-check'),
+    ]
+    for titre, desc, ordre, icone in pillars:
+        MethodPillar.objects.get_or_create(
+            titre=titre,
+            defaults={'description': desc, 'ordre': ordre, 'icone': icone, 'est_actif': True}
+        )
 
     # 1. Catégories Galerie
     cat_ceremonie, _ = GalleryCategory.objects.get_or_create(

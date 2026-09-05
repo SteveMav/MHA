@@ -1,4 +1,4 @@
-from .models import Schedule
+from .models import Schedule, AcademyInfo, MethodPillar
 from announcements.models import Annonce
 from gallery.models import GalleryAlbum, GalleryPhoto
 from shop.models import Product
@@ -158,6 +158,21 @@ def index(request):
     if not featured_products.exists():
         featured_products = Product.objects.filter(est_actif=True).select_related('categorie')[:4]
 
+    # Données dynamiques AcademyInfo & MethodPillar avec repli gracieux
+    academy_info = AcademyInfo.objects.first()
+    db_pillars = list(MethodPillar.objects.filter(est_actif=True).order_by('ordre', 'id'))
+    if db_pillars:
+        active_method_pillars = [
+            {
+                "title": p.titre,
+                "text": p.description,
+                "icone": p.icone,
+            }
+            for p in db_pillars
+        ]
+    else:
+        active_method_pillars = METHOD_PILLARS
+
     canonical_url = absolute_url(request, '/')
     hero_image_url = absolute_static_url(request, 'images/basketball.jpeg')
     logo_url = absolute_static_url(request, 'images/mha_logo.jpeg')
@@ -227,7 +242,8 @@ def index(request):
         'total_photos_count': total_photos_count,
         'featured_products': featured_products,
         'programs': PROGRAMS,
-        'method_pillars': METHOD_PILLARS,
+        'method_pillars': active_method_pillars,
+        'academy_info': academy_info,
         'staff_members': STAFF_MEMBERS,
         'faqs': FAQS,
         'seo_title': "Magic Hoops Academy Kinshasa | Académie de basket pour jeunes à Gombe",

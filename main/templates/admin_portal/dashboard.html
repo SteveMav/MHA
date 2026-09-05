@@ -1,0 +1,285 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Tableau de bord Administration{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Tableau de bord</h1>
+        <p class="text-muted mb-0">Vue globale des membres, abonnements et activités de Magic Hoops Academy.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'admin_users_list' %}" class="btn btn-mha-primary">
+            <i class="bi bi-person-plus-fill me-1"></i> Gérer les membres
+        </a>
+        <a href="{% url 'admin_announcements' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-circle me-1"></i> Nouvelle annonce
+        </a>
+    </div>
+</div>
+
+<!-- Cartes Métriques Principales -->
+<div class="row g-3 mb-4">
+    <!-- Total Membres -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="admin-card p-3 admin-card-hover h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Membres Actifs</span>
+                    <h2 class="h2 fw-bold text-dark my-2">{{ total_members }}</h2>
+                    <span class="badge bg-light text-secondary border small">{{ total_users }} utilisateurs au total</span>
+                </div>
+                <div class="metric-icon-box bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-top">
+                <a href="{% url 'admin_users_list' %}" class="small text-decoration-none fw-semibold text-primary">
+                    Voir tous les membres <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abonnements Payés (Actifs) -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="admin-card p-3 admin-card-hover h-100" style="border-left: 4px solid #198754;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Abonnements Payés</span>
+                    <h2 class="h2 fw-bold text-success my-2">{{ count_paye }}</h2>
+                    <span class="badge bg-success-subtle text-success small">À jour & valides</span>
+                </div>
+                <div class="metric-icon-box bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-top">
+                <a href="{% url 'admin_users_list' %}?statut=paye" class="small text-decoration-none fw-semibold text-success">
+                    Filtrer les abonnés à jour <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abonnements En Attente -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="admin-card p-3 admin-card-hover h-100" style="border-left: 4px solid #FFC107;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">En Attente de Paiement</span>
+                    <h2 class="h2 fw-bold text-warning my-2">{{ count_en_attente }}</h2>
+                    <span class="badge bg-warning-subtle text-dark small">À valider</span>
+                </div>
+                <div class="metric-icon-box bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-top">
+                <a href="{% url 'admin_users_list' %}?statut=en_attente" class="small text-decoration-none fw-semibold text-warning">
+                    Traiter les demandes <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expirés ou Sans Abonnement -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="admin-card p-3 admin-card-hover h-100" style="border-left: 4px solid #DC3545;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Expirés / Sans Abonn.</span>
+                    <h2 class="h2 fw-bold text-danger my-2">{{ count_expire_ou_sans }}</h2>
+                    <span class="badge bg-danger-subtle text-danger small">{{ count_expire }} expiré(s), {{ count_aucun }} sans abonn.</span>
+                </div>
+                <div class="metric-icon-box bg-danger bg-opacity-10 text-danger">
+                    <i class="bi bi-exclamation-octagon-fill"></i>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-top">
+                <a href="{% url 'admin_users_list' %}?statut=expire" class="small text-decoration-none fw-semibold text-danger">
+                    Relancer les renouvellements <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ligne Métriques Secondaires (Contenu du Club) -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="admin-card p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="metric-icon-box bg-info bg-opacity-10 text-info">
+                    <i class="bi bi-calendar-check-fill"></i>
+                </div>
+                <div>
+                    <div class="small text-muted fw-semibold">Créneaux Horaires</div>
+                    <div class="h5 fw-bold mb-0">{{ total_schedules }} créneau(x) configuré(s)</div>
+                </div>
+            </div>
+            <a href="{% url 'admin_schedules' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                Voir
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="admin-card p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="metric-icon-box bg-secondary bg-opacity-10 text-secondary">
+                    <i class="bi bi-images"></i>
+                </div>
+                <div>
+                    <div class="small text-muted fw-semibold">Galerie & Photos</div>
+                    <div class="h5 fw-bold mb-0">{{ total_photos }} photos / {{ total_albums }} albums</div>
+                </div>
+            </div>
+            <a href="{% url 'admin_gallery' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                Gérer
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="admin-card p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="metric-icon-box bg-warning bg-opacity-10 text-dark">
+                    <i class="bi bi-megaphone-fill"></i>
+                </div>
+                <div>
+                    <div class="small text-muted fw-semibold">Sessions & Annonces</div>
+                    <div class="h5 fw-bold mb-0">{{ total_annonces }} annonce(s) en ligne</div>
+                </div>
+            </div>
+            <a href="{% url 'admin_announcements' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                Gérer
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Deux Grandes Colonnes : Utilisateurs Récents & Derniers Abonnements -->
+<div class="row g-4">
+    <!-- Colonne Gauche : Derniers Utilisateurs Inscrits -->
+    <div class="col-lg-7">
+        <div class="admin-card">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-person-lines-fill text-primary me-2"></i>Derniers Membres Inscrits</h2>
+                <a href="{% url 'admin_users_list' %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                    Voir toute la liste
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Inscription</th>
+                            <th>Statut Abonn.</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light border text-dark d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 0.85rem;">
+                                        {{ u.first_name|first|default:u.username|first|upper }}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'admin_user_detail' u.id %}" class="fw-bold text-dark text-decoration-none">
+                                            {{ u.get_full_name|default:u.username }}
+                                        </a>
+                                        <div class="text-muted small">{{ u.email|default:"Pas d'email" }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="small text-muted">
+                                {{ u.date_joined|date:"d/m/Y" }}
+                            </td>
+                            <td>
+                                <span class="badge {{ u.sub_status.badge_class }}">
+                                    {{ u.sub_status.label }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'admin_user_detail' u.id %}" class="btn btn-sm btn-light border rounded-pill" title="Voir la fiche">
+                                    <i class="bi bi-eye"></i> Fiche
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">Aucun utilisateur enregistré.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne Droite : Dernières Opérations Abonnements & Annonces -->
+    <div class="col-lg-5">
+        <!-- Derniers Abonnements -->
+        <div class="admin-card mb-4">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-receipt text-success me-2"></i>Derniers Paiements & Demandes</h2>
+                <a href="{% url 'admin_users_list' %}" class="small text-decoration-none">Tous les membres</a>
+            </div>
+            <div class="p-3">
+                {% for sub in recent_abonnements %}
+                <div class="d-flex align-items-center justify-content-between py-2 border-bottom {% if forloop.last %}border-0{% endif %}">
+                    <div>
+                        <div class="fw-bold text-dark">
+                            <a href="{% url 'admin_user_detail' sub.membre_id %}" class="text-decoration-none text-dark">
+                                {{ sub.membre.get_full_name|default:sub.membre.username }}
+                            </a>
+                            <span class="badge bg-light text-secondary ms-1">{{ sub.montant }} $</span>
+                        </div>
+                        <small class="text-muted">
+                            Du {{ sub.date_debut|date:"d/m/Y" }} au {{ sub.date_fin|date:"d/m/Y" }} • {{ sub.get_moyen_paiement_display|default:"Cash" }}
+                        </small>
+                    </div>
+                    <div>
+                        {% if sub.statut == 'payé' %}
+                            <span class="badge bg-success">Payé</span>
+                        {% elif sub.statut == 'en_attente' %}
+                            <a href="{% url 'admin_subscription_quick_action' sub.id %}?action=valider" class="btn btn-xs btn-warning rounded-pill px-2 py-1 small fw-bold text-dark" title="Valider immédiatement">
+                                <i class="bi bi-check-lg"></i> Valider
+                            </a>
+                        {% else %}
+                            <span class="badge bg-danger">Expiré</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-muted text-center py-3 small">Aucun abonnement récent.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Dernières Annonces -->
+        <div class="admin-card">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-megaphone text-warning me-2"></i>Dernières Annonces</h2>
+                <a href="{% url 'admin_announcements' %}" class="btn btn-sm btn-outline-dark rounded-pill">Gérer</a>
+            </div>
+            <div class="p-3">
+                {% for ann in recent_annonces %}
+                <div class="py-2 border-bottom {% if forloop.last %}border-0{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong class="text-dark small text-truncate" style="max-width: 70%;">{{ ann.titre }}</strong>
+                        <span class="badge bg-light text-secondary small">{{ ann.date_publication|date:"d M" }}</span>
+                    </div>
+                    <p class="text-muted small mb-0 text-truncate">{{ ann.message|striptags }}</p>
+                </div>
+                {% empty %}
+                <div class="text-muted text-center py-3 small">Aucune annonce publiée.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

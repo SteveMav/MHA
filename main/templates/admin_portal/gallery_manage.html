@@ -1,0 +1,293 @@
+{% extends 'admin_portal/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestion de la Galerie & Photos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Galerie Photos & Albums</h1>
+        <p class="text-muted mb-0">Créez des événements, téléversez des lots de photos et gérez les clichés publics.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'gallery:gallery_list' %}" target="_blank" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Galerie publique
+        </a>
+        <button type="button" class="btn btn-mha-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#createAlbumModal">
+            <i class="bi bi-plus-circle me-1"></i> Nouvel Album
+        </button>
+    </div>
+</div>
+
+<!-- Ligne Albums Existants -->
+<div class="row g-4 mb-4">
+    {% for album in albums %}
+    <div class="col-md-6 col-xl-4">
+        <div class="admin-card h-100 overflow-hidden d-flex flex-column">
+            <!-- Couverture Album -->
+            <div class="position-relative" style="height: 180px; background-color: #0C1829;">
+                {% if album.couverture %}
+                <img src="{{ album.couverture.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% elif album.first_photo %}
+                <img src="{{ album.first_photo.image.url }}" alt="{{ album.titre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100 text-white-50">
+                    <i class="bi bi-image fs-1"></i>
+                </div>
+                {% endif %}
+
+                <!-- Badges statut -->
+                <div class="position-absolute top-0 start-0 m-2 d-flex gap-1 flex-wrap">
+                    {% if album.est_publie %}
+                    <span class="badge bg-success rounded-pill">Publié</span>
+                    {% else %}
+                    <span class="badge bg-secondary rounded-pill">Brouillon</span>
+                    {% endif %}
+                    {% if album.est_en_vedette %}
+                    <span class="badge bg-warning text-dark rounded-pill">★ En vedette</span>
+                    {% endif %}
+                </div>
+
+                <div class="position-absolute bottom-0 end-0 m-2">
+                    <span class="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1">
+                        <i class="bi bi-camera me-1"></i> {{ album.nb_photos }} photo(s)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Contenu Album -->
+            <div class="p-3 d-flex flex-column flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="badge bg-light text-primary border small">{{ album.categorie.nom|default:"Sans catégorie" }}</span>
+                    <small class="text-muted">{{ album.date_evenement|date:"d/m/Y"|default:"Date non définie" }}</small>
+                </div>
+                
+                <h3 class="h6 fw-bold text-dark mb-1">{{ album.titre }}</h3>
+                <p class="small text-muted mb-2 text-truncate">{{ album.lieu }}</p>
+                <p class="small text-muted flex-grow-1 mb-3">{{ album.description|truncatechars:100 }}</p>
+
+                <!-- Actions Album -->
+                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#uploadPhotosModal{{ album.id }}">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i> + Photos
+                    </button>
+                    <div class="btn-group">
+                        <a href="{{ album.get_absolute_url }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill" title="Voir l'album">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill ms-1" data-bs-toggle="modal" data-bs-target="#editAlbumModal{{ album.id }}" title="Modifier">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <a href="{% url 'admin_album_delete' album.id %}" class="btn btn-sm btn-outline-danger rounded-pill ms-1" onclick="return confirm('Supprimer l\'album & toutes ses photos ?');" title="Supprimer">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Upload Photos Lot pour l'album -->
+    <div class="modal fade" id="uploadPhotosModal{{ album.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload_photos">
+                    <input type="hidden" name="album_id" value="{{ album.id }}">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold">Ajouter des photos à "{{ album.titre }}"</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Sélectionner plusieurs photos</label>
+                            <input type="file" name="photos" class="form-control" multiple accept="image/*" required>
+                            <div class="form-text small">Vous pouvez sélectionner plusieurs fichiers en même temps (Ctrl + clic).</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-mha-primary rounded-pill px-4">Téléverser les clichés</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Modification Album -->
+    <div class="modal fade" id="editAlbumModal{{ album.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_album">
+                    <input type="hidden" name="album_id" value="{{ album.id }}">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold">Modifier l'album : {{ album.titre }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold">Titre de l'album</label>
+                                <input type="text" name="titre" class="form-control" value="{{ album.titre }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Catégorie</label>
+                                <select name="categorie" class="form-select">
+                                    <option value="">-- Sans catégorie --</option>
+                                    {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {% if album.categorie_id == cat.id %}selected{% endif %}>{{ cat.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Date de l'événement</label>
+                                <input type="date" name="date_evenement" class="form-control" value="{{ album.date_evenement|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Lieu</label>
+                                <input type="text" name="lieu" class="form-control" value="{{ album.lieu }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Description</label>
+                                <textarea name="description" class="form-control" rows="3">{{ album.description }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Image de couverture (remplacer)</label>
+                                <input type="file" name="couverture" class="form-control" accept="image/*">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="est_publie" id="publie{{ album.id }}" {% if album.est_publie %}checked{% endif %}>
+                                    <label class="form-check-label small fw-bold" for="publie{{ album.id }}">Publié en ligne</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="est_en_vedette" id="vedette{{ album.id }}" {% if album.est_en_vedette %}checked{% endif %}>
+                                    <label class="form-check-label small fw-bold" for="vedette{{ album.id }}">Mettre en vedette (Accueil)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="admin-card p-5 text-center text-muted">
+            <i class="bi bi-images fs-1 text-secondary opacity-50 d-block mb-3"></i>
+            <h4>Aucun album pour le moment</h4>
+            <p class="small mb-3">Créez votre premier album photo pour enrichir la galerie du site.</p>
+            <button type="button" class="btn btn-mha-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createAlbumModal">
+                <i class="bi bi-plus-lg me-1"></i> Créer un album
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Derniers clichés ajoutés avec action de suppression directe -->
+{% if recent_photos %}
+<div class="admin-card p-4">
+    <h2 class="h5 fw-bold mb-3 pb-2 border-bottom">
+        <i class="bi bi-camera-fill text-primary me-2"></i>Dernières Photos Téléversées
+    </h2>
+    <div class="row g-3">
+        {% for p in recent_photos %}
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div class="card border rounded-3 overflow-hidden position-relative h-100 shadow-sm">
+                <img src="{{ p.image.url }}" alt="{{ p.titre }}" style="width: 100%; height: 110px; object-fit: cover;">
+                <div class="p-2 small">
+                    <div class="fw-semibold text-truncate" title="{{ p.titre }}">{{ p.titre|default:p.album.titre }}</div>
+                    <div class="text-muted text-truncate" style="font-size: 0.72rem;">{{ p.album.titre }}</div>
+                </div>
+                <div class="position-absolute top-0 end-0 m-1">
+                    <a href="{% url 'admin_photo_delete' p.id %}" class="btn btn-xs btn-danger rounded-circle p-1" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center;" onclick="return confirm('Supprimer cette photo ?');" title="Supprimer la photo">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal Création d'Album -->
+<div class="modal fade" id="createAlbumModal" tabindex="-1" aria-labelledby="createAlbumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_album">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold" id="createAlbumModalLabel">Créer un nouvel album d'événement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold">Titre de l'album / événement</label>
+                            <input type="text" name="titre" class="form-control" placeholder="Ex: Tournoi Espoirs Kinshasa 2026" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Catégorie</label>
+                            <select name="categorie" class="form-select">
+                                <option value="">-- Sans catégorie --</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Date de l'événement</label>
+                            <input type="date" name="date_evenement" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Lieu</label>
+                            <input type="text" name="lieu" class="form-control" value="Terrain principal, Gombe, Kinshasa">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Description de l'événement</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Racontez les temps forts, les victoires et l'ambiance..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Photo de couverture (principale)</label>
+                            <input type="file" name="couverture" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Téléversement initial (multi-photos)</label>
+                            <input type="file" name="photos" class="form-control" multiple accept="image/*">
+                            <div class="form-text small">Vous pourrez en ajouter davantage après création.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="est_publie" id="createPublie" checked>
+                                <label class="form-check-label small fw-bold" for="createPublie">Publier immédiatement</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="est_en_vedette" id="createVedette">
+                                <label class="form-check-label small fw-bold" for="createVedette">Mettre en vedette sur l'accueil</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-mha-primary rounded-pill px-4">Créer l'album</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
