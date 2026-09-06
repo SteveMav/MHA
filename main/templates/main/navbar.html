@@ -7,9 +7,10 @@
             <span class="text-truncate fw-bold">Magic Hoops Academy</span>
         </a>
 
-        <!-- Contrôles rapides Mobile (Panier + Toggler Offcanvas) -->
+        <!-- Contrôles rapides Mobile (Panier conditionnel + Toggler Offcanvas) -->
         <div class="d-flex align-items-center gap-2 d-lg-none ms-auto">
-            <!-- Accès direct Panier mobile -->
+            <!-- Accès Panier mobile (visible UNIQUEMENT quand on est dans la boutique) -->
+            {% if request.resolver_match.app_name == 'shop' or '/boutique/' in request.path %}
             <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier d'achat">
                 <i class="bi bi-cart3"></i>
                 {% if cart_count and cart_count > 0 %}
@@ -18,6 +19,7 @@
                 </span>
                 {% endif %}
             </a>
+            {% endif %}
 
             <!-- Bouton Burger Mobile 60fps -->
             <button class="navbar-toggler mha-burger-btn p-0 border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas" aria-label="Ouvrir le menu de navigation">
@@ -47,6 +49,16 @@
             <div class="offcanvas-body d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center p-4 p-lg-0">
                 <ul class="navbar-nav ms-auto align-items-stretch align-items-lg-center mha-nav-list">
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'gallery:gallery_list' %}">
+                            <i class="bi bi-images me-2 d-lg-none text-primary"></i>Galerie
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'announcements:announcement_list' %}">
+                            <i class="bi bi-megaphone me-2 d-lg-none text-primary"></i>Sessions
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'index' %}#programmes">
                             <i class="bi bi-trophy me-2 d-lg-none text-primary"></i>Programmes
                         </a>
@@ -62,22 +74,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'gallery:gallery_list' %}">
-                            <i class="bi bi-images me-2 d-lg-none text-primary"></i>Galerie
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'shop:product_list' %}">
                             <i class="bi bi-bag me-2 d-lg-none text-primary"></i>Boutique
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'announcements:announcement_list' %}">
-                            <i class="bi bi-megaphone me-2 d-lg-none text-primary"></i>Sessions
-                        </a>
-                    </li>
 
-                    <!-- Panier d'achat Desktop (déjà présent en haut sur mobile) -->
+                    <!-- Panier d'achat Desktop -->
                     <li class="nav-item ms-lg-2 d-none d-lg-inline-block">
                         <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier">
                             <i class="bi bi-cart3"></i>
