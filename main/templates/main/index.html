@@ -103,17 +103,19 @@
 
 {% if latest_announcement %}
 <!-- Bandeau Dernière Annonce Flash Info -->
-<div class="announcement-spotlight-bar py-3" style="background: rgba(12, 24, 41, 0.04); border-bottom: 1px solid var(--line);">
+<div class="announcement-spotlight-bar py-2">
     <div class="container">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-4 shadow-sm" style="background: linear-gradient(135deg, var(--secondary-deep) 0%, var(--secondary-color) 100%); border-left: 5px solid var(--primary-color);">
-            <div class="d-flex align-items-center gap-3 flex-wrap flex-grow-1">
-                <span class="badge-poster-orange text-nowrap"><i class="bi bi-megaphone-fill me-1"></i> Dernière Annonce</span>
-                <div class="text-white">
-                    <strong class="d-block d-md-inline me-md-2" style="font-size: 1.05rem;">{{ latest_announcement.titre }}</strong>
-                    <span class="text-white-50 small d-none d-sm-inline">{{ latest_announcement.resume_seo|default:latest_announcement.message|striptags|truncatechars:100 }}</span>
+        <div class="announcement-spotlight-card d-flex align-items-md-center justify-content-between flex-column flex-md-row gap-2 gap-md-3 p-3 rounded-4 shadow-sm">
+            <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
+                <span class="badge-poster-orange flex-shrink-0 text-nowrap"><i class="bi bi-megaphone-fill me-1"></i> Flash Info</span>
+                <div class="text-white text-truncate flex-grow-1">
+                    <strong class="d-inline text-truncate" style="font-size: 0.96rem;">{{ latest_announcement.titre }}</strong>
+                    {% if latest_announcement.resume_seo or latest_announcement.message %}
+                    <span class="text-white-50 small d-none d-lg-inline ms-2">{{ latest_announcement.resume_seo|default:latest_announcement.message|striptags|truncatechars:80 }}</span>
+                    {% endif %}
                 </div>
             </div>
-            <a href="{{ latest_announcement.get_absolute_url }}" class="btn btn-primary rounded-pill btn-sm px-4 text-nowrap">
+            <a href="{{ latest_announcement.get_absolute_url }}" class="btn btn-primary rounded-pill btn-sm px-4 text-nowrap flex-shrink-0 text-center">
                 Voir l'annonce <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>

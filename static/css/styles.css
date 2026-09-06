@@ -1939,8 +1939,50 @@ footer a {
     font-size: 0.9rem;
 }
 
-.mobile-cta-bar {
-    display: none;
+/* Mobile Burger Button (Tactile 60fps) */
+.mha-burger-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(12, 24, 41, 0.05);
+    border: 1px solid rgba(12, 24, 41, 0.1) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.mha-burger-btn:active {
+    transform: scale(0.92);
+    background: var(--primary-light);
+}
+
+.mha-burger-box {
+    width: 20px;
+    height: 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mha-burger-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--secondary-color);
+    border-radius: 2px;
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease;
+}
+
+/* Offcanvas Drawer Styling (Hardware-Accelerated 60fps) */
+.mha-nav-offcanvas {
+    --bs-offcanvas-width: 320px;
+    background-color: #FFFFFF !important;
+    border-left: 1px solid rgba(12, 24, 41, 0.08) !important;
+    box-shadow: -12px 0 36px rgba(6, 13, 23, 0.14) !important;
+    will-change: transform;
 }
 
 @media (max-width: 991.98px) {
@@ -1989,37 +2031,46 @@ footer a {
         transform: none;
     }
 
-    .navbar-collapse {
-        margin-top: 0.8rem;
-        padding: 0.9rem;
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        background: var(--surface);
-        box-shadow: var(--shadow-soft);
+    /* Offcanvas Mobile Drawer Interior */
+    .mha-nav-offcanvas {
+        border-top-left-radius: 24px;
+        border-bottom-left-radius: 24px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .navbar-nav {
-        align-items: stretch !important;
-        gap: 0.35rem;
+    .mha-nav-list {
+        gap: 0.4rem;
+        margin-top: 0.25rem;
     }
 
-    .nav-link {
-        border-radius: 14px;
-        padding: 0.75rem 0.85rem !important;
-    }
-
-    .nav-link:hover {
-        background: rgba(255, 94, 20, 0.08);
-    }
-
-    .nav-link::after {
-        display: none;
-    }
-
-    .nav-auth-btn,
-    .nav-join-btn {
+    .mha-nav-list .nav-item {
         width: 100%;
-        margin-top: 0.35rem;
+    }
+
+    .mha-nav-list .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem !important;
+        font-size: 0.96rem;
+        font-weight: 600;
+        color: var(--secondary-color) !important;
+        background: #F8F9FA;
+        border: 1px solid rgba(12, 24, 41, 0.05);
+        border-radius: 14px;
+        transition: background 160ms var(--ease-out), transform 160ms var(--ease-out), color 160ms var(--ease-out);
+    }
+
+    .mha-nav-list .nav-link:hover,
+    .mha-nav-list .nav-link:active {
+        background: var(--primary-light);
+        color: var(--primary-color) !important;
+        border-color: rgba(255, 94, 20, 0.25);
+        transform: translateX(3px);
+    }
+
+    .mha-drawer-footer {
+        padding-bottom: 1rem;
     }
 }
 
@@ -2031,15 +2082,11 @@ footer a {
         overflow-x: clip;
     }
 
-    body {
-        padding-bottom: 68px;
-    }
-
     .container {
         width: 100%;
         max-width: 100%;
-        padding-left: 12px;
-        padding-right: 12px;
+        padding-left: 14px;
+        padding-right: 14px;
     }
 
     .btn {
@@ -2047,11 +2094,12 @@ footer a {
     }
 
     .site-navbar {
-        min-height: 72px;
+        min-height: 66px;
     }
 
     .site-navbar .container {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
     }
 
     .navbar-brand img {
@@ -2060,7 +2108,8 @@ footer a {
     }
 
     .navbar-brand span {
-        font-size: 0.96rem;
+        font-size: 0.94rem;
+        max-width: 180px;
     }
 
     .navbar-toggler-icon {
@@ -2226,31 +2275,18 @@ footer a {
         grid-template-columns: 38px minmax(0, 1fr);
         padding: 0.9rem;
     }
-
-    .mobile-cta-bar {
-        position: fixed;
-        left: 50%;
-        right: auto;
-        bottom: 0.6rem;
-        z-index: 1040;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        width: calc(100% - 1.5rem);
-        max-width: 420px;
-        gap: 0.45rem;
-        padding: 0.45rem;
-        border: 1px solid rgba(12, 24, 41, 0.14);
-        border-radius: 999px;
-        background: #FFFFFF;
-        box-shadow: 0 8px 26px rgba(6, 13, 23, 0.16);
-        transform: translateX(-50%);
-        will-change: transform;
+    /* Mobile Values Ribbon (2x2 athletic symmetry) */
+    .values-ribbon-bar {
+        padding: 0.75rem 0;
     }
 
-    .mobile-cta-bar .btn {
-        padding: 0.62rem 0.7rem;
-        font-size: 0.84rem;
-        font-weight: 600;
+    .values-ribbon-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.45rem 0.85rem;
+        text-align: center;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
     }
 }
 
@@ -2279,6 +2315,43 @@ footer a {
 .values-ribbon-content .star {
     color: var(--primary-color);
     font-size: 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .values-ribbon-bar {
+        padding: 0.65rem 0;
+    }
+
+    .values-ribbon-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem 0.85rem;
+        text-align: center;
+        font-size: 0.74rem;
+        letter-spacing: 0.05em;
+    }
+}
+
+/* Bandeau Annonce Spotlight */
+.announcement-spotlight-bar {
+    background: rgba(12, 24, 41, 0.03);
+    border-bottom: 1px solid var(--line);
+}
+
+.announcement-spotlight-card {
+    background: linear-gradient(135deg, var(--secondary-deep) 0%, var(--secondary-color) 100%);
+    border-left: 4px solid var(--primary-color);
+}
+
+@media (max-width: 767.98px) {
+    .announcement-spotlight-card {
+        padding: 0.75rem 0.85rem !important;
+    }
+    .announcement-spotlight-card .btn {
+        width: 100%;
+        padding: 0.45rem 1rem;
+        font-size: 0.82rem;
+    }
 }
 
 .badge-age-pill {

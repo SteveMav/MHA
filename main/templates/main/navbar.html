@@ -1,79 +1,186 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light sticky-top site-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center me-lg-4" href="{% url 'index' %}">
-            <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy" height="38" class="me-2">
-            <span>Magic Hoops Academy</span>
+    <div class="container d-flex align-items-center justify-content-between">
+        <!-- Logo & Titre de l'académie -->
+        <a class="navbar-brand d-flex align-items-center me-2 me-lg-4 text-truncate" href="{% url 'index' %}">
+            <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy" height="38" class="me-2 flex-shrink-0">
+            <span class="text-truncate fw-bold">Magic Hoops Academy</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Basculer la navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}#programmes">Programmes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}#schedule">Horaires</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gallery:gallery_list' %}">Galerie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'shop:product_list' %}">Boutique</a>
-                </li>
 
-                <!-- Panier d'achat -->
-                <li class="nav-item ms-lg-2">
-                    <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier">
-                        <i class="bi bi-cart3"></i>
-                        {% if cart_count and cart_count > 0 %}
-                        <span class="nav-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                            {{ cart_count }}
-                        </span>
-                        {% endif %}
-                    </a>
-                </li>
-
-                {% if user.is_authenticated %}
-                <li class="nav-item dropdown ms-lg-2">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle fs-5 me-1 text-primary"></i>
-                        <span>{{ user.first_name|default:user.username }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
-                        <li><a class="dropdown-item" href="{% url 'shop:order_tracking' %}"><i class="bi bi-box-seam me-2"></i>Mes commandes</a></li>
-                        {% if user.is_staff %}
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header text-uppercase small fw-bold text-primary"><i class="bi bi-shield-lock-fill me-1"></i> Portail Gérant</h6></li>
-                        <li><a class="dropdown-item fw-bold text-primary bg-primary-light" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Espace Administration</a></li>
-                        <li><a class="dropdown-item" href="{% url 'admin_users_list' %}"><i class="bi bi-people-fill me-2 text-secondary"></i>Membres & Abonnements</a></li>
-                        <li><a class="dropdown-item" href="{% url 'admin_schedules' %}"><i class="bi bi-calendar3 me-2 text-secondary"></i>Gestion Horaires</a></li>
-                        <li><a class="dropdown-item" href="{% url 'admin_gallery' %}"><i class="bi bi-images me-2 text-secondary"></i>Gestion Galerie</a></li>
-                        <li><a class="dropdown-item" href="{% url 'admin_announcements' %}"><i class="bi bi-megaphone-fill me-2 text-secondary"></i>Gestion Annonces</a></li>
-                        <li><a class="dropdown-item" href="{% url 'admin_site_content' %}"><i class="bi bi-pencil-square me-2 text-secondary"></i>Textes & Méthode</a></li>
-                        <li><a class="dropdown-item text-muted small" href="/admin/"><i class="bi bi-gear me-2"></i>Django Admin natif</a></li>
-                        {% endif %}
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
-                    </ul>
-                </li>
-                {% else %}
-                <li class="nav-item ms-lg-2">
-                    <a class="nav-link nav-auth-link" href="{% url 'login' %}">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
-                    </a>
-                </li>
-                <li class="nav-item ms-lg-1">
-                    <a class="btn btn-primary rounded-pill nav-join-btn" href="{% url 'inscription' %}">
-                        <i class="bi bi-person-plus-fill me-1"></i>Rejoindre
-                    </a>
-                </li>
+        <!-- Contrôles rapides Mobile (Panier + Toggler Offcanvas) -->
+        <div class="d-flex align-items-center gap-2 d-lg-none ms-auto">
+            <!-- Accès direct Panier mobile -->
+            <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier d'achat">
+                <i class="bi bi-cart3"></i>
+                {% if cart_count and cart_count > 0 %}
+                <span class="nav-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                    {{ cart_count }}
+                </span>
                 {% endif %}
-            </ul>
+            </a>
+
+            <!-- Bouton Burger Mobile 60fps -->
+            <button class="navbar-toggler mha-burger-btn p-0 border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas" aria-label="Ouvrir le menu de navigation">
+                <span class="mha-burger-box">
+                    <span class="mha-burger-line"></span>
+                    <span class="mha-burger-line"></span>
+                    <span class="mha-burger-line"></span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Menu Desktop (navbar classique) & Tiroir Mobile (Offcanvas GPU-accéléré) -->
+        <div class="offcanvas-lg offcanvas-end mha-nav-offcanvas" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+            <!-- En-tête tiroir mobile (masqué sur desktop) -->
+            <div class="offcanvas-header border-bottom py-3 px-4 d-lg-none align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo MHA" height="36" class="me-2 rounded-circle border border-2 border-primary">
+                    <div>
+                        <h6 class="offcanvas-title fw-bold text-secondary mb-0" id="navbarOffcanvasLabel">Magic Hoops</h6>
+                        <small class="text-muted d-block" style="font-size: 0.72rem;"><i class="bi bi-geo-alt-fill text-primary"></i> Kinshasa • Gombe</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close text-reset shadow-none" data-bs-dismiss="offcanvas" data-bs-target="#navbarOffcanvas" aria-label="Fermer le menu"></button>
+            </div>
+
+            <!-- Corps du menu (liens) -->
+            <div class="offcanvas-body d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center p-4 p-lg-0">
+                <ul class="navbar-nav ms-auto align-items-stretch align-items-lg-center mha-nav-list">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}#programmes">
+                            <i class="bi bi-trophy me-2 d-lg-none text-primary"></i>Programmes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}#methode">
+                            <i class="bi bi-bullseye me-2 d-lg-none text-primary"></i>Méthode
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}#schedule">
+                            <i class="bi bi-calendar3 me-2 d-lg-none text-primary"></i>Horaires
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'gallery:gallery_list' %}">
+                            <i class="bi bi-images me-2 d-lg-none text-primary"></i>Galerie
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'shop:product_list' %}">
+                            <i class="bi bi-bag me-2 d-lg-none text-primary"></i>Boutique
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'announcements:announcement_list' %}">
+                            <i class="bi bi-megaphone me-2 d-lg-none text-primary"></i>Sessions
+                        </a>
+                    </li>
+
+                    <!-- Panier d'achat Desktop (déjà présent en haut sur mobile) -->
+                    <li class="nav-item ms-lg-2 d-none d-lg-inline-block">
+                        <a class="nav-cart-btn position-relative d-inline-flex align-items-center justify-content-center" href="{% url 'shop:cart_detail' %}" title="Voir mon panier" aria-label="Panier">
+                            <i class="bi bi-cart3"></i>
+                            {% if cart_count and cart_count > 0 %}
+                            <span class="nav-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                {{ cart_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    <!-- Espace Utilisateur Desktop -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown ms-lg-2 d-none d-lg-block">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5 me-1 text-primary"></i>
+                            <span>{{ user.first_name|default:user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'shop:order_tracking' %}"><i class="bi bi-box-seam me-2"></i>Mes commandes</a></li>
+                            {% if user.is_staff %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header text-uppercase small fw-bold text-primary"><i class="bi bi-shield-lock-fill me-1"></i> Portail Gérant</h6></li>
+                            <li><a class="dropdown-item fw-bold text-primary bg-primary-light" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Espace Administration</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_users_list' %}"><i class="bi bi-people-fill me-2 text-secondary"></i>Membres & Abonnements</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_schedules' %}"><i class="bi bi-calendar3 me-2 text-secondary"></i>Gestion Horaires</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_gallery' %}"><i class="bi bi-images me-2 text-secondary"></i>Gestion Galerie</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_announcements' %}"><i class="bi bi-megaphone-fill me-2 text-secondary"></i>Gestion Annonces</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_site_content' %}"><i class="bi bi-pencil-square me-2 text-secondary"></i>Textes & Méthode</a></li>
+                            <li><a class="dropdown-item text-muted small" href="/admin/"><i class="bi bi-gear me-2"></i>Django Admin natif</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2 d-none d-lg-block">
+                        <a class="nav-link nav-auth-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-1 d-none d-lg-block">
+                        <a class="btn btn-primary rounded-pill nav-join-btn" href="{% url 'inscription' %}">
+                            <i class="bi bi-person-plus-fill me-1"></i>Rejoindre
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- Espace Utilisateur & Actions Spécifiques Mobile (dans le tiroir) -->
+                <div class="mha-drawer-footer d-lg-none mt-4 pt-3 border-top">
+                    {% if user.is_authenticated %}
+                    <div class="p-3 rounded-3 bg-light mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-person-circle fs-3 text-primary me-2"></i>
+                            <div>
+                                <strong class="d-block text-secondary leading-tight">{{ user.first_name|default:user.username }}</strong>
+                                <span class="badge {% if user.is_staff %}bg-primary text-white{% else %}bg-secondary text-white{% endif %} rounded-pill" style="font-size: 0.68rem;">
+                                    {% if user.is_staff %}Staff / Gérant{% else %}Membre Académie{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2 mt-2">
+                            <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-secondary text-start rounded-pill">
+                                <i class="bi bi-person me-2"></i>Mon Profil
+                            </a>
+                            <a href="{% url 'shop:order_tracking' %}" class="btn btn-sm btn-outline-secondary text-start rounded-pill">
+                                <i class="bi bi-box-seam me-2"></i>Mes commandes
+                            </a>
+                            {% if user.is_staff %}
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-sm btn-primary text-start rounded-pill fw-bold">
+                                <i class="bi bi-speedometer2 me-2"></i>Espace Administration
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a class="btn btn-outline-danger btn-sm rounded-pill w-100" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+                    </a>
+                    {% else %}
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-primary rounded-pill py-2 fw-bold shadow-sm" href="{% url 'inscription' %}">
+                            <i class="bi bi-person-plus-fill me-2"></i>Rejoindre l'académie
+                        </a>
+                        <a class="btn btn-outline-primary rounded-pill py-2 fw-semibold" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Connexion membre
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Raccourcis Contact & Terrain -->
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <p class="small text-muted mb-1">
+                            <i class="bi bi-geo-alt-fill text-primary me-1"></i> Avenue de la Science n°5, Gombe
+                        </p>
+                        <a href="tel:+243900824429" class="small fw-bold text-decoration-none text-secondary">
+                            <i class="bi bi-telephone-fill text-primary me-1"></i> +243 900 824 429
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
