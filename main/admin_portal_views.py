@@ -558,6 +558,12 @@ def admin_gallery(request):
         action = request.POST.get('action', 'create_album')
 
         if action == 'create_album':
+            is_ajax = (
+                request.headers.get('X-Requested-With') == 'XMLHttpRequest' or
+                request.POST.get('is_ajax') == '1' or
+                'application/json' in request.headers.get('Accept', '')
+            )
+
             titre = request.POST.get('titre', '').strip()
             categorie_id = request.POST.get('categorie')
             description = request.POST.get('description', '').strip()
@@ -567,18 +573,60 @@ def admin_gallery(request):
             est_en_vedette = request.POST.get('est_en_vedette') == 'on'
             couverture = request.FILES.get('couverture')
 
+            if not titre:
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': "Le titre de l'album est obligatoire."}, status=400)
+                messages.error(request, "Le titre de l'album est obligatoire.")
+                return redirect('admin_gallery')
+
+            # Vérification taille couverture si fournie (max 3 Mo)
+            if couverture and couverture.size > (3 * 1024 * 1024):
+                size_mb = couverture.size / (1024 * 1024)
+                if is_ajax:
+                    return JsonResponse({
+                        'success': False,
+                        'error': f"La photo de couverture dépasse la limite autorisée de 3 Mo ({size_mb:.1f} Mo)."
+                    }, status=400)
+                messages.error(request, f"La photo de couverture dépasse la limite autorisée de 3 Mo ({size_mb:.1f} Mo).")
+                return redirect('admin_gallery')
+
+            # Vérification préalable de la taille de tous les clichés initiaux (max 3 Mo)
+            photos = request.FILES.getlist('photos')
+            for photo_file in photos:
+                if photo_file.size > (3 * 1024 * 1024):
+                    size_mb = photo_file.size / (1024 * 1024)
+                    if is_ajax:
+                        return JsonResponse({
+                            'success': False,
+                            'error': f"Le cliché '{photo_file.name}' dépasse la limite maximale autorisée de 3 Mo ({size_mb:.1f} Mo)."
+                        }, status=400)
+                    messages.error(request, f"Le cliché '{photo_file.name}' dépasse la limite maximale autorisée de 3 Mo ({size_mb:.1f} Mo).")
+                    return redirect('admin_gallery')
+
             date_evenement = None
             if date_evenement_str:
-                try:
-                    date_evenement = timezone.datetime.strptime(date_evenement_str, '%Y-%m-%d').date()
-                except ValueError:
-                    date_evenement = None
+                for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%Y/%m/%d', '%d-%m-%Y'):
+                    try:
+                        date_evenement = timezone.datetime.strptime(date_evenement_str.strip(), fmt).date()
+                        break
+                    except ValueError:
+                        pass
+
+            today = timezone.localdate()
+            if date_evenement and date_evenement > today:
+                if is_ajax:
+                    return JsonResponse({
+                        'success': False,
+                        'error': f"La date de l'événement ne peut pas être dans le futur (au maximum aujourd'hui : {today.strftime('%d/%m/%Y')})."
+                    }, status=400)
+                messages.error(request, f"La date de l'événement ne peut pas être dans le futur (au maximum aujourd'hui : {today.strftime('%d/%m/%Y')}).")
+                return redirect('admin_gallery')
 
             categorie = None
             if categorie_id:
                 categorie = GalleryCategory.objects.filter(pk=categorie_id).first()
 
-            if titre:
+            try:
                 album = GalleryAlbum.objects.create(
                     titre=titre,
                     categorie=categorie,
@@ -589,31 +637,30 @@ def admin_gallery(request):
                     est_en_vedette=est_en_vedette,
                     couverture=couverture
                 )
-
-                is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.POST.get('is_ajax') == '1'
+            except Exception as e:
                 if is_ajax:
-                    return JsonResponse({
-                        'success': True,
-                        'album_id': album.id,
-                        'album_titre': album.titre,
-                        'message': f"Album '{album.titre}' créé avec succès."
-                    })
+                    return JsonResponse({'success': False, 'error': f"Erreur création album : {str(e)}"}, status=400)
+                messages.error(request, f"Erreur : {str(e)}")
+                return redirect('admin_gallery')
 
-                # Gestion d'éventuelles photos initiales uploadées en multi-fichiers
-                photos = request.FILES.getlist('photos')
-                for i, photo_file in enumerate(photos):
-                    GalleryPhoto.objects.create(
-                        album=album,
-                        image=photo_file,
-                        titre=f"{album.titre} - Cliché #{i+1}",
-                        ordre=i+1
-                    )
+            if is_ajax:
+                return JsonResponse({
+                    'success': True,
+                    'album_id': album.id,
+                    'album_titre': album.titre,
+                    'message': f"Album '{album.titre}' créé avec succès."
+                })
 
-                messages.success(request, f"Album '{album.titre}' créé avec succès ({len(photos)} photos téléversées) !")
-            else:
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.POST.get('is_ajax') == '1':
-                    return JsonResponse({'success': False, 'error': "Le titre de l'album est obligatoire."}, status=400)
-                messages.error(request, "Le titre de l'album est obligatoire.")
+            # Gestion d'éventuelles photos initiales uploadées en multi-fichiers
+            for i, photo_file in enumerate(photos):
+                GalleryPhoto.objects.create(
+                    album=album,
+                    image=photo_file,
+                    titre=f"{album.titre} - Cliché #{i+1}",
+                    ordre=i+1
+                )
+
+            messages.success(request, f"Album '{album.titre}' créé avec succès ({len(photos)} photos téléversées) !")
             return redirect('admin_gallery')
 
         elif action == 'upload_photos':
@@ -622,6 +669,13 @@ def admin_gallery(request):
             photos = request.FILES.getlist('photos')
 
             if photos:
+                # Vérification préalable de la taille de chaque cliché (max 3 Mo)
+                for photo_file in photos:
+                    if photo_file.size > (3 * 1024 * 1024):
+                        size_mb = photo_file.size / (1024 * 1024)
+                        messages.error(request, f"Le cliché '{photo_file.name}' pèse {size_mb:.1f} Mo et dépasse la limite autorisée de 3 Mo. Aucun cliché n'a été ajouté.")
+                        return redirect('admin_gallery')
+
                 current_max_order = album.photos.count()
                 for i, photo_file in enumerate(photos):
                     GalleryPhoto.objects.create(
@@ -652,13 +706,25 @@ def admin_gallery(request):
 
             date_evenement_str = request.POST.get('date_evenement')
             if date_evenement_str:
-                try:
-                    album.date_evenement = timezone.datetime.strptime(date_evenement_str, '%Y-%m-%d').date()
-                except ValueError:
-                    pass
+                for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%Y/%m/%d', '%d-%m-%Y'):
+                    try:
+                        album.date_evenement = timezone.datetime.strptime(date_evenement_str.strip(), fmt).date()
+                        break
+                    except ValueError:
+                        pass
+
+            today = timezone.localdate()
+            if album.date_evenement and album.date_evenement > today:
+                messages.error(request, f"La date de l'événement ne peut pas être dans le futur (au maximum aujourd'hui : {today.strftime('%d/%m/%Y')}).")
+                return redirect('admin_gallery')
 
             if 'couverture' in request.FILES:
-                album.couverture = request.FILES['couverture']
+                couv = request.FILES['couverture']
+                if couv.size > (3 * 1024 * 1024):
+                    size_mb = couv.size / (1024 * 1024)
+                    messages.error(request, f"La photo de couverture dépasse la limite autorisée de 3 Mo ({size_mb:.1f} Mo).")
+                    return redirect('admin_gallery')
+                album.couverture = couv
 
             album.save()
             messages.success(request, f"Album '{album.titre}' mis à jour !")
@@ -693,14 +759,14 @@ def admin_photo_delete(request, pk):
     return redirect(request.META.get('HTTP_REFERER') or 'admin_gallery')
 
 
-MAX_PHOTO_SIZE = 2 * 1024 * 1024  # 2 Mo max par cliché
+MAX_PHOTO_SIZE = 3 * 1024 * 1024  # 3 Mo max par cliché
 
 
 @staff_required
 def admin_async_photo_upload(request, album_id):
     """
     Endpoint AJAX/Asynchrone pour le téléversement photo par photo d'un album.
-    Valide l'image, vérifie la limite de 2 Mo, applique la transposition EXIF (smartphones),
+    Valide l'image, vérifie la limite de 3 Mo, applique la transposition EXIF (smartphones),
     calcule l'ordre et retourne les détails JSON de la photo créée.
     """
     if request.method != 'POST':
@@ -712,12 +778,12 @@ def admin_async_photo_upload(request, album_id):
     if not photo_file:
         return JsonResponse({'success': False, 'error': "Aucun fichier image reçu."}, status=400)
 
-    # Vérification stricte de la taille maximale (2 Mo)
+    # Vérification stricte de la taille maximale (3 Mo)
     if photo_file.size > MAX_PHOTO_SIZE:
         size_mb = photo_file.size / (1024 * 1024)
         return JsonResponse({
             'success': False,
-            'error': f"Le cliché '{photo_file.name}' pèse {size_mb:.1f} Mo. La taille maximale autorisée est de 2 Mo par cliché."
+            'error': f"Le cliché '{photo_file.name}' pèse {size_mb:.1f} Mo. La taille maximale autorisée est de 3 Mo par cliché."
         }, status=400)
 
     # Validation image & orientation EXIF via Pillow
@@ -760,7 +826,7 @@ def admin_async_photo_upload(request, album_id):
         size_mb = photo_file.size / (1024 * 1024)
         return JsonResponse({
             'success': False,
-            'error': f"Le cliché '{photo_file.name}' dépasse la limite maximale autorisée de 2 Mo ({size_mb:.1f} Mo)."
+            'error': f"Le cliché '{photo_file.name}' dépasse la limite maximale autorisée de 3 Mo ({size_mb:.1f} Mo)."
         }, status=400)
 
     max_order = GalleryPhoto.objects.filter(album=album).aggregate(Max('ordre'))['ordre__max'] or 0

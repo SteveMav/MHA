@@ -1,13 +1,13 @@
 /**
  * Magic Hoops Academy - Asynchronous Photo Uploader
  * Téléversement photo par photo avec calcul du pourcentage global en temps réel,
- * prévisualisations, optimisation client-side, limite stricte de 2 Mo et suppression des timeouts.
+ * prévisualisations, optimisation client-side, limite stricte de 3 Mo et suppression des timeouts.
  */
 
 (function () {
     'use strict';
 
-    const MAX_ALLOWED_FILE_SIZE = 2 * 1024 * 1024; // Limite stricte : 2 Mo (2 097 152 octets)
+    const MAX_ALLOWED_FILE_SIZE = 3 * 1024 * 1024; // Limite stricte : 3 Mo (3 145 728 octets)
 
     function formatBytes(bytes, decimals = 1) {
         if (!bytes || bytes === 0) return '0 Octet';
@@ -20,10 +20,10 @@
 
     /**
      * Compression/redimensionnement d'image via Canvas côté navigateur.
-     * Réduit considérablement la taille des photos 48MP de smartphone (de ~12 Mo à ~800 Ko)
+     * Réduit considérablement la taille des photos 48MP de smartphone (de ~12 Mo à ~1 Mo)
      * tout en conservant une excellente résolution (jusqu'à 2560px).
      */
-    function compressImage(file, maxWidth = 2560, maxHeight = 2560, quality = 0.86) {
+    function compressImage(file, maxWidth = 2560, maxHeight = 2560, quality = 0.88) {
         return new Promise((resolve) => {
             if (!file.type.startsWith('image/') || file.type === 'image/gif' || file.type === 'image/svg+xml') {
                 return resolve(file);
@@ -36,7 +36,7 @@
                     let width = img.width;
                     let height = img.height;
 
-                    if (width <= maxWidth && height <= maxHeight && file.size < 1.2 * 1024 * 1024) {
+                    if (width <= maxWidth && height <= maxHeight && file.size < 1.5 * 1024 * 1024) {
                         return resolve(file);
                     }
 
@@ -83,41 +83,48 @@
     }
 
     /**
-     * Garantit que le fichier envoyé respecte la limite stricte de 2 Mo.
-     * Si shouldOptimize est activé, compresse et adapte la résolution pour passer sous les 2 Mo.
-     * Si l'optimisation est désactivée et que le fichier fait > 2 Mo, une exception explicite est levée.
+     * Garantit que le fichier respecte la limite de 3 Mo (3 145 728 octets).
+     * Si l'optimisation est demandée et que le fichier dépasse 2 Mo, il est automatiquement
+     * compressé côté client en Canvas pour conserver un rendu HD tout en garantissant un poids < 3 Mo.
      */
-    async function prepareImageUnder2MB(file, shouldOptimize = true) {
-        if (!shouldOptimize) {
+    async function prepareImageUnder3MB(file, optimize = true) {
+        if (!file.type.startsWith('image/')) {
             if (file.size > MAX_ALLOWED_FILE_SIZE) {
-                throw new Error(`La photo fait ${formatBytes(file.size)}, ce qui dépasse la limite maximale de 2 Mo. Veuillez activer l'optimisation web pour la compresser automatiquement.`);
+                throw new Error(`Le fichier '${file.name}' (${formatBytes(file.size)}) dépasse la limite de 3 Mo.`);
             }
             return file;
         }
 
-        // Si déjà très léger (< 600 Ko) et conforme
-        if (file.size <= MAX_ALLOWED_FILE_SIZE && file.size < 600 * 1024) {
+        if (!optimize) {
+            if (file.size > MAX_ALLOWED_FILE_SIZE) {
+                throw new Error(`La photo '${file.name}' (${formatBytes(file.size)}) dépasse 3 Mo et l'optimisation est désactivée.`);
+            }
             return file;
         }
 
-        let maxWidth = 2560;
-        let quality = 0.85;
-        let processed = await compressImage(file, maxWidth, maxWidth, quality);
-
-        // Réduction itérative si la photo dépasse toujours 2 Mo
-        let attempts = 0;
-        while (processed.size > MAX_ALLOWED_FILE_SIZE && attempts < 4) {
-            maxWidth = Math.round(maxWidth * 0.8);
-            quality = Math.max(0.55, quality - 0.12);
-            processed = await compressImage(file, maxWidth, maxWidth, quality);
-            attempts++;
+        // Si le fichier fait déjà 2 Mo ou moins, aucune compression nécessaire
+        if (file.size <= 2 * 1024 * 1024) {
+            return file;
         }
 
-        if (processed.size > MAX_ALLOWED_FILE_SIZE) {
-            throw new Error(`Le fichier (${formatBytes(processed.size)}) dépasse la limite maximale de 2 Mo même après optimisation.`);
+        // Palier 1 : 2560px max, 88% qualité
+        let optimized = await compressImage(file, 2560, 2560, 0.88);
+
+        // Si encore > 3 Mo, Palier 2 : 2048px max, 82% qualité
+        if (optimized.size > MAX_ALLOWED_FILE_SIZE) {
+            optimized = await compressImage(optimized, 2048, 2048, 0.82);
         }
 
-        return processed;
+        // Si encore > 3 Mo, Palier 3 : 1920px max, 75% qualité
+        if (optimized.size > MAX_ALLOWED_FILE_SIZE) {
+            optimized = await compressImage(optimized, 1920, 1920, 0.75);
+        }
+
+        if (optimized.size > MAX_ALLOWED_FILE_SIZE) {
+            throw new Error(`Même après optimisation, la photo '${file.name}' reste supérieure à 3 Mo (${formatBytes(optimized.size)}).`);
+        }
+
+        return optimized;
     }
 
     /**
@@ -215,18 +222,34 @@
                 return;
             }
 
+            const shouldOptimize = this.optimizeCheckbox ? this.optimizeCheckbox.checked : true;
+            const extremeFiles = [];
+
             validFiles.forEach(f => {
-                const previewUrl = URL.createObjectURL(f);
-                this.filesQueue.push({
-                    file: f,
-                    status: 'pending', // 'pending', 'optimizing', 'uploading', 'done', 'error'
-                    loadedBytes: 0,
-                    totalBytes: f.size,
-                    previewUrl: previewUrl,
-                    id: 'photo-' + Math.random().toString(36).substr(2, 9),
-                    errorMsg: ''
-                });
+                // Fichier disproportionné (> 50 Mo) ou non optimisable si switch décoché
+                if (f.size > 50 * 1024 * 1024) {
+                    extremeFiles.push(f);
+                } else if (!shouldOptimize && f.size > MAX_ALLOWED_FILE_SIZE) {
+                    extremeFiles.push(f);
+                } else {
+                    const previewUrl = URL.createObjectURL(f);
+                    this.filesQueue.push({
+                        file: f,
+                        status: 'pending', // 'pending', 'optimizing', 'uploading', 'done', 'error'
+                        loadedBytes: 0,
+                        totalBytes: f.size,
+                        previewUrl: previewUrl,
+                        id: 'photo-' + Math.random().toString(36).substr(2, 9),
+                        errorMsg: '',
+                        optimizedFile: null
+                    });
+                }
             });
+
+            if (extremeFiles.length > 0) {
+                const listStr = extremeFiles.map(f => `• ${f.name} (${formatBytes(f.size)})`).join('\n');
+                alert(`⚠️ ${extremeFiles.length} fichier(s) rejeté(s) car dépassant 50 Mo ou supérieurs à 3 Mo (avec optimisation désactivée) :\n\n${listStr}`);
+            }
 
             this.renderPreviewList();
             this.updateSummary();
@@ -277,18 +300,29 @@
 
             this.previewList.classList.remove('d-none');
             this.previewList.innerHTML = this.filesQueue.map(item => {
-                const isOver2MB = item.totalBytes > MAX_ALLOWED_FILE_SIZE;
+                const isOverLimit = item.totalBytes > MAX_ALLOWED_FILE_SIZE;
+                let badgeHtml = '';
+                if (item.status === 'done') {
+                    badgeHtml = '<span class="badge bg-success"><i class="bi bi-check me-1"></i>Téléversé</span>';
+                } else if (isOverLimit) {
+                    badgeHtml = shouldOptimize 
+                        ? '<span class="badge bg-info text-dark" title="Sera automatiquement compressé sous 3 Mo"><i class="bi bi-magic me-1"></i>Auto-compressé</span>' 
+                        : '<span class="badge bg-danger" title="Dépasse 3 Mo">> 3 Mo</span>';
+                } else {
+                    badgeHtml = '<span class="badge bg-light text-secondary border">&le; 3 Mo</span>';
+                }
+
                 return `
                 <div class="col-6 col-sm-4 col-md-3" id="item-${item.id}">
                     <div class="card h-100 border shadow-sm rounded-3 overflow-hidden position-relative">
                         <img src="${item.previewUrl}" alt="${item.file.name}" style="height: 90px; width: 100%; object-fit: cover;">
                         <div class="p-2 small">
                             <div class="text-truncate fw-semibold" style="font-size: 0.78rem;" title="${item.file.name}">${item.file.name}</div>
-                            <div class="d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                                <span class="${isOver2MB && !shouldOptimize ? 'text-danger fw-bold' : 'text-muted'}">${formatBytes(item.totalBytes)}</span>
-                                ${isOver2MB ? (shouldOptimize ? '<span class="badge bg-info text-dark" title="Sera réduit sous 2 Mo">Adapté</span>' : '<span class="badge bg-danger" title="Dépasse 2 Mo">> 2 Mo</span>') : ''}
+                            <div class="d-flex align-items-center justify-content-between my-1" style="font-size: 0.7rem;">
+                                <span class="${isOverLimit && !shouldOptimize ? 'text-danger fw-bold' : 'text-muted'}">${formatBytes(item.totalBytes)}</span>
+                                ${badgeHtml}
                             </div>
-                            <div class="status-indicator mt-1" style="font-size: 0.72rem;">
+                            <div class="status-indicator" style="font-size: 0.72rem;">
                                 ${this.renderStatusBadge(item)}
                             </div>
                         </div>
@@ -313,12 +347,15 @@
         renderStatusBadge(item) {
             switch (item.status) {
                 case 'optimizing':
-                    return '<span class="text-info"><i class="spinner-border spinner-border-sm me-1" style="width: 10px; height: 10px;"></i> Optimisation (< 2 Mo)...</span>';
+                    return '<span class="text-info"><i class="spinner-border spinner-border-sm me-1" style="width: 10px; height: 10px;"></i> Compression HD...</span>';
                 case 'uploading':
                     const pct = Math.round((item.loadedBytes / (item.totalBytes || 1)) * 100);
                     return `<span class="text-primary fw-bold"><i class="bi bi-arrow-repeat spin me-1"></i> ${pct}%</span>`;
                 case 'done':
-                    return '<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Téléversé</span>';
+                    const optNote = (item.optimizedFile && item.optimizedFile.size < item.file.size) 
+                        ? ` <small class="text-muted">(${formatBytes(item.optimizedFile.size)})</small>` 
+                        : '';
+                    return `<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Téléversé${optNote}</span>`;
                 case 'error':
                     return `<span class="text-danger fw-bold" title="${item.errorMsg || 'Erreur'}"><i class="bi bi-exclamation-circle-fill me-1"></i> ${item.errorMsg ? (item.errorMsg.length > 22 ? item.errorMsg.substring(0, 22) + '...' : item.errorMsg) : 'Échec'}</span>`;
                 default:
@@ -371,13 +408,19 @@
 
                 let fileToSend = item.file;
                 try {
-                    item.status = 'optimizing';
-                    this.updateItemStatus(item);
-                    fileToSend = await prepareImageUnder2MB(item.file, shouldOptimize);
+                    if (shouldOptimize && item.file.size > 2 * 1024 * 1024) {
+                        item.status = 'optimizing';
+                        this.updateItemStatus(item);
+                        if (this.progressStatus) {
+                            this.progressStatus.textContent = `Compression HD (${formatBytes(item.file.size)}) cliché ${i + 1}/${totalCount}...`;
+                        }
+                    }
+                    fileToSend = await prepareImageUnder3MB(item.file, shouldOptimize);
+                    item.optimizedFile = fileToSend;
                     item.totalBytes = fileToSend.size;
                 } catch (sizeErr) {
                     item.status = 'error';
-                    item.errorMsg = sizeErr.message || 'Fichier supérieur à 2 Mo';
+                    item.errorMsg = sizeErr.message || 'Fichier supérieur à 3 Mo';
                     this.updateItemStatus(item);
                     errorCount++;
                     continue;
@@ -421,7 +464,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <i class="bi bi-check-circle-fill me-2 fs-5"></i>
-                                <strong>Succès !</strong> ${successCount} photo(s) (toutes < 2 Mo) ajoutée(s) avec succès.
+                                <strong>Succès !</strong> ${successCount} photo(s) (toutes &le; 3 Mo) ajoutée(s) avec succès.
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-success" onclick="window.location.reload();">
                                 <i class="bi bi-arrow-clockwise me-1"></i> Actualiser
@@ -455,6 +498,9 @@
 
                 xhr.open('POST', this.uploadUrl, true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                if (this.csrfToken) {
+                    xhr.setRequestHeader('X-CSRFToken', this.csrfToken);
+                }
 
                 xhr.upload.onprogress = (e) => {
                     if (e.lengthComputable) {
@@ -541,18 +587,135 @@
         }
     }
 
+
+
+    function setupFileValidators() {
+        // Validation instantanée & optimisation pour les fichiers uniques (ex: couverture)
+        document.querySelectorAll('.check-3mb-file').forEach(input => {
+            input.addEventListener('change', async function () {
+                const feedback = this.parentElement.querySelector('.file-size-feedback') 
+                    || document.getElementById(this.id ? this.id.replace('Input', 'Feedback') : '');
+                const file = this.files && this.files[0];
+
+                if (!file) {
+                    this.classList.remove('is-invalid', 'is-valid');
+                    if (feedback) feedback.innerHTML = '';
+                    return;
+                }
+
+                if (file.size > 40 * 1024 * 1024) {
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                    this.value = '';
+                    if (feedback) {
+                        feedback.innerHTML = `<span class="text-danger fw-bold"><i class="bi bi-x-circle-fill me-1"></i> Fichier supérieur à 40 Mo.</span>`;
+                    }
+                    alert(`❌ Le fichier "${file.name}" dépasse 40 Mo.`);
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    this.classList.remove('is-invalid');
+                    if (feedback) {
+                        feedback.innerHTML = `<span class="text-info"><i class="spinner-border spinner-border-sm me-1"></i> Photo de ${formatBytes(file.size)} détectée. Optimisation automatique en cours...</span>`;
+                    }
+                    try {
+                        const optimized = await prepareImageUnder3MB(file, true);
+                        if (window.DataTransfer) {
+                            const dt = new DataTransfer();
+                            dt.items.add(optimized);
+                            this.files = dt.files;
+                        }
+                        this.classList.add('is-valid');
+                        if (feedback) {
+                            feedback.innerHTML = `<span class="text-success fw-semibold"><i class="bi bi-magic me-1"></i> "${file.name}" optimisé automatiquement : ${formatBytes(file.size)} ➔ ${formatBytes(optimized.size)} (HD &le; 3 Mo)</span>`;
+                        }
+                    } catch (err) {
+                        if (feedback) {
+                            feedback.innerHTML = `<span class="text-warning fw-semibold"><i class="bi bi-info-circle me-1"></i> Sera optimisé lors de l'envoi (&le; 3 Mo).</span>`;
+                        }
+                    }
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                    if (feedback) {
+                        feedback.innerHTML = `<span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> "${file.name}" (${formatBytes(file.size)}) : Conforme (&le; 3 Mo)</span>`;
+                    }
+                }
+            });
+        });
+
+        // Validation & information transparente pour les sélections multiples (photos d'album)
+        document.querySelectorAll('.check-3mb-multiple').forEach(input => {
+            input.addEventListener('change', function () {
+                const feedback = this.parentElement.querySelector('.file-size-feedback')
+                    || document.getElementById(this.id ? this.id.replace('Input', 'Feedback') : '');
+                const files = this.files ? Array.from(this.files) : [];
+
+                if (files.length === 0) {
+                    this.classList.remove('is-invalid', 'is-valid');
+                    if (feedback) feedback.innerHTML = '';
+                    return;
+                }
+
+                const heavyFiles = files.filter(f => f.size > MAX_ALLOWED_FILE_SIZE);
+                const totalBytes = files.reduce((acc, f) => acc + f.size, 0);
+
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+
+                if (heavyFiles.length > 0) {
+                    if (feedback) {
+                        feedback.innerHTML = `<span class="text-primary fw-semibold"><i class="bi bi-magic me-1"></i> ${files.length} photo(s) sélectionnée(s) (${formatBytes(totalBytes)}). ${heavyFiles.length} photo(s) lourdes seront automatiquement compressées sous 3 Mo en HD lors de l'envoi.</span>`;
+                    }
+                } else {
+                    if (feedback) {
+                        feedback.innerHTML = `<span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> ${files.length} photo(s) sélectionnée(s) (${formatBytes(totalBytes)} au total, toutes &le; 3 Mo).</span>`;
+                    }
+                }
+            });
+        });
+    }
+
     // Initialisation automatique sur tous les conteneurs d'upload de la page
     document.addEventListener('DOMContentLoaded', () => {
+        setupFileValidators();
+
         document.querySelectorAll('.async-photo-uploader').forEach(el => {
             new AsyncPhotoUploader(el);
         });
 
-        // Gestion de la création d'album avec multi-photos asynchrones et limite de 2 Mo
+        // Gestion de la création d'album avec multi-photos asynchrones et auto-compression sous 3 Mo
         const createAlbumForm = document.getElementById('createAlbumForm');
         if (createAlbumForm) {
             createAlbumForm.addEventListener('submit', async function (e) {
                 const photosInput = createAlbumForm.querySelector('input[name="photos"]');
                 const selectedFiles = photosInput && photosInput.files ? Array.from(photosInput.files) : [];
+                const couvertureInput = createAlbumForm.querySelector('input[name="couverture"]');
+                const dateInput = createAlbumForm.querySelector('input[name="date_evenement"]');
+
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const todayIso = `${year}-${month}-${day}`;
+
+                // 0. Vérification date pour tous les cas
+                if (dateInput && dateInput.value && dateInput.value > todayIso) {
+                    e.preventDefault();
+                    alert("La date de l'événement ne peut pas être dans le futur (au maximum aujourd'hui).");
+                    return;
+                }
+
+                // 1. Couverture : si > 2 Mo, tentative d'optimisation
+                if (couvertureInput && couvertureInput.files && couvertureInput.files.length > 0) {
+                    const covFile = couvertureInput.files[0];
+                    if (covFile.size > 40 * 1024 * 1024) {
+                        e.preventDefault();
+                        alert(`❌ La photo de couverture "${covFile.name}" dépasse 40 Mo.`);
+                        return;
+                    }
+                }
 
                 // Si pas de photos supplémentaires, on laisse le submit classique opérer
                 if (selectedFiles.length === 0) {
@@ -573,81 +736,102 @@
                 if (progressText) progressText.textContent = "Création de l'album...";
 
                 try {
-                    // 1. Vérifier et adapter la couverture si présente
-                    const couvertureInput = createAlbumForm.querySelector('input[name="couverture"]');
-                    if (couvertureInput && couvertureInput.files && couvertureInput.files.length > 0) {
-                        const covFile = couvertureInput.files[0];
-                        if (covFile.size > MAX_ALLOWED_FILE_SIZE) {
-                            try {
-                                const optCov = await prepareImageUnder2MB(covFile, true);
-                                const dt = new DataTransfer();
-                                dt.items.add(optCov);
-                                couvertureInput.files = dt.files;
-                            } catch (covErr) {
-                                throw new Error("L'image de couverture dépasse 2 Mo. Veuillez choisir une image plus légère.");
-                            }
-                        }
-                    }
-
-                    // 2. Créer l'album d'abord (sans les photos multiples)
+                    // Créer l'album d'abord (sans les photos multiples)
                     const formData = new FormData(createAlbumForm);
                     formData.delete('photos'); // Les photos seront envoyées asynchronement ensuite
                     formData.append('is_ajax', '1');
 
-                    const response = await fetch(createAlbumForm.action || window.location.href, {
+                    // Optimisation automatique de la couverture si > 2 Mo
+                    if (couvertureInput && couvertureInput.files && couvertureInput.files.length > 0) {
+                        const covFile = couvertureInput.files[0];
+                        if (covFile.size > 2 * 1024 * 1024) {
+                            if (progressText) progressText.textContent = "Optimisation de la photo de couverture...";
+                            try {
+                                const optCov = await prepareImageUnder3MB(covFile, true);
+                                formData.set('couverture', optCov);
+                            } catch (cErr) {
+                                console.warn("Optimisation couverture :", cErr);
+                            }
+                        }
+                    }
+
+                    let targetUrl = createAlbumForm.dataset.actionUrl || createAlbumForm.getAttribute('action') || '/gestion/galerie/';
+                    if (typeof targetUrl !== 'string' || targetUrl.includes('[object')) {
+                        targetUrl = '/gestion/galerie/';
+                    }
+                    if (!targetUrl.endsWith('/')) {
+                        targetUrl += '/';
+                    }
+
+                    const csrfToken = formData.get('csrfmiddlewaretoken') 
+                        || (document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '');
+
+                    const response = await fetch(targetUrl, {
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRFToken': csrfToken
                         }
                     });
 
-                    const res = await response.json();
-                    if (!res.success || !res.album_id) {
+                    let res;
+                    const responseText = await response.text();
+                    try {
+                        res = JSON.parse(responseText);
+                    } catch (parseErr) {
+                        console.error("Réponse reçue non-JSON du serveur:", responseText);
+                        throw new Error(`Le serveur a renvoyé une réponse inattendue (statut ${response.status}).`);
+                    }
+
+                    if (!response.ok || !res.success || !res.album_id) {
                         throw new Error(res.error || "Erreur lors de la création de l'album");
                     }
 
                     const albumId = res.album_id;
                     const uploadUrl = `/gestion/galerie/album/${albumId}/upload-async/`;
-                    const csrfToken = formData.get('csrfmiddlewaretoken');
 
-                    // 3. Téléversement asynchrone photo par photo
+                    // Téléversement asynchrone photo par photo avec compression intelligente sous 3 Mo
                     const total = selectedFiles.length;
-                    let loadedTotalBytes = 0;
-                    const totalBytes = selectedFiles.reduce((a, b) => a + b.size, 0);
 
                     for (let i = 0; i < total; i++) {
-                        const file = selectedFiles[i];
+                        const rawFile = selectedFiles[i];
+
                         if (progressText) {
-                            progressText.textContent = `Traitement du cliché ${i + 1}/${total} : ${file.name}`;
+                            progressText.textContent = `Optimisation du cliché ${i + 1}/${total} : ${rawFile.name} (${formatBytes(rawFile.size)})...`;
                         }
 
-                        // Optimisation et garantie <= 2 Mo
-                        let optimized = file;
+                        // Auto-compression en Canvas si > 2 Mo
+                        let fileToSend = rawFile;
                         try {
-                            optimized = await prepareImageUnder2MB(file, true);
-                        } catch (e) {
-                            console.warn("Fichier trop lourd non réductible :", e.message);
-                            continue;
+                            fileToSend = await prepareImageUnder3MB(rawFile, true);
+                        } catch (optErr) {
+                            console.warn("Optimisation échouée, essai direct :", optErr);
+                        }
+
+                        if (progressText) {
+                            const optLabel = fileToSend.size < rawFile.size ? ` (optimisé à ${formatBytes(fileToSend.size)})` : '';
+                            progressText.textContent = `Envoi du cliché ${i + 1}/${total} : ${rawFile.name}${optLabel}`;
                         }
 
                         await new Promise((resolve, reject) => {
                             const xhr = new XMLHttpRequest();
                             xhr.open('POST', uploadUrl, true);
                             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                            xhr.setRequestHeader('X-CSRFToken', csrfToken);
 
                             xhr.upload.onprogress = (ev) => {
                                 if (ev.lengthComputable) {
-                                    const currentOverall = loadedTotalBytes + ev.loaded;
-                                    const pct = Math.min(100, Math.round((currentOverall / totalBytes) * 100));
-                                    if (progressBar) progressBar.style.width = `${pct}%`;
-                                    if (progressPercent) progressPercent.textContent = `${pct}%`;
+                                    const filePct = ev.loaded / ev.total;
+                                    const overallPct = Math.min(99, Math.round(((i + filePct) / total) * 100));
+                                    if (progressBar) progressBar.style.width = `${overallPct}%`;
+                                    if (progressPercent) progressPercent.textContent = `${overallPct}%`;
                                 }
                             };
 
                             xhr.onload = () => {
                                 if (xhr.status >= 200 && xhr.status < 300) {
-                                    loadedTotalBytes += optimized.size;
                                     resolve();
                                 } else {
                                     try {
@@ -658,11 +842,11 @@
                                     }
                                 }
                             };
-                            xhr.onerror = () => reject(new Error('Erreur réseau'));
+                            xhr.onerror = () => reject(new Error('Erreur de connexion réseau'));
 
                             const photoData = new FormData();
                             photoData.append('csrfmiddlewaretoken', csrfToken);
-                            photoData.append('photo', optimized);
+                            photoData.append('photo', fileToSend);
                             xhr.send(photoData);
                         });
 
@@ -672,7 +856,7 @@
                     }
 
                     if (progressText) {
-                        progressText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Album et photos créés avec succès ! Redirection...</span>`;
+                        progressText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Album et ${total} photos optimisées créés avec succès ! Redirection...</span>`;
                     }
                     setTimeout(() => window.location.reload(), 1200);
 

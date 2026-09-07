@@ -60,6 +60,15 @@ class GalleryAlbum(models.Model):
     def __str__(self):
         return self.titre
 
+    def clean(self):
+        super().clean()
+        from django.utils import timezone
+        from django.core.exceptions import ValidationError
+        if self.date_evenement and self.date_evenement > timezone.localdate():
+            raise ValidationError({
+                'date_evenement': "La date de l'événement ne peut pas être dans le futur (au maximum aujourd'hui)."
+            })
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self._generate_unique_slug()

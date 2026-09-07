@@ -442,21 +442,41 @@ class AdminPortalTests(TestCase):
         data = resp.json()
         self.assertFalse(data['success'])
 
-    def test_admin_async_photo_upload_exceeds_2mb(self):
+    def test_admin_async_photo_upload_exceeds_3mb(self):
         from gallery.models import GalleryAlbum
         from django.core.files.uploadedfile import SimpleUploadedFile
         self.client.login(username='staff_coach', password='password123')
-        album = GalleryAlbum.objects.create(titre="Album Test Limit 2MB")
+        album = GalleryAlbum.objects.create(titre="Album Test Limit 3MB")
         url = reverse('admin_async_photo_upload', args=[album.id])
 
-        # Créer un fichier de 2.5 Mo
-        oversized_content = b'x' * (int(2.5 * 1024 * 1024))
+        # Créer un fichier de 3.5 Mo (dépasse 3 Mo)
+        oversized_content = b'x' * (int(3.5 * 1024 * 1024))
         oversized_file = SimpleUploadedFile("too_heavy.jpg", oversized_content, content_type="image/jpeg")
         resp = self.client.post(url, {'photo': oversized_file})
         self.assertEqual(resp.status_code, 400)
         data = resp.json()
         self.assertFalse(data['success'])
-        self.assertIn("2 Mo", data['error'])
+        self.assertIn("3 Mo", data['error'])
+
+    def test_admin_async_photo_upload_accepts_under_3mb(self):
+        from gallery.models import GalleryAlbum
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        import io
+        from PIL import Image
+        self.client.login(username='staff_coach', password='password123')
+        album = GalleryAlbum.objects.create(titre="Album Test Under 3MB")
+        url = reverse('admin_async_photo_upload', args=[album.id])
+
+        # Créer une image valide de ~2.2 Mo (bien sous 3 Mo mais > 2 Mo)
+        buf = io.BytesIO()
+        img = Image.new('RGB', (1800, 1800), color='green')
+        img.save(buf, format='JPEG', quality=95)
+        buf.seek(0)
+        valid_file = SimpleUploadedFile("valid_under_3mb.jpg", buf.read(), content_type="image/jpeg")
+        resp = self.client.post(url, {'photo': valid_file})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data['success'])
 
     def test_admin_gallery_create_album_ajax(self):
         from gallery.models import GalleryAlbum
@@ -474,6 +494,45 @@ class AdminPortalTests(TestCase):
         data = resp.json()
         self.assertTrue(data['success'])
         self.assertTrue(GalleryAlbum.objects.filter(titre='Album Ajax Tournoi').exists())
+
+    def test_admin_gallery_rejects_future_date(self):
+        from django.utils import timezone
+        self.client.login(username='staff_coach', password='password123')
+        future_date = (timezone.localdate() + timezone.timedelta(days=5)).strftime('%Y-%m-%d')
+        resp = self.client.post(
+            reverse('admin_gallery'),
+            {
+                'action': 'create_album',
+                'titre': 'Album Futur Rejeté',
+                'date_evenement': future_date,
+                'is_ajax': '1',
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(resp.status_code, 400)
+        data = resp.json()
+        self.assertFalse(data['success'])
+        self.assertIn("futur", data['error'].lower())
+
+    def test_admin_gallery_accepts_today_date(self):
+        from gallery.models import GalleryAlbum
+        from django.utils import timezone
+        self.client.login(username='staff_coach', password='password123')
+        today_date = timezone.localdate().strftime('%Y-%m-%d')
+        resp = self.client.post(
+            reverse('admin_gallery'),
+            {
+                'action': 'create_album',
+                'titre': 'Album Aujourdhui Valide',
+                'date_evenement': today_date,
+                'is_ajax': '1',
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data['success'])
+        self.assertTrue(GalleryAlbum.objects.filter(titre='Album Aujourdhui Valide').exists())
 
     def test_staff_profile_displays_exempt_and_no_subscription_payment(self):
         self.client.force_login(self.staff_user)

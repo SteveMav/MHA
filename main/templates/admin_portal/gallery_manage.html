@@ -116,7 +116,7 @@
                             <i class="bi bi-images fs-1 text-primary opacity-75 d-block mb-2"></i>
                             <h6 class="fw-bold mb-1">Glissez-déposez vos photos ici</h6>
                             <p class="small text-muted mb-2">ou cliquez pour parcourir les dossiers (sélection multiple supportée)</p>
-                            <span class="badge bg-light text-secondary border px-3 py-2"><i class="bi bi-info-circle me-1"></i> JPG, PNG, WEBP acceptés (Max 2 Mo / photo)</span>
+                            <span class="badge bg-light text-secondary border px-3 py-2"><i class="bi bi-info-circle me-1"></i> JPG, PNG, WEBP acceptés (Max 3 Mo / photo)</span>
                             <input type="file" name="photos" class="async-file-input d-none" multiple accept="image/*">
                         </div>
 
@@ -126,7 +126,7 @@
                                 <input class="form-check-input async-optimize-checkbox" type="checkbox" id="optimizeSwitch{{ album.id }}" checked>
                                 <label class="form-check-label small fw-semibold" for="optimizeSwitch{{ album.id }}">
                                     <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Optimisation web intelligente
-                                    <span class="text-muted fw-normal d-block" style="font-size: 0.75rem;">Garantit un poids &le; 2 Mo, accélère l'envoi de ~80% et prévient les timeouts réseau (conserve une haute définition)</span>
+                                    <span class="text-muted fw-normal d-block" style="font-size: 0.75rem;">Garantit un poids &le; 3 Mo, accélère l'envoi de ~80% et prévient les timeouts réseau (conserve une haute définition)</span>
                                 </label>
                             </div>
                             <span class="badge bg-primary rounded-pill px-3 py-2 async-summary-badge d-none">0 photo</span>
@@ -195,7 +195,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Date de l'événement</label>
-                                <input type="date" name="date_evenement" class="form-control" value="{{ album.date_evenement|date:'Y-m-d' }}">
+                                <input type="date" name="date_evenement" class="form-control" value="{{ album.date_evenement|date:'Y-m-d' }}" max="{% now 'Y-m-d' %}">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Lieu</label>
@@ -206,8 +206,9 @@
                                 <textarea name="description" class="form-control" rows="3">{{ album.description }}</textarea>
                             </div>
                             <div class="col-12">
-                                <label class="form-label small fw-bold">Image de couverture (remplacer)</label>
-                                <input type="file" name="couverture" class="form-control" accept="image/*">
+                                <label class="form-label small fw-bold">Image de couverture (remplacer, max 3 Mo)</label>
+                                <input type="file" name="couverture" class="form-control check-3mb-file" data-max-size="3145728" accept="image/*">
+                                <div class="file-size-feedback small mt-1"></div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check form-switch">
@@ -276,7 +277,7 @@
 <div class="modal fade" id="createAlbumModal" tabindex="-1" aria-labelledby="createAlbumModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content rounded-4 border-0 shadow-lg">
-            <form method="POST" enctype="multipart/form-data" id="createAlbumForm">
+            <form method="POST" action="{% url 'admin_gallery' %}" data-action-url="{% url 'admin_gallery' %}" enctype="multipart/form-data" id="createAlbumForm">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="create_album">
                 <div class="modal-header border-bottom">
@@ -300,7 +301,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Date de l'événement</label>
-                            <input type="date" name="date_evenement" class="form-control">
+                            <input type="date" name="date_evenement" class="form-control" max="{% now 'Y-m-d' %}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Lieu</label>
@@ -311,13 +312,15 @@
                             <textarea name="description" class="form-control" rows="3" placeholder="Racontez les temps forts, les victoires et l'ambiance..."></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Photo de couverture (max 2 Mo)</label>
-                            <input type="file" name="couverture" class="form-control" accept="image/*">
+                            <label class="form-label small fw-bold">Photo de couverture (max 3 Mo)</label>
+                            <input type="file" name="couverture" id="createCouvertureInput" class="form-control check-3mb-file" data-max-size="3145728" accept="image/*">
+                            <div id="createCouvertureFeedback" class="file-size-feedback small mt-1"></div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Téléversement initial (multi-photos, max 2 Mo)</label>
-                            <input type="file" name="photos" class="form-control" multiple accept="image/*">
-                            <div class="form-text small">Max 2 Mo par cliché. Envoi asynchrone sécurisé avec suivi en direct.</div>
+                            <label class="form-label small fw-bold">Téléversement initial (multi-photos, max 3 Mo)</label>
+                            <input type="file" name="photos" id="createPhotosInput" class="form-control check-3mb-multiple" data-max-size="3145728" multiple accept="image/*">
+                            <div id="createPhotosFeedback" class="file-size-feedback small mt-1"></div>
+                            <div class="form-text small"><i class="bi bi-magic me-1"></i>Max 3 Mo par cliché (les photos plus lourdes sont automatiquement optimisées en HD &le; 3 Mo).</div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch">
@@ -368,5 +371,5 @@
         100% { transform: rotate(360deg); }
     }
 </style>
-<script src="{% static 'js/gallery_upload.js' %}"></script>
+<script src="{% static 'js/gallery_upload.js' %}?v={% now 'YmdHis' %}"></script>
 {% endblock %}
