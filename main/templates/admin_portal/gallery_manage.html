@@ -116,7 +116,7 @@
                             <i class="bi bi-images fs-1 text-primary opacity-75 d-block mb-2"></i>
                             <h6 class="fw-bold mb-1">Glissez-déposez vos photos ici</h6>
                             <p class="small text-muted mb-2">ou cliquez pour parcourir les dossiers (sélection multiple supportée)</p>
-                            <span class="badge bg-light text-secondary border px-3 py-2">JPG, PNG, WEBP acceptés</span>
+                            <span class="badge bg-light text-secondary border px-3 py-2"><i class="bi bi-info-circle me-1"></i> JPG, PNG, WEBP acceptés (Max 2 Mo / photo)</span>
                             <input type="file" name="photos" class="async-file-input d-none" multiple accept="image/*">
                         </div>
 
@@ -126,7 +126,7 @@
                                 <input class="form-check-input async-optimize-checkbox" type="checkbox" id="optimizeSwitch{{ album.id }}" checked>
                                 <label class="form-check-label small fw-semibold" for="optimizeSwitch{{ album.id }}">
                                     <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Optimisation web intelligente
-                                    <span class="text-muted fw-normal d-block" style="font-size: 0.75rem;">Accélère l'envoi de ~80% et prévient les timeouts réseau (conserve une haute définition 2.5K)</span>
+                                    <span class="text-muted fw-normal d-block" style="font-size: 0.75rem;">Garantit un poids &le; 2 Mo, accélère l'envoi de ~80% et prévient les timeouts réseau (conserve une haute définition)</span>
                                 </label>
                             </div>
                             <span class="badge bg-primary rounded-pill px-3 py-2 async-summary-badge d-none">0 photo</span>
@@ -311,13 +311,13 @@
                             <textarea name="description" class="form-control" rows="3" placeholder="Racontez les temps forts, les victoires et l'ambiance..."></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Photo de couverture (principale)</label>
+                            <label class="form-label small fw-bold">Photo de couverture (max 2 Mo)</label>
                             <input type="file" name="couverture" class="form-control" accept="image/*">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Téléversement initial (multi-photos)</label>
+                            <label class="form-label small fw-bold">Téléversement initial (multi-photos, max 2 Mo)</label>
                             <input type="file" name="photos" class="form-control" multiple accept="image/*">
-                            <div class="form-text small">Vous pourrez en ajouter davantage après création. Envoi asynchrone sécurisé avec suivi en direct.</div>
+                            <div class="form-text small">Max 2 Mo par cliché. Envoi asynchrone sécurisé avec suivi en direct.</div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch">

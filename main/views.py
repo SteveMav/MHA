@@ -369,37 +369,49 @@ def inscription(request):
 
 def robots_txt(request):
     sitemap_url = absolute_url(request, '/sitemap.xml')
+    llms_url = absolute_url(request, '/llms.txt')
     content = f"""User-agent: *
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
+Disallow: /boutique/panier/
+Disallow: /boutique/commander/
 Allow: /static/
 Allow: /media/
 Allow: /
 
 User-agent: OAI-SearchBot
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
 Allow: /
 
 User-agent: ChatGPT-User
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
 Allow: /
 
 User-agent: GPTBot
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
 Allow: /
 
 User-agent: Googlebot
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
 Allow: /
 
 User-agent: Google-Extended
 Disallow: /admin/
+Disallow: /gestion/
 Disallow: /accounts/
 Allow: /
+
+# Directives IA / LLM
+# LLM-Context: {llms_url}
 
 Sitemap: {sitemap_url}
 """

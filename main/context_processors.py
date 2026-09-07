@@ -1,4 +1,4 @@
-﻿from django.conf import settings
+from django.conf import settings
 
 
 def seo_context(request):
@@ -8,4 +8,5 @@ def seo_context(request):
     """
     return {
         'google_site_verification': getattr(settings, 'GOOGLE_SITE_VERIFICATION', ''),
+        'google_analytics_id': getattr(settings, 'GOOGLE_ANALYTICS_ID', ''),
     }

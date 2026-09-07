@@ -693,12 +693,15 @@ def admin_photo_delete(request, pk):
     return redirect(request.META.get('HTTP_REFERER') or 'admin_gallery')
 
 
+MAX_PHOTO_SIZE = 2 * 1024 * 1024  # 2 Mo max par cliché
+
+
 @staff_required
 def admin_async_photo_upload(request, album_id):
     """
     Endpoint AJAX/Asynchrone pour le téléversement photo par photo d'un album.
-    Valide l'image, applique la transposition EXIF (smartphones), calcule l'ordre
-    et retourne les détails JSON de la photo créée.
+    Valide l'image, vérifie la limite de 2 Mo, applique la transposition EXIF (smartphones),
+    calcule l'ordre et retourne les détails JSON de la photo créée.
     """
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': "Méthode non autorisée. Requête POST attendue."}, status=405)
@@ -708,6 +711,14 @@ def admin_async_photo_upload(request, album_id):
 
     if not photo_file:
         return JsonResponse({'success': False, 'error': "Aucun fichier image reçu."}, status=400)
+
+    # Vérification stricte de la taille maximale (2 Mo)
+    if photo_file.size > MAX_PHOTO_SIZE:
+        size_mb = photo_file.size / (1024 * 1024)
+        return JsonResponse({
+            'success': False,
+            'error': f"Le cliché '{photo_file.name}' pèse {size_mb:.1f} Mo. La taille maximale autorisée est de 2 Mo par cliché."
+        }, status=400)
 
     # Validation image & orientation EXIF via Pillow
     try:
@@ -727,7 +738,7 @@ def admin_async_photo_upload(request, album_id):
                 save_fmt = img_format if img_format in ['JPEG', 'PNG', 'WEBP'] else 'JPEG'
                 if save_fmt == 'JPEG':
                     img = img.convert('RGB')
-                    img.save(buffer, format='JPEG', quality=95)
+                    img.save(buffer, format='JPEG', quality=90)
                 else:
                     img.save(buffer, format=save_fmt)
                 buffer.seek(0)
@@ -744,6 +755,13 @@ def admin_async_photo_upload(request, album_id):
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': f"Fichier image invalide ou non reconnu : {str(e)}"}, status=400)
+
+    if photo_file.size > MAX_PHOTO_SIZE:
+        size_mb = photo_file.size / (1024 * 1024)
+        return JsonResponse({
+            'success': False,
+            'error': f"Le cliché '{photo_file.name}' dépasse la limite maximale autorisée de 2 Mo ({size_mb:.1f} Mo)."
+        }, status=400)
 
     max_order = GalleryPhoto.objects.filter(album=album).aggregate(Max('ordre'))['ordre__max'] or 0
     next_order = max_order + 1

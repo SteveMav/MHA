@@ -87,7 +87,10 @@ class MainAppTests(TestCase):
         self.assertIn("filles et garcons", resp_llms.content.decode('utf-8'))
 
     def test_seo_and_geo_meta_tags(self):
-        with self.settings(GOOGLE_SITE_VERIFICATION="TEST_VERIFICATION_TOKEN_123"):
+        with self.settings(
+            GOOGLE_SITE_VERIFICATION="TEST_VERIFICATION_TOKEN_123",
+            GOOGLE_ANALYTICS_ID="G-TESTANALYTICS123",
+        ):
             response = self.client.get(reverse('index'))
             self.assertEqual(response.status_code, 200)
             content = response.content.decode('utf-8')
@@ -98,6 +101,8 @@ class MainAppTests(TestCase):
             self.assertIn('name="ICBM" content="-4.3162, 15.2952"', content)
             # Google site verification
             self.assertIn('name="google-site-verification" content="TEST_VERIFICATION_TOKEN_123"', content)
+            # Google Analytics
+            self.assertIn('gtag/js?id=G-TESTANALYTICS123', content)
             # Keywords and title
             self.assertIn('name="keywords"', content)
             self.assertIn("Filles &amp; Garçons", content)
@@ -436,6 +441,22 @@ class AdminPortalTests(TestCase):
         self.assertEqual(resp.status_code, 400)
         data = resp.json()
         self.assertFalse(data['success'])
+
+    def test_admin_async_photo_upload_exceeds_2mb(self):
+        from gallery.models import GalleryAlbum
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.client.login(username='staff_coach', password='password123')
+        album = GalleryAlbum.objects.create(titre="Album Test Limit 2MB")
+        url = reverse('admin_async_photo_upload', args=[album.id])
+
+        # Créer un fichier de 2.5 Mo
+        oversized_content = b'x' * (int(2.5 * 1024 * 1024))
+        oversized_file = SimpleUploadedFile("too_heavy.jpg", oversized_content, content_type="image/jpeg")
+        resp = self.client.post(url, {'photo': oversized_file})
+        self.assertEqual(resp.status_code, 400)
+        data = resp.json()
+        self.assertFalse(data['success'])
+        self.assertIn("2 Mo", data['error'])
 
     def test_admin_gallery_create_album_ajax(self):
         from gallery.models import GalleryAlbum

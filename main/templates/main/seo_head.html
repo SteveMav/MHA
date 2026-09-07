@@ -19,10 +19,22 @@
 <meta name="google-site-verification" content="{{ google_site_verification }}">
 {% endif %}
 
+<!-- Google Analytics 4 (Suivi du trafic, clics et visiteurs) -->
+{% if google_analytics_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ google_analytics_id }}');
+</script>
+{% endif %}
+
 {% if canonical_url %}
 <link rel="canonical" href="{{ canonical_url }}">
 {% endif %}
 <link rel="icon" href="{% static 'images/mha_logo.jpeg' %}">
+<link rel="alternate" type="text/markdown" href="{% url 'llms_txt' %}" title="Magic Hoops Academy AI Context">
 
 <!-- Open Graph / Réseaux Sociaux & Moteurs de Recherche -->
 <meta property="og:locale" content="fr_CD">
