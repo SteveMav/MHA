@@ -33,7 +33,9 @@
 {% if canonical_url %}
 <link rel="canonical" href="{{ canonical_url }}">
 {% endif %}
-<link rel="icon" href="{% static 'images/mha_logo.jpeg' %}">
+<link rel="icon" type="image/jpeg" href="{% static 'images/mha_logo.jpeg' %}">
+<link rel="shortcut icon" href="{% static 'images/mha_logo.jpeg' %}">
+<link rel="apple-touch-icon" href="{% static 'images/mha_logo.jpeg' %}">
 <link rel="alternate" type="text/markdown" href="{% url 'llms_txt' %}" title="Magic Hoops Academy AI Context">
 
 <!-- Open Graph / Réseaux Sociaux & Moteurs de Recherche -->
