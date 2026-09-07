@@ -8,6 +8,7 @@ from shop.models import Product
 
 
 class StaticViewSitemap(Sitemap):
+    protocol = 'https'
     changefreq = 'weekly'
     priority = 0.9
 
@@ -29,6 +30,7 @@ class StaticViewSitemap(Sitemap):
 
 
 class AnnouncementSitemap(Sitemap):
+    protocol = 'https'
     changefreq = 'daily'
     priority = 0.8
 
@@ -43,6 +45,7 @@ class AnnouncementSitemap(Sitemap):
 
 
 class GallerySitemap(Sitemap):
+    protocol = 'https'
     changefreq = 'weekly'
     priority = 0.7
 
@@ -57,6 +60,7 @@ class GallerySitemap(Sitemap):
 
 
 class ShopSitemap(Sitemap):
+    protocol = 'https'
     changefreq = 'daily'
     priority = 0.8
 

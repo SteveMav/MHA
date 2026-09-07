@@ -12,6 +12,12 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
 
+    # Prévisualisation des pages d'erreur
+    path('erreur/404/', views.preview_404, name='preview_404'),
+    path('erreur/500/', views.preview_500, name='preview_500'),
+    path('erreur/403/', views.preview_403, name='preview_403'),
+    path('erreur/400/', views.preview_400, name='preview_400'),
+
     # Espace Administration (/gestion/)
     path('gestion/', admin_portal_views.admin_dashboard, name='admin_dashboard'),
     path('gestion/utilisateurs/', admin_portal_views.admin_users_list, name='admin_users_list'),
@@ -22,6 +28,7 @@ urlpatterns = [
     path('gestion/contenu/', admin_portal_views.admin_site_content, name='admin_site_content'),
     path('gestion/contenu/pilier/<int:pk>/supprimer/', admin_portal_views.admin_pillar_delete, name='admin_pillar_delete'),
     path('gestion/galerie/', admin_portal_views.admin_gallery, name='admin_gallery'),
+    path('gestion/galerie/album/<int:album_id>/upload-async/', admin_portal_views.admin_async_photo_upload, name='admin_async_photo_upload'),
     path('gestion/galerie/album/<int:pk>/supprimer/', admin_portal_views.admin_album_delete, name='admin_album_delete'),
     path('gestion/galerie/photo/<int:pk>/supprimer/', admin_portal_views.admin_photo_delete, name='admin_photo_delete'),
     path('gestion/annonces/', admin_portal_views.admin_announcements, name='admin_announcements'),

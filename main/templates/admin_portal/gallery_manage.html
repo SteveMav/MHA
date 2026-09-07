@@ -89,26 +89,77 @@
 
     <!-- Modal Upload Photos Lot pour l'album -->
     <div class="modal fade" id="uploadPhotosModal{{ album.id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow async-photo-uploader" data-album-id="{{ album.id }}" data-upload-url="{% url 'admin_async_photo_upload' album.id %}">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="upload_photos">
                     <input type="hidden" name="album_id" value="{{ album.id }}">
                     <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold">Ajouter des photos à "{{ album.titre }}"</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-cloud-arrow-up-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-bold mb-0">Ajouter des photos</h5>
+                                <small class="text-muted">Album : "{{ album.titre }}"</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close async-close-btn" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Sélectionner plusieurs photos</label>
-                            <input type="file" name="photos" class="form-control" multiple accept="image/*" required>
-                            <div class="form-text small">Vous pouvez sélectionner plusieurs fichiers en même temps (Ctrl + clic).</div>
+                        <!-- Alertes succès / info -->
+                        <div class="alert alert-success d-none async-success-alert rounded-3 mb-3" role="alert"></div>
+
+                        <!-- Zone de glisser-déposer / sélection -->
+                        <div class="async-dropzone border border-2 border-dashed rounded-4 p-4 text-center mb-3 bg-white" style="cursor: pointer; transition: all 0.2s ease;">
+                            <i class="bi bi-images fs-1 text-primary opacity-75 d-block mb-2"></i>
+                            <h6 class="fw-bold mb-1">Glissez-déposez vos photos ici</h6>
+                            <p class="small text-muted mb-2">ou cliquez pour parcourir les dossiers (sélection multiple supportée)</p>
+                            <span class="badge bg-light text-secondary border px-3 py-2">JPG, PNG, WEBP acceptés</span>
+                            <input type="file" name="photos" class="async-file-input d-none" multiple accept="image/*">
                         </div>
+
+                        <!-- Options de téléversement -->
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 bg-light p-3 rounded-3 border">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input async-optimize-checkbox" type="checkbox" id="optimizeSwitch{{ album.id }}" checked>
+                                <label class="form-check-label small fw-semibold" for="optimizeSwitch{{ album.id }}">
+                                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Optimisation web intelligente
+                                    <span class="text-muted fw-normal d-block" style="font-size: 0.75rem;">Accélère l'envoi de ~80% et prévient les timeouts réseau (conserve une haute définition 2.5K)</span>
+                                </label>
+                            </div>
+                            <span class="badge bg-primary rounded-pill px-3 py-2 async-summary-badge d-none">0 photo</span>
+                        </div>
+
+                        <!-- Conteneur de progression en temps réel (0-100%) -->
+                        <div class="async-progress-container d-none mb-3 p-3 bg-light rounded-4 border">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small fw-bold async-progress-status text-primary">Préparation du téléversement...</span>
+                                <span class="badge bg-primary fs-6 px-3 py-1 rounded-pill async-progress-percent">0%</span>
+                            </div>
+                            <div class="progress rounded-pill shadow-sm" style="height: 18px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary async-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                                <span class="async-progress-bytes">0 Mo / 0 Mo</span>
+                                <span><i class="bi bi-shield-check text-success me-1"></i> Sauvegarde en continu</span>
+                            </div>
+                        </div>
+
+                        <!-- Prévisualisation des vignettes sélectionnées -->
+                        <div class="row g-2 async-preview-list d-none" style="max-height: 240px; overflow-y: auto;"></div>
                     </div>
-                    <div class="modal-footer border-top">
-                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-mha-primary rounded-pill px-4">Téléverser les clichés</button>
+                    <div class="modal-footer border-top d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4 async-close-btn" data-bs-dismiss="modal">Fermer</button>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-danger rounded-pill px-3 async-cancel-btn d-none">
+                                <i class="bi bi-x-circle me-1"></i> Annuler
+                            </button>
+                            <button type="button" class="btn btn-mha-primary rounded-pill px-4 async-start-btn" disabled>
+                                <i class="bi bi-cloud-arrow-up-fill me-1"></i> Téléverser les clichés
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -225,7 +276,7 @@
 <div class="modal fade" id="createAlbumModal" tabindex="-1" aria-labelledby="createAlbumModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content rounded-4 border-0 shadow-lg">
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" id="createAlbumForm">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="create_album">
                 <div class="modal-header border-bottom">
@@ -266,7 +317,7 @@
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Téléversement initial (multi-photos)</label>
                             <input type="file" name="photos" class="form-control" multiple accept="image/*">
-                            <div class="form-text small">Vous pourrez en ajouter davantage après création.</div>
+                            <div class="form-text small">Vous pourrez en ajouter davantage après création. Envoi asynchrone sécurisé avec suivi en direct.</div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch">
@@ -281,6 +332,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Barre de progression pour la création d'album avec multi-photos -->
+                    <div id="createAlbumProgressBox" class="d-none mt-3 p-3 bg-light rounded-4 border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span id="createAlbumProgressText" class="small fw-bold text-primary">Initialisation du téléversement...</span>
+                            <span id="createAlbumProgressPercent" class="badge bg-primary fs-6 px-3 py-1 rounded-pill">0%</span>
+                        </div>
+                        <div class="progress rounded-pill shadow-sm" style="height: 18px;">
+                            <div id="createAlbumProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer border-top">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Annuler</button>
@@ -290,4 +352,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    .async-dropzone:hover {
+        border-color: var(--mha-orange) !important;
+        background-color: rgba(255, 94, 20, 0.04) !important;
+    }
+    .spin {
+        animation: mha-spin 1s linear infinite;
+        display: inline-block;
+    }
+    @keyframes mha-spin {
+        100% { transform: rotate(360deg); }
+    }
+</style>
+<script src="{% static 'js/gallery_upload.js' %}"></script>
 {% endblock %}

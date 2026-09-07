@@ -37,9 +37,11 @@
 
         <!-- Statut d'abonnement actuel -->
         <div class="d-flex flex-column align-items-md-end">
-            <span class="text-muted small mb-1">Statut Abonnement</span>
+            <span class="text-muted small mb-1">Statut du Compte</span>
             <span class="badge {{ sub_status.badge_class }} fs-6 py-2 px-3 shadow-sm">
-                {% if sub_status.code == 'paye' %}
+                {% if member.is_staff or sub_status.code == 'staff' %}
+                    <i class="bi bi-shield-fill-check text-warning me-1"></i> Staff / Exempté d'abonnement
+                {% elif sub_status.code == 'paye' %}
                     <i class="bi bi-check-circle-fill me-1"></i> Payé (Actif jusqu'au {{ sub_status.active_sub.date_fin|date:"d/m/Y" }})
                 {% elif sub_status.code == 'en_attente' %}
                     <i class="bi bi-hourglass-split me-1"></i> Paiement en attente
@@ -87,6 +89,7 @@
                     <dt class="col-5 text-muted small">Adresse / Commune</dt>
                     <dd class="col-7">{{ profile.adresse|default:"Non renseignée" }}</dd>
 
+                    {% if not member.is_staff %}
                     <dt class="col-5 text-muted small">École fréquentée</dt>
                     <dd class="col-7">{{ profile.ecole_frequente|default:"Non renseignée" }}</dd>
 
@@ -103,11 +106,13 @@
                             <span class="text-muted">Non renseigné</span>
                         {% endif %}
                     </dd>
+                    {% endif %}
                 </dl>
             </div>
         </div>
 
-        <!-- Fiche Sportive & Mensurations -->
+        {% if not member.is_staff %}
+        <!-- Fiche Sportive & Mensurations (Joueurs) -->
         <div class="admin-card">
             <div class="p-3 border-bottom bg-light rounded-top-4">
                 <h2 class="h5 fw-bold mb-0"><i class="bi bi-dribbble text-primary me-2"></i>Profil Sportif & Athlétique</h2>
@@ -138,12 +143,63 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <!-- Encart Rôle Staff & Responsabilités -->
+        <div class="admin-card">
+            <div class="p-3 border-bottom bg-light rounded-top-4">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-person-badge text-primary me-2"></i>Fonction & Encadrement MHA</h2>
+            </div>
+            <div class="p-3">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3">
+                        <i class="bi bi-shield-lock-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <strong class="d-block text-dark">
+                            {% if member.is_superuser %}Administrateur Général{% else %}Membre du Staff / Coach{% endif %}
+                        </strong>
+                        <span class="small text-muted">Compte d'encadrement actif avec privilèges d'administration.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Colonne Droite : Formulaire d'Enregistrement / Renouvellement & Historique -->
     <div class="col-lg-7">
         
-        <!-- Formulaire d'Enregistrement Rapide d'Abonnement -->
+        {% if member.is_staff %}
+        <!-- Carte Spécifique Rôle Staff / Administrateur -->
+        <div class="admin-card mb-4" style="border-top: 4px solid var(--mha-navy);">
+            <div class="p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0 text-dark">
+                    <i class="bi bi-shield-lock-fill text-primary me-2"></i>Statut & Privilèges Staff
+                </h2>
+                <span class="badge bg-danger">Staff MHA</span>
+            </div>
+            <div class="p-4">
+                <div class="alert alert-info border-0 d-flex align-items-start mb-3">
+                    <i class="bi bi-info-circle-fill fs-3 text-primary me-3 flex-shrink-0 mt-1"></i>
+                    <div>
+                        <strong class="d-block mb-1">Membre de l'équipe d'encadrement / administration</strong>
+                        <span class="small text-muted">
+                            Ce compte dispose d'accès de gestion et d'encadrement au sein de Magic Hoops Academy. Il est <strong>exempté de cotisation joueur</strong> et ne requiert aucun abonnement mensuel.
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 pt-2">
+                    <a href="/admin/auth/user/{{ member.id }}/change/" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
+                        <i class="bi bi-gear me-1"></i> Permissions Django Admin
+                    </a>
+                    <a href="{% url 'admin_users_list' %}?role=staff" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        <i class="bi bi-people me-1"></i> Liste de l'équipe Staff
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Formulaire d'Enregistrement Rapide d'Abonnement (Membres assujettis uniquement) -->
         <div class="admin-card mb-4" style="border-top: 4px solid var(--mha-orange);">
             <div class="p-3 border-bottom bg-white d-flex justify-content-between align-items-center">
                 <h2 class="h5 fw-bold mb-0 text-dark">
@@ -224,6 +280,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
 
         <!-- Historique des Abonnements du Membre -->
         <div class="admin-card">
@@ -307,7 +364,13 @@
                         {% empty %}
                         <tr>
                             <td colspan="5" class="text-center py-4 text-muted">
+                                {% if member.is_staff %}
+                                <i class="bi bi-shield-check fs-2 d-block mb-2 text-primary opacity-50"></i>
+                                <span class="fw-semibold">Compte exempté d'abonnement</span>
+                                <div class="small text-muted">Les membres du personnel et encadrants ne souscrivent pas d'abonnements joueurs.</div>
+                                {% else %}
                                 Aucun abonnement enregistré pour ce membre.
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

@@ -110,20 +110,28 @@ REGISTRATION_STEPS = [
 
 FAQS = [
     {
-        "question": "Où se trouve Magic Hoops Academy à Kinshasa ?",
-        "answer": "Magic Hoops Academy s'entraîne à la Gombe, à Kinshasa, à l'adresse De la science numéro 5.",
+        "question": "Comment inscrire son enfant (fille ou garçon) à l'académie de basket à Kinshasa ?",
+        "answer": "L'inscription à Magic Hoops Academy se fait facilement en ligne via notre formulaire d'inscription ou directement sur notre terrain à la Gombe. Les parents choisissent la tranche d'âge de leur enfant (Mini, Junior ou Elite) pour préparer sa première séance d'évaluation.",
     },
     {
-        "question": "Quels âges peuvent rejoindre l'académie ?",
-        "answer": "L'académie accueille les jeunes basketteurs avec des programmes U10 à U13, U14 à U17 et U18 et plus.",
+        "question": "L'académie accueille-t-elle aussi bien les filles que les garçons ?",
+        "answer": "Absolument. Magic Hoops Academy promeut activement le basketball féminin et masculin en RDC. Nos programmes sont parfaitement adaptés aux filles et garçons de 8 à 18+ ans, avec un encadrement bienveillant, sécurisé et exigeant.",
     },
     {
-        "question": "Que travaille-t-on pendant les entraînements ?",
-        "answer": "Les séances couvrent les fondamentaux du basketball, la coordination, la technique individuelle, le jeu collectif, la discipline et la préparation physique selon le niveau.",
+        "question": "À partir de quel âge les enfants peuvent-ils débuter le basketball ?",
+        "answer": "Les enfants peuvent débuter dès l'âge de 8 ans dans le programme Mini Hoops (U10 à U13). Les séances sont axées sur la motricité, la coordination, les règles fondamentales et le plaisir de jouer en équipe.",
     },
     {
-        "question": "Comment suivre les nouvelles sessions de basket ?",
-        "answer": "Les nouvelles sessions, parcours et événements sont publiés dans la rubrique Actualités du site.",
+        "question": "Où se trouve le terrain d'entraînement de basketball à Kinshasa ?",
+        "answer": "Magic Hoops Academy s'entraîne au cœur de Kinshasa, dans la commune de la Gombe, à l'adresse Avenue de la Science numéro 5. Le terrain est sécurisé et facilement accessible pour les familles.",
+    },
+    {
+        "question": "Faut-il déjà avoir un bon niveau pour rejoindre Magic Hoops Academy ?",
+        "answer": "Non, tous les niveaux sont les bienvenus. Nos coachs évaluent chaque jeune pour l'intégrer dans le groupe adéquat : initiation pour les débutants complets, perfectionnement pour les joueurs réguliers, et filière performance pour l'élite compétitive.",
+    },
+    {
+        "question": "Quels sont les jours et horaires des entraînements de basket ?",
+        "answer": "Les séances régulières se déroulent chaque semaine, notamment le mercredi après-midi et le samedi matin selon les catégories d'âge. Le calendrier détaillé des sessions est mis à jour dans la rubrique Horaires et Actualités.",
     },
 ]
 
@@ -246,10 +254,10 @@ def index(request):
         'academy_info': academy_info,
         'staff_members': STAFF_MEMBERS,
         'faqs': FAQS,
-        'seo_title': "Magic Hoops Academy Kinshasa | Académie de basket pour jeunes à Gombe",
+        'seo_title': "Magic Hoops Academy | Académie de Basket à Kinshasa (RDC) • Filles & Garçons",
         'seo_description': (
-            "Académie de basketball à Kinshasa pour jeunes U10 à U18+: entraînements à la Gombe, "
-            "programmes Mini, Junior et Elite Hoops, discipline et formation humaine."
+            "Académie de basketball de référence à Kinshasa (Gombe) pour enfants, filles et garçons "
+            "de 8 à 18+ ans. Entraînements techniques, discipline, stages et formation humaine en RDC."
         ),
         'canonical_url': canonical_url,
         'og_type': 'website',
@@ -402,35 +410,102 @@ def llms_txt(request):
     base_url = absolute_url(request, '/')
     content = f"""# {ACADEMY_NAME}
 
-Magic Hoops Academy Kinshasa est une academie de basketball jeunesse situee a la Gombe, Kinshasa. Sa mission est de former des jeunes basketteurs avec discipline, respect, travail, cohesion et ambition.
+Magic Hoops Academy (MHA) est l'academie de basketball de reference a Kinshasa, en Republique Democratique du Congo (RDC).
+Situee dans la commune de la Gombe (Avenue de la Science n°5), elle forme les enfants et les jeunes (filles et garcons de 8 a 18+ ans) aux fondamentaux du basketball, a la motricite athletique et aux valeurs cardinales : travail, respect, solidarite et perseverance.
 
-## Informations cles
+## Informations cles & Entite
 
-- Nom: {ACADEMY_NAME}
-- Slogan: La ou le talent rencontre la discipline
-- Fondateur: Bruno Lobaya Nkoy, alias Magic
-- Sport: Basketball
-- Public: jeunes basketteurs U10, U14, U18 et plus
-- Adresse: {ACADEMY_ADDRESS}
-- Email: {ACADEMY_EMAIL}
-- Ville: Kinshasa, Republique democratique du Congo
+- Nom officiel : {ACADEMY_NAME}
+- Diminutif / Sigle : MHA Kinshasa
+- Sport : Basketball
+- Localisation : Avenue de la Science n°5, Commune de la Gombe, Kinshasa, RDC (Republique Democratique du Congo)
+- Fondateur & Directeur Technique : Bruno Lobaya Nkoy (alias Coach Magic)
+- Public cible : Enfants, adolescents, filles et garcons dès 8 ans jusqu'a 18+ ans (debutants, intermediaires et competiteurs)
+- Contact telephonique / WhatsApp : +243 900 824 429
+- Email officiel : {ACADEMY_EMAIL}
+- Site officiel : {base_url}
 
-## Pages importantes
+## Programmes de Formation Basket
 
-- Accueil: {base_url}
-- Programmes: {base_url}#programmes
-- Methode MHA: {base_url}#methode
-- Coach et staff: {base_url}#coach
-- Galerie photos et événements: {absolute_url(request, '/galerie/')}
-- Boutique officielle et accessoires: {absolute_url(request, '/boutique/')}
-- Inscription: {absolute_url(request, '/inscription/')}
-- Actualites et sessions: {absolute_url(request, '/news/')}
-- Sitemap XML: {absolute_url(request, '/sitemap.xml')}
+1. **Mini Hoops (U10 a U13 - Filles et Garcons de 8 a 12 ans)** :
+   - Objectif : Initiation joyeuse et securisee, motricite globale, decouverte des regles, premiers dribbles, passes et tirs.
+   - Ideal pour : Les parents cherchant une academie ou une ecole de basket pour leur jeune enfant a Kinshasa.
 
-## Description
+2. **Junior Hoops (U14 a U17 - Filles et Garcons de 13 a 16 ans)** :
+   - Objectif : Perfectionnement technique individuel, tactique collective, defense, vision du jeu et esprit de groupe.
+   - Ideal pour : Les adolescents souhaitant progresser rapidement et disputer des matchs organises.
 
-{ACADEMY_DESCRIPTION}
+3. **Elite Hoops (U18 et plus)** :
+   - Objectif : Haute intensite physique, preparation athletique, discipline tactique et orientation vers le basketball competitif.
 
-L'académie organise des événements sportifs majeurs dont les clichés sont exposés dans la Galerie. La Boutique officielle permet de commander les tenues de match, t-shirts, ballons et accessoires avec retrait direct au terrain ou livraison à Kinshasa. Les annonces publiées dans la rubrique Actualités concernent les sessions de basket, les parcours de formation et les informations pour les familles.
+## Questions Frequentes des Parents (FAQ)
+
+- **Comment inscrire mon enfant ou ma fille au basket a Kinshasa ?**  
+  Les inscriptions se font directement sur le site web ({absolute_url(request, '/inscription/')}) ou sur le terrain d'entrainement a la Gombe.
+- **Les filles sont-elles acceptees ?**  
+  Oui, l'academie encourage activement la pratique feminine et accueille avec enthousiasme les filles et les garcons.
+- **Où se deroulent les cours et entrainements ?**  
+  Sur le terrain officiel de Magic Hoops Academy, Avenue de la Science n°5, Gombe, Kinshasa.
+- **Quels sont les jours d'entrainement ?**  
+  Entrainements reguliers les mercredis apres-midi et samedis matin.
+- **Existe-t-il une boutique pour les tenues de basket ?**  
+  Oui, la boutique officielle MHA ({absolute_url(request, '/boutique/')}) propose maillots, t-shirts, ballons officiels et equipements avec retrait direct au terrain ou livraison a Kinshasa.
+
+## Pages et URLs de Reference
+
+- Accueil & Presentation : {base_url}
+- Programmes de basket : {base_url}#programmes
+- Methode MHA : {base_url}#methode
+- Coach et staff : {base_url}#coach
+- Inscription jeune basketteur : {absolute_url(request, '/inscription/')}
+- Galerie photos et evenements sportifs : {absolute_url(request, '/galerie/')}
+- Boutique officielle d'equipements : {absolute_url(request, '/boutique/')}
+- Actualites & Sessions : {absolute_url(request, '/news/')}
+- Plan du site XML : {absolute_url(request, '/sitemap.xml')}
 """
     return HttpResponse(content, content_type='text/plain; charset=utf-8')
+
+
+# ==============================================================================
+# Gestionnaires & Prévisualisations des Pages d'Erreur (404, 500, 403, 400)
+# ==============================================================================
+
+def custom_404(request, exception=None):
+    """Gestionnaire personnalisé pour l'erreur 404 (Balle hors-limites / Page non trouvée)."""
+    return render(request, '404.html', status=404)
+
+
+def custom_403(request, exception=None):
+    """Gestionnaire personnalisé pour l'erreur 403 (Faute technique / Zone restreinte)."""
+    return render(request, '403.html', status=403)
+
+
+def custom_500(request):
+    """Gestionnaire personnalisé pour l'erreur 500 (Temps-mort technique serveur)."""
+    return render(request, '500.html', status=500)
+
+
+def custom_400(request, exception=None):
+    """Gestionnaire personnalisé pour l'erreur 400 (Violation de règle / Requête invalide)."""
+    return render(request, '400.html', status=400)
+
+
+def preview_404(request):
+    """Route de test pour prévisualiser la page 404."""
+    return render(request, '404.html')
+
+
+def preview_403(request):
+    """Route de test pour prévisualiser la page 403."""
+    return render(request, '403.html')
+
+
+def preview_500(request):
+    """Route de test pour prévisualiser la page 500."""
+    return render(request, '500.html')
+
+
+def preview_400(request):
+    """Route de test pour prévisualiser la page 400."""
+    return render(request, '400.html')
+

@@ -45,14 +45,15 @@ def profile_view(request):
     # Accounts created through createsuperuser/admin may have no member profile.
     profile, _ = Profile.objects.get_or_create(user=user)
     
-    # Get current active or last subscription
-    current_subscription = user.abonnements.order_by('-date_fin').first()
+    # Get current active or last subscription (for non-staff members)
+    is_staff_member = user.is_staff or user.is_superuser
+    current_subscription = None if is_staff_member else user.abonnements.order_by('-date_fin').first()
     
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             u_form = UserUpdateForm(request.POST, instance=user)
             p_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
-            a_form = AbonnementForm() # Empty form if just updating profile
+            a_form = None if is_staff_member else AbonnementForm()
             
             if u_form.is_valid() and p_form.is_valid():
                 u_form.save()
@@ -60,6 +61,9 @@ def profile_view(request):
                 return redirect('profile')
                 
         elif 'pay_subscription' in request.POST:
+            if is_staff_member:
+                # Les membres du staff et administrateurs n'ont pas d'abonnement
+                return redirect('profile')
             u_form = UserUpdateForm(instance=user)
             p_form = ProfileUpdateForm(instance=profile)
             a_form = AbonnementForm(request.POST)
@@ -79,12 +83,13 @@ def profile_view(request):
     else:
         u_form = UserUpdateForm(instance=user)
         p_form = ProfileUpdateForm(instance=profile)
-        a_form = AbonnementForm()
+        a_form = None if is_staff_member else AbonnementForm()
 
     context = {
         'u_form': u_form,
         'p_form': p_form,
         'a_form': a_form,
-        'subscription': current_subscription
+        'subscription': current_subscription,
+        'is_staff_member': is_staff_member,
     }
     return render(request, 'accounts/profile.html', context)

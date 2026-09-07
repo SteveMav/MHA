@@ -1,0 +1,153 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block title %}Accès restreint (403) | Magic Hoops Academy Kinshasa{% endblock %}
+
+{% block content %}
+<main class="error-page-wrapper" role="main">
+    <div class="error-court-lines" aria-hidden="true"></div>
+
+    <div class="container position-relative z-1 text-center">
+        <div class="error-card">
+            <!-- Illustration Basketball SVG Animée : Sifflet d'Arbitre & Cadenas de Zone Restreinte -->
+            <div class="error-illustration-box" aria-hidden="true">
+                <svg viewBox="0 0 160 160" width="140" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ombre au sol -->
+                    <ellipse cx="80" cy="142" rx="30" ry="7" fill="rgba(12, 24, 41, 0.12)" />
+                    
+                    <!-- Bouclier de protection en arrière-plan -->
+                    <path d="M80 16 L124 36 V76 C124 108 80 126 80 126 C80 126 36 108 36 76 V36 L80 16 Z" fill="#0C1829" opacity="0.06" />
+                    <path d="M80 22 L118 39 V74 C118 102 80 118 80 118 C80 118 42 102 42 74 V39 L80 22 Z" stroke="#FF5E14" stroke-width="2" stroke-dasharray="4 3" opacity="0.4" />
+
+                    <!-- Sifflet d'arbitre suspendu qui oscille -->
+                    <g class="anim-whistle-sway">
+                        <!-- Cordon orange du sifflet -->
+                        <path d="M80 10 C75 25, 78 40, 80 52" stroke="#FF5E14" stroke-width="3" stroke-linecap="round" fill="none" />
+                        <circle cx="80" cy="12" r="3.5" fill="#FF5E14" />
+                        <circle cx="80" cy="52" r="3" fill="#0C1829" />
+                        
+                        <!-- Corps du sifflet professionnel -->
+                        <rect x="74" y="55" width="22" height="14" rx="4" fill="#0C1829" />
+                        <circle cx="68" cy="74" r="15" fill="#0C1829" />
+                        <circle cx="68" cy="74" r="10" fill="#182B46" />
+                        <path d="M72 58 H88 V66 H72 Z" fill="#FF5E14" />
+                        <!-- Bille d'arbitre intérieure -->
+                        <circle cx="67" cy="73" r="4.5" fill="#FF5E14" />
+                        <!-- Trou d'air du sifflet -->
+                        <circle cx="78" cy="62" r="2.5" fill="#FFFFFF" />
+                        <!-- Éclair ou son du sifflet -->
+                        <path d="M96 52 L106 46 M100 62 L112 62 M98 72 L108 78" stroke="#FF5E14" stroke-width="2.5" stroke-linecap="round" />
+                    </g>
+                    
+                    <!-- Cadenas de sécurité superposé -->
+                    <g transform="translate(100, 88)">
+                        <rect x="0" y="8" width="26" height="20" rx="4" fill="#FF5E14" />
+                        <path d="M5 8 V4 C5 0, 21 0, 21 4 V8" stroke="#0C1829" stroke-width="3.5" fill="none" />
+                        <circle cx="13" cy="17" r="2.5" fill="#FFFFFF" />
+                        <path d="M13 19.5 V23" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Badge Scoreboard 403 -->
+            <div class="mb-2">
+                <span class="error-code-badge">403</span>
+            </div>
+            
+            <div class="mb-3">
+                <span class="error-code-label" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: rgba(220, 53, 69, 0.25);">
+                    <i class="bi bi-shield-lock-fill"></i> Zone Restreinte • Faute Technique
+                </span>
+            </div>
+
+            <div class="error-script-tag">Coup de sifflet de l'arbitre !</div>
+            <h1 class="error-title">Accès non autorisé</h1>
+            
+            <p class="error-desc">
+                Cette zone du terrain est réservée aux coachs, arbitres ou administrateurs accrédités de Magic Hoops Academy. Si vous êtes membre du staff ou possédez un compte, veuillez vous authentifier pour poursuivre.
+            </p>
+
+            <!-- Actions Principales -->
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3 mb-4 pb-2">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}?next={{ request.path|default:'/' }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm w-100 w-sm-auto">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter à mon compte
+                </a>
+                {% else %}
+                <a href="{% url 'profile' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm w-100 w-sm-auto">
+                    <i class="bi bi-person-badge me-2"></i>Accéder à mon profil
+                </a>
+                {% endif %}
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4 w-100 w-sm-auto">
+                    <i class="bi bi-house-door-fill me-2 text-primary"></i>Retour au terrain (Accueil)
+                </a>
+            </div>
+
+            <!-- Grille de raccourcis utiles -->
+            <div class="pt-4 border-top">
+                <div class="small fw-bold text-uppercase text-muted mb-3" style="letter-spacing: 0.08em;">
+                    Espaces publics ouverts à tous :
+                </div>
+                <div class="row g-2 justify-content-center text-start">
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'programmes' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-trophy-fill"></i></span>
+                            <div>
+                                <span class="d-block">Programmes</span>
+                                <small class="text-muted fw-normal">U10, U14, Elite</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'shop:product_list' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-bag-fill"></i></span>
+                            <div>
+                                <span class="d-block">Boutique</span>
+                                <small class="text-muted fw-normal">Maillots & Ballons</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'gallery:gallery_list' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-images"></i></span>
+                            <div>
+                                <span class="d-block">Galerie</span>
+                                <small class="text-muted fw-normal">Événements MHA</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'methode' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-bullseye"></i></span>
+                            <div>
+                                <span class="d-block">Méthode</span>
+                                <small class="text-muted fw-normal">Pédagogie MHA</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barre de contact rapide -->
+            <div class="error-support-bar text-start">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-shield-check text-primary fs-4"></i>
+                    <div>
+                        <div class="fw-bold text-secondary small">Besoin d'un accès particulier ?</div>
+                        <small class="text-muted">Contactez la direction technique ou le secrétariat de l'académie.</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="mailto:info@magichoops.cd?subject=Demande%20d%27acc%C3%A8s%20MHA" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-envelope-fill me-1 text-primary"></i> info@magichoops.cd
+                    </a>
+                    <a href="https://wa.me/243900824429" target="_blank" rel="noopener" class="btn btn-sm btn-success rounded-pill px-3">
+                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

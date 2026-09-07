@@ -43,15 +43,24 @@
 
                         <div class="d-grid gap-2">
                             <div class="p-3 bg-light rounded-3 text-start">
-                                <small class="text-muted d-block mb-1">Statut</small>
-                                {% if subscription and subscription.statut == 'payé' %}
-                                <span class="badge bg-success rounded-pill">Abonnement Actif</span>
-                                <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">Expire le {{
-                                    subscription.date_fin|date:"d M Y" }}</small>
-                                {% elif subscription and subscription.statut == 'en_attente' %}
-                                <span class="badge bg-warning text-dark rounded-pill">En attente de validation</span>
+                                <small class="text-muted d-block mb-1">Statut du compte</small>
+                                {% if user.is_staff or user.is_superuser %}
+                                <span class="badge bg-primary rounded-pill">
+                                    <i class="bi bi-shield-fill-check me-1"></i> {% if user.is_superuser %}Administrateur{% else %}Membre du Staff{% endif %}
+                                </span>
+                                <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">
+                                    Accès complet permanent (Exempté d'abonnement)
+                                </small>
                                 {% else %}
-                                <span class="badge bg-danger rounded-pill">Abonnement Inactif/Expiré</span>
+                                    {% if subscription and subscription.statut == 'payé' %}
+                                    <span class="badge bg-success rounded-pill">Abonnement Actif</span>
+                                    <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">Expire le {{
+                                        subscription.date_fin|date:"d M Y" }}</small>
+                                    {% elif subscription and subscription.statut == 'en_attente' %}
+                                    <span class="badge bg-warning text-dark rounded-pill">En attente de validation</span>
+                                    {% else %}
+                                    <span class="badge bg-danger rounded-pill">Abonnement Inactif/Expiré</span>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="p-3 bg-light rounded-3 text-start">
@@ -59,11 +68,18 @@
                                 <span class="fw-bold">{{ user.date_joined|date:"d M Y" }}</span>
                             </div>
 
-                            <!-- Subscription Button -->
+                            {% if user.is_staff or user.is_superuser %}
+                            <!-- Raccourci vers le portail gérant pour le personnel -->
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary rounded-pill fw-bold shadow-sm mt-2">
+                                <i class="bi bi-speedometer2 me-2"></i> Espace Administration
+                            </a>
+                            {% else %}
+                            <!-- Subscription Button pour les membres joueurs -->
                             <button type="button" class="btn btn-primary rounded-pill fw-bold shadow-sm mt-2"
                                 data-bs-toggle="modal" data-bs-target="#subscriptionModal">
                                 <i class="bi bi-credit-card me-2"></i> Payer mon abonnement
                             </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -96,7 +112,13 @@
                                 </div>
                             </div>
 
-                            <h5 class="mb-4 text-muted border-bottom pb-2 mt-5">Détails du Profil</h5>
+                            <h5 class="mb-4 text-muted border-bottom pb-2 mt-5">
+                                {% if user.is_staff or user.is_superuser %}
+                                Coordonnées & Profil Staff
+                                {% else %}
+                                Détails du Profil & Fiche Sportive
+                                {% endif %}
+                            </h5>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold text-muted">Date de naissance</label>
@@ -110,6 +132,13 @@
                                     <label class="form-label small fw-bold text-muted">Adresse</label>
                                     {{ p_form.adresse }}
                                 </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-muted">Photo de profil</label>
+                                    {{ p_form.photo }}
+                                </div>
+
+                                {% if not user.is_staff and not user.is_superuser %}
+                                <!-- Informations réservées aux jeunes membres joueurs -->
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold text-muted">École fréquentée</label>
                                     {{ p_form.ecole_frequente }}
@@ -134,10 +163,7 @@
                                     <label class="form-label small fw-bold text-muted">Contact Parent/Tuteur</label>
                                     {{ p_form.contact_parent }}
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label small fw-bold text-muted">Photo de profil</label>
-                                    {{ p_form.photo }}
-                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="d-flex justify-content-end mt-5">
@@ -152,7 +178,8 @@
         </div>
     </div>
 
-    <!-- Subscription Modal -->
+    {% if not user.is_staff and not user.is_superuser %}
+    <!-- Subscription Modal (uniquement pour les membres joueurs) -->
     <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-labelledby="subscriptionModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -195,6 +222,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 
     {% include 'main/footer.html' %}

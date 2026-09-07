@@ -1,0 +1,140 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block title %}Page introuvable (404) | Magic Hoops Academy Kinshasa{% endblock %}
+
+{% block content %}
+<main class="error-page-wrapper" role="main">
+    <div class="error-court-lines" aria-hidden="true"></div>
+
+    <div class="container position-relative z-1 text-center">
+        <div class="error-card">
+            <!-- Illustration Basketball SVG Animée : Tir Manqué / Ballon Hors-Limites -->
+            <div class="error-illustration-box" aria-hidden="true">
+                <svg viewBox="0 0 160 160" width="140" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ombre du ballon au sol animée -->
+                    <ellipse cx="56" cy="142" rx="22" ry="7" fill="rgba(12, 24, 41, 0.12)" class="anim-ball-shadow" />
+                    
+                    <!-- Panneau de basket stylisé -->
+                    <rect x="95" y="20" width="8" height="90" rx="3" fill="#0C1829" />
+                    <rect x="80" y="28" width="38" height="52" rx="4" fill="#FFFFFF" stroke="#0C1829" stroke-width="4" />
+                    <rect x="90" y="44" width="18" height="20" fill="none" stroke="#FF5E14" stroke-width="3" />
+                    <!-- Arceau & Filet -->
+                    <path d="M72 64 H102" stroke="#FF5E14" stroke-width="5" stroke-linecap="round" />
+                    <path d="M74 66 L78 92 L87 66 L96 92 L100 66" stroke="#5A6B82" stroke-width="2.2" stroke-dasharray="3 2" fill="none" opacity="0.85" />
+                    
+                    <!-- Arc de tir manqué (trajectoire en pointillés) -->
+                    <path d="M28 120 C35 50, 75 35, 88 58" stroke="#FF5E14" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.5" />
+                    
+                    <!-- Ballon de basketball rebondissant hors-cadre -->
+                    <g class="anim-ball-bounce">
+                        <circle cx="56" cy="78" r="24" fill="#FF5E14" />
+                        <!-- Lignes du ballon -->
+                        <path d="M32 78 H80" stroke="#0C1829" stroke-width="2.5" />
+                        <path d="M56 54 V102" stroke="#0C1829" stroke-width="2.5" />
+                        <path d="M39 60 C50 70, 50 86, 39 96" stroke="#0C1829" stroke-width="2" fill="none" />
+                        <path d="M73 60 C62 70, 62 86, 73 96" stroke="#0C1829" stroke-width="2" fill="none" />
+                        <circle cx="48" cy="68" r="3" fill="#FFFFFF" opacity="0.35" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Badge Scoreboard 404 -->
+            <div class="mb-2">
+                <span class="error-code-badge">404</span>
+            </div>
+            
+            <div class="mb-3">
+                <span class="error-code-label">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Balle Hors-Limites
+                </span>
+            </div>
+
+            <div class="error-script-tag">Oups ! Ce ballon est sorti du parquet...</div>
+            <h1 class="error-title">Page introuvable</h1>
+            
+            <p class="error-desc">
+                La page que vous tentez de rejoindre a été déplacée, supprimée ou n'a jamais foulé le terrain. Pas de panique : aucune faute n'est comptée, on remet le ballon en jeu !
+            </p>
+
+            <!-- Actions Principales -->
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3 mb-4 pb-2">
+                <a href="{% url 'index' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm w-100 w-sm-auto">
+                    <i class="bi bi-house-door-fill me-2"></i>Retour au terrain (Accueil)
+                </a>
+                <a href="{% url 'programmes' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4 w-100 w-sm-auto">
+                    <i class="bi bi-trophy-fill me-2 text-primary"></i>Nos programmes
+                </a>
+                <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4 w-100 w-sm-auto">
+                    <i class="bi bi-bag-fill me-2 text-primary"></i>Boutique MHA
+                </a>
+            </div>
+
+            <!-- Grille de raccourcis utiles -->
+            <div class="pt-4 border-top">
+                <div class="small fw-bold text-uppercase text-muted mb-3" style="letter-spacing: 0.08em;">
+                    Poursuivre votre visite à l'Académie :
+                </div>
+                <div class="row g-2 justify-content-center text-start">
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'index' %}#schedule" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-calendar-week"></i></span>
+                            <div>
+                                <span class="d-block">Horaires</span>
+                                <small class="text-muted fw-normal">Entraînements</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'inscription' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-person-plus-fill"></i></span>
+                            <div>
+                                <span class="d-block">Inscription</span>
+                                <small class="text-muted fw-normal">Rejoindre MHA</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'gallery:gallery_list' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-images"></i></span>
+                            <div>
+                                <span class="d-block">Galerie</span>
+                                <small class="text-muted fw-normal">Photos & Matchs</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="{% url 'announcements:announcement_list' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-megaphone-fill"></i></span>
+                            <div>
+                                <span class="d-block">Sessions</span>
+                                <small class="text-muted fw-normal">Actualités du club</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barre de contact rapide -->
+            <div class="error-support-bar text-start">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-geo-alt-fill text-primary fs-4"></i>
+                    <div>
+                        <div class="fw-bold text-secondary small">Terrain Magic Hoops Academy Kinshasa</div>
+                        <small class="text-muted">Avenue de la Science n°5, Gombe • Kinshasa</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="https://wa.me/243900824429" target="_blank" rel="noopener" class="btn btn-sm btn-success rounded-pill px-3">
+                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                    </a>
+                    <a href="tel:+243900824429" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-telephone-fill me-1 text-primary"></i> +243 900 824 429
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

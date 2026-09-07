@@ -1,15 +1,30 @@
 {% load static %}
-{% firstof seo_title "Magic Hoops Academy Kinshasa | Académie de basket à Kinshasa" as page_title %}
-{% firstof seo_description "Magic Hoops Academy Kinshasa forme les jeunes basketteurs avec discipline, respect, travail, cohésion et ambition." as page_description %}
+{% firstof seo_title "Magic Hoops Academy | Académie de Basket à Kinshasa (RDC) • Filles & Garçons" as page_title %}
+{% firstof seo_description "Académie de basketball de référence à Kinshasa (Gombe) pour enfants, filles et garçons de 8 à 18+ ans. Entraînements d'excellence, discipline et stages en RDC." as page_description %}
 <title>{{ page_title }}</title>
 <meta name="description" content="{{ page_description }}">
+<meta name="keywords" content="basket en RDC, basketball RDC, basket kinshasa, academie de basket kinshasa, cours de basket enfant, ecole de basket fille kinshasa, entrainement basket gombe, coach magic kinshasa, magic hoops academy">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="author" content="Magic Hoops Academy Kinshasa">
 <meta name="theme-color" content="#0C1829">
+
+<!-- Balises géographiques & Référencement Local (Kinshasa / Gombe / RDC) -->
+<meta name="geo.region" content="CD-KN">
+<meta name="geo.placename" content="Kinshasa, Gombe">
+<meta name="geo.position" content="-4.3162;15.2952">
+<meta name="ICBM" content="-4.3162, 15.2952">
+
+<!-- Validation Google Search Console -->
+{% if google_site_verification %}
+<meta name="google-site-verification" content="{{ google_site_verification }}">
+{% endif %}
+
 {% if canonical_url %}
 <link rel="canonical" href="{{ canonical_url }}">
 {% endif %}
 <link rel="icon" href="{% static 'images/mha_logo.jpeg' %}">
+
+<!-- Open Graph / Réseaux Sociaux & Moteurs de Recherche -->
 <meta property="og:locale" content="fr_CD">
 <meta property="og:site_name" content="Magic Hoops Academy Kinshasa">
 <meta property="og:title" content="{{ page_title }}">
@@ -20,11 +35,14 @@
 {% endif %}
 {% if og_image %}
 <meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Magic Hoops Academy Kinshasa">
 <meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Magic Hoops Academy Kinshasa">
 {% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ page_title }}">
 <meta name="twitter:description" content="{{ page_description }}">
+
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

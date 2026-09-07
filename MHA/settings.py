@@ -77,7 +77,7 @@ ROOT_URLCONF = 'MHA.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,6 +86,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'shop.context_processors.cart_context',
+                'main.context_processors.seo_context',
             ],
         },
     },
@@ -218,5 +219,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# Feature Flags
+# Feature Flags & SEO Settings
 ENABLE_ANNOUNCEMENT_EMAILS = config('ENABLE_ANNOUNCEMENT_EMAILS', default=False, cast=bool)
+GOOGLE_SITE_VERIFICATION = config('GOOGLE_SITE_VERIFICATION', default='')

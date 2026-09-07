@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Max
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -35,11 +36,22 @@ def staff_required(view_func):
 def compute_user_subscription_status(user, today=None):
     """
     Calcule le statut d'abonnement pour un utilisateur :
+    - 'staff' si l'utilisateur est administrateur ou staff (exempté d'abonnement)
     - 'paye' (Actif) si abonnement avec statut 'payé' et date_fin >= aujourd'hui
     - 'en_attente' si abonnement avec statut 'en_attente'
     - 'expire' si abonnement avec statut 'expiré' ou date_fin passée
     - 'aucun' si aucun abonnement enregistré
     """
+    if getattr(user, 'is_staff', False) or getattr(user, 'is_superuser', False):
+        return {
+            'code': 'staff',
+            'label': 'Staff / Exempté',
+            'badge_class': 'bg-dark text-white',
+            'color': 'dark',
+            'active_sub': None,
+            'latest_sub': None,
+        }
+
     if today is None:
         today = timezone.localdate()
 
@@ -105,13 +117,15 @@ def admin_dashboard(request):
     total_users_count = len(all_users)
     total_members_count = sum(1 for u in all_users if not u.is_staff)
 
-    # Calcul des compteurs par statut
+    # Calcul des compteurs par statut (uniquement pour les membres assujettis, hors staff)
     count_paye = 0
     count_en_attente = 0
     count_expire = 0
     count_aucun = 0
 
     for u in all_users:
+        if u.is_staff:
+            continue
         st = compute_user_subscription_status(u, today)
         code = st['code']
         if code == 'paye':
@@ -210,7 +224,7 @@ def admin_users_list(request):
 
     # Statistiques globales pour les compteurs d'onglets
     all_users_for_stats = list(User.objects.prefetch_related('abonnements').all())
-    stats_counts = {'tous': len(all_users_for_stats), 'paye': 0, 'en_attente': 0, 'expire': 0, 'aucun': 0}
+    stats_counts = {'tous': len(all_users_for_stats), 'paye': 0, 'en_attente': 0, 'expire': 0, 'aucun': 0, 'staff': 0}
     for u in all_users_for_stats:
         code = compute_user_subscription_status(u, today)['code']
         stats_counts[code] = stats_counts.get(code, 0) + 1
@@ -238,6 +252,10 @@ def admin_user_detail(request, user_id):
     if request.method == 'POST':
         action = request.POST.get('action', 'add_subscription')
         if action == 'add_subscription':
+            if member.is_staff or member.is_superuser:
+                messages.warning(request, f"{member.get_full_name() or member.username} est membre du personnel (Staff) et n'a pas besoin d'abonnement.")
+                return redirect('admin_user_detail', user_id=member.id)
+
             montant = request.POST.get('montant', '25.00')
             duree = request.POST.get('duree', '1_mois')
             date_debut_str = request.POST.get('date_debut')
@@ -572,6 +590,15 @@ def admin_gallery(request):
                     couverture=couverture
                 )
 
+                is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.POST.get('is_ajax') == '1'
+                if is_ajax:
+                    return JsonResponse({
+                        'success': True,
+                        'album_id': album.id,
+                        'album_titre': album.titre,
+                        'message': f"Album '{album.titre}' créé avec succès."
+                    })
+
                 # Gestion d'éventuelles photos initiales uploadées en multi-fichiers
                 photos = request.FILES.getlist('photos')
                 for i, photo_file in enumerate(photos):
@@ -584,6 +611,8 @@ def admin_gallery(request):
 
                 messages.success(request, f"Album '{album.titre}' créé avec succès ({len(photos)} photos téléversées) !")
             else:
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.POST.get('is_ajax') == '1':
+                    return JsonResponse({'success': False, 'error': "Le titre de l'album est obligatoire."}, status=400)
                 messages.error(request, "Le titre de l'album est obligatoire.")
             return redirect('admin_gallery')
 
@@ -662,6 +691,87 @@ def admin_photo_delete(request, pk):
     photo.delete()
     messages.info(request, f"Photo supprimée de l'album '{album_title}'.")
     return redirect(request.META.get('HTTP_REFERER') or 'admin_gallery')
+
+
+@staff_required
+def admin_async_photo_upload(request, album_id):
+    """
+    Endpoint AJAX/Asynchrone pour le téléversement photo par photo d'un album.
+    Valide l'image, applique la transposition EXIF (smartphones), calcule l'ordre
+    et retourne les détails JSON de la photo créée.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': "Méthode non autorisée. Requête POST attendue."}, status=405)
+
+    album = get_object_or_404(GalleryAlbum, pk=album_id)
+    photo_file = request.FILES.get('photo') or request.FILES.get('image') or request.FILES.get('photos')
+
+    if not photo_file:
+        return JsonResponse({'success': False, 'error': "Aucun fichier image reçu."}, status=400)
+
+    # Validation image & orientation EXIF via Pillow
+    try:
+        import io
+        from PIL import Image, ImageOps
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+
+        # Ouvre l'image avec PIL pour valider son intégrité
+        img = Image.open(photo_file)
+        img_format = img.format or 'JPEG'
+
+        try:
+            transposed = ImageOps.exif_transpose(img)
+            if transposed is not None:
+                img = transposed
+                buffer = io.BytesIO()
+                save_fmt = img_format if img_format in ['JPEG', 'PNG', 'WEBP'] else 'JPEG'
+                if save_fmt == 'JPEG':
+                    img = img.convert('RGB')
+                    img.save(buffer, format='JPEG', quality=95)
+                else:
+                    img.save(buffer, format=save_fmt)
+                buffer.seek(0)
+                photo_file = InMemoryUploadedFile(
+                    buffer,
+                    'ImageField',
+                    photo_file.name,
+                    f'image/{save_fmt.lower()}',
+                    buffer.getbuffer().nbytes,
+                    None
+                )
+        except Exception:
+            pass
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f"Fichier image invalide ou non reconnu : {str(e)}"}, status=400)
+
+    max_order = GalleryPhoto.objects.filter(album=album).aggregate(Max('ordre'))['ordre__max'] or 0
+    next_order = max_order + 1
+
+    titre_custom = request.POST.get('titre', '').strip()
+    titre = titre_custom or f"{album.titre} - Cliché #{next_order}"
+
+    photo = GalleryPhoto.objects.create(
+        album=album,
+        image=photo_file,
+        titre=titre,
+        ordre=next_order
+    )
+
+    return JsonResponse({
+        'success': True,
+        'photo': {
+            'id': photo.id,
+            'titre': photo.titre,
+            'url': photo.image.url,
+            'ordre': photo.ordre,
+        },
+        'album': {
+            'id': album.id,
+            'titre': album.titre,
+            'total_photos': album.photos.count()
+        }
+    })
 
 
 # ==============================================================================

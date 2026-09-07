@@ -1,0 +1,105 @@
+{% extends 'main/base_site.html' %}
+{% load static %}
+
+{% block title %}Requête non conforme (400) | Magic Hoops Academy Kinshasa{% endblock %}
+
+{% block content %}
+<main class="error-page-wrapper" role="main">
+    <div class="error-court-lines" aria-hidden="true"></div>
+
+    <div class="container position-relative z-1 text-center">
+        <div class="error-card">
+            <!-- Illustration Basketball SVG Animée : Signal d'Arbitre / Violation de Règle -->
+            <div class="error-illustration-box" aria-hidden="true">
+                <svg viewBox="0 0 160 160" width="140" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="80" cy="142" rx="26" ry="6" fill="rgba(12, 24, 41, 0.12)" />
+                    
+                    <!-- Lignes de démarcation du terrain -->
+                    <line x1="30" y1="130" x2="130" y2="130" stroke="#0C1829" stroke-width="4" />
+                    <line x1="80" y1="130" x2="80" y2="148" stroke="#FF5E14" stroke-width="3" stroke-dasharray="3 3" />
+                    
+                    <!-- Panneau d'avertissement / Faute -->
+                    <rect x="52" y="32" width="56" height="56" rx="8" transform="rotate(45 80 60)" fill="#FF5E14" />
+                    <rect x="57" y="37" width="46" height="46" rx="6" transform="rotate(45 80 60)" fill="#0C1829" />
+                    
+                    <!-- Symbole d'interdiction / point d'exclamation -->
+                    <text x="80" y="68" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="900" font-size="28" fill="#FF5E14">!</text>
+
+                    <!-- Ballon arrêté sur la ligne -->
+                    <g transform="translate(42, 90)">
+                        <circle cx="16" cy="16" r="14" fill="#FF5E14" />
+                        <path d="M2 16 H30" stroke="#0C1829" stroke-width="2" />
+                        <path d="M16 2 V30" stroke="#0C1829" stroke-width="2" />
+                        <path d="M6 6 C12 12, 12 20, 6 26" stroke="#0C1829" stroke-width="1.5" fill="none" />
+                        <path d="M26 6 C20 12, 20 20, 26 26" stroke="#0C1829" stroke-width="1.5" fill="none" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Badge Scoreboard 400 -->
+            <div class="mb-2">
+                <span class="error-code-badge">400</span>
+            </div>
+            
+            <div class="mb-3">
+                <span class="error-code-label">
+                    <i class="bi bi-slash-circle-fill"></i> Violation de Règle • Requête Invalide
+                </span>
+            </div>
+
+            <div class="error-script-tag">Action non conforme au règlement !</div>
+            <h1 class="error-title">Requête invalide</h1>
+            
+            <p class="error-desc">
+                Les données reçues par le serveur sont incomplètes, corrompues ou non conformes aux consignes de jeu. Veuillez vérifier votre saisie ou revenir à l'étape précédente.
+            </p>
+
+            <!-- Actions Principales -->
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3 mb-4 pb-2">
+                <button type="button" onclick="window.history.back();" class="btn btn-outline-secondary btn-lg rounded-pill px-4 w-100 w-sm-auto">
+                    <i class="bi bi-arrow-left me-2"></i>Page précédente
+                </button>
+                <a href="{% url 'index' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm w-100 w-sm-auto">
+                    <i class="bi bi-house-door-fill me-2"></i>Retour au terrain (Accueil)
+                </a>
+            </div>
+
+            <!-- Grille de raccourcis utiles -->
+            <div class="pt-4 border-top">
+                <div class="small fw-bold text-uppercase text-muted mb-3" style="letter-spacing: 0.08em;">
+                    Reprendre votre navigation :
+                </div>
+                <div class="row g-2 justify-content-center text-start">
+                    <div class="col-sm-6 col-md-4">
+                        <a href="{% url 'programmes' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-trophy-fill"></i></span>
+                            <div>
+                                <span class="d-block">Programmes</span>
+                                <small class="text-muted fw-normal">Formations jeunes</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <a href="{% url 'shop:product_list' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-bag-fill"></i></span>
+                            <div>
+                                <span class="d-block">Boutique</span>
+                                <small class="text-muted fw-normal">Équipements MHA</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <a href="{% url 'inscription' %}" class="error-quick-link-card">
+                            <span class="error-quick-link-icon"><i class="bi bi-person-plus-fill"></i></span>
+                            <div>
+                                <span class="d-block">Inscription</span>
+                                <small class="text-muted fw-normal">Formulaire d'adhésion</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

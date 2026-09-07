@@ -27,3 +27,10 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
+# Gestionnaires officiels d'erreurs HTTP Django
+handler404 = 'main.views.custom_404'
+handler500 = 'main.views.custom_500'
+handler403 = 'main.views.custom_403'
+handler400 = 'main.views.custom_400'
+
+
