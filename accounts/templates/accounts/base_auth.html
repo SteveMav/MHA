@@ -11,7 +11,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <style>
@@ -34,7 +34,7 @@
 
         .auth-card {
             background: var(--surface);
-            border-radius: 28px;
+            border-radius: 8px;
             border: 1px solid var(--line);
             box-shadow: var(--shadow-soft);
             padding: clamp(1.75rem, 4vw, 2.5rem);
@@ -45,7 +45,7 @@
         .auth-logo {
             width: 72px;
             height: auto;
-            border-radius: 50%;
+            border-radius: 8px;
             margin-bottom: 1rem;
         }
     </style>
@@ -53,31 +53,34 @@
 
 <body>
 
-    <!-- Simple Navbar -->
-    <nav class="navbar navbar-light bg-white site-navbar">
-        <div class="container justify-content-between">
-            <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="{% url 'index' %}">
-                <img src="{% static 'images/mha_logo.jpeg' %}" alt="MHA Logo" height="42" class="me-2 rounded-circle">
-                <span>Magic Hoops Academy</span>
+    <!-- Brand Header -->
+    <header class="home-nav" style="background: #ffffff; border-bottom: 1px solid var(--line);">
+        <div class="home-wrap" style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; padding-bottom: 14px;">
+            <a class="home-brand" href="{% url 'index' %}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="{% static 'images/mha_logo.jpeg' %}" alt="Logo Magic Hoops Academy Kinshasa" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover;">
+                <span style="display: flex; flex-direction: column; line-height: 1.15;">
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; letter-spacing: -.02em; color: var(--secondary-color);">Magic Hoops</span>
+                    <span style="font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .02em;">Academy · Kinshasa</span>
+                </span>
             </a>
-            <a href="{% url 'index' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                <i class="bi bi-arrow-left me-1"></i> Retour au site
+            <a href="{% url 'index' %}" class="home-link" style="font-size: 13px;">
+                ← Retour au site
             </a>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
     <div class="auth-container">
-        <div class="container d-flex justify-content-center">
+        <div class="home-wrap" style="display: flex; justify-content: center; width: 100%;">
             {% block content %}
             {% endblock %}
         </div>
     </div>
 
     <!-- Simple Footer -->
-    <footer class="bg-white py-3 text-center text-muted border-top mt-auto">
-        <div class="container">
-            <small>&copy; {% now "Y" %} Magic Hoops Academy. Tous droits réservés.</small>
+    <footer style="background: #ffffff; padding: 16px 20px; text-align: center; color: var(--muted); border-top: 1px solid var(--line); margin-top: auto; font-size: 13px;">
+        <div class="home-wrap">
+            <span>&copy; {% now "Y" %} Magic Hoops Academy · Kinshasa (RDC). Tous droits réservés.</span>
         </div>
     </footer>
 

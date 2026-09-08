@@ -5,15 +5,15 @@
 {% block content %}
 <div class="auth-card">
     <div class="text-center mb-4">
-        <h3 class="fw-bold text-primary">Connexion</h3>
-        <p class="text-muted">Accédez à votre espace membre</p>
+        <h1 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: var(--secondary-color); margin: 0 0 6px;">Connexion</h1>
+        <p class="text-muted small mb-0">Accédez à votre espace membre</p>
     </div>
 
     <form method="post">
         {% csrf_token %}
 
         {% if form.errors %}
-        <div class="alert alert-danger">
+        <div class="alert alert-danger py-2 small" style="border-radius: 6px;">
             Email, nom d’utilisateur ou mot de passe incorrect.
         </div>
         {% endif %}
@@ -27,12 +27,12 @@
             {{ form.password }}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Se connecter</button>
+        <button type="submit" class="home-button" style="width: 100%; justify-content: center; min-height: 44px;">Se connecter ↗</button>
     </form>
 
-    <div class="text-center mt-4">
-        <p class="small text-muted">Pas encore membre ? <a href="{% url 'register' %}"
-                class="text-primary fw-bold text-decoration-none">S'inscrire</a></p>
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="small text-muted mb-0">Pas encore membre ? <a href="{% url 'register' %}"
+                class="home-link" style="font-size: 13px;">S'inscrire ↗</a></p>
     </div>
 </div>
 {% endblock %}

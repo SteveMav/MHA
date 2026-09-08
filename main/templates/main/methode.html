@@ -3,59 +3,60 @@
 
 {% block content %}
 <main class="page-shell">
-    <section class="subpage-hero compact-hero">
+    <section class="py-5" style="background: var(--surface-alt); border-bottom: 1px solid var(--line);">
         <div class="container">
+            <nav aria-label="Fil d'Ariane" class="mb-3">
+                <ol class="breadcrumb small mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Méthode MHA</li>
+                </ol>
+            </nav>
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                <span class="badge-poster-orange"><i class="bi bi-bullseye me-1"></i> Pédagogie & Formation</span>
-                <span class="hero-kicker mb-0">Méthode MHA</span>
+                <span class="badge" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">
+                    <i class="bi bi-bullseye me-1"></i> Pédagogie & Formation
+                </span>
+                <span class="badge" style="background: rgba(12, 24, 41, 0.08); color: var(--secondary-color); border: 1px solid var(--line); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 600; font-size: 0.8rem;">
+                    Méthode MHA
+                </span>
             </div>
-            <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
-            <h1>Former le joueur complet, pas seulement le scoreur.</h1>
-            <p>La progression durable repose sur un équilibre répété : rigueur technique, développement athlétique, intelligence tactique et mental d'acier.</p>
+            <h1 class="h2 fw-bold text-secondary mb-2">Former le joueur complet, pas seulement le scoreur</h1>
+            <p class="text-muted mb-0 lead fs-6">La progression durable repose sur un équilibre répété : rigueur technique, développement athlétique, intelligence tactique et mental d'acier.</p>
         </div>
     </section>
 
-    <!-- Ruban des Valeurs -->
-    <div class="values-ribbon-bar" aria-label="Valeurs">
+    <section class="py-5" style="background: var(--paper);">
         <div class="container">
-            <div class="values-ribbon-content">
-                <span><span class="star">★</span> TRAVAIL</span>
-                <span><span class="star">★</span> RESPECT</span>
-                <span><span class="star">★</span> SOLIDARITÉ</span>
-                <span><span class="star">★</span> PERSÉVÉRANCE</span>
-            </div>
-        </div>
-    </div>
-
-    <section class="section-block method-page">
-        <div class="container">
-            <div class="method-deep-grid">
+            <div class="row g-4">
                 {% for pillar in method_pillars %}
-                <article>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span>0{{ forloop.counter }}</span>
-                        <i class="bi bi-dribbble fs-4 text-primary"></i>
-                    </div>
-                    <h2>{{ pillar.title }}</h2>
-                    <p>{{ pillar.text }}</p>
-                </article>
+                <div class="col-md-6">
+                    <article class="card border p-4 h-100" style="border-radius: 8px; background: var(--surface); box-shadow: 0 1px 3px rgba(12, 24, 41, 0.05);">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold text-primary" style="font-size: 1.35rem;">0{{ forloop.counter }}</span>
+                            <i class="bi bi-dribbble fs-4 text-primary"></i>
+                        </div>
+                        <h2 class="h4 fw-bold text-secondary mb-2">{{ pillar.title }}</h2>
+                        <p class="text-muted mb-0" style="line-height: 1.6;">{{ pillar.text }}</p>
+                    </article>
+                </div>
                 {% endfor %}
             </div>
 
             <!-- Philosophie du club -->
-            <div class="contact-panel mt-5">
-                <div>
-                    <span class="badge-poster-orange mb-2">Discipline & Respect</span>
-                    <h2 class="section-heading mb-2">Le cadre fait la différence</h2>
-                    <p class="text-muted mb-0">Au-delà du basketball, nous inculquons la ponctualité, l'effort collectif et le dépassement de soi. C'est ce qui transforme des jeunes passionnés en adultes exemplaires.</p>
-                </div>
-                <div class="contact-actions">
-                    <a href="{% url 'inscription' %}" class="btn btn-primary rounded-pill w-100">
-                        Inscrire mon enfant
-                    </a>
-                    <a href="{% url 'staff' %}" class="btn btn-outline-primary rounded-pill w-100">
-                        Rencontrer le staff
-                    </a>
+            <div class="card border p-4 p-md-5 mt-5" style="border-radius: 8px; background: var(--surface);">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-7">
+                        <span class="badge mb-2" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700;">Discipline & Respect</span>
+                        <h2 class="h4 fw-bold text-secondary mb-2">Le cadre fait la différence</h2>
+                        <p class="text-muted mb-0">Au-delà du basketball, nous inculquons la ponctualité, l'effort collectif et le dépassement de soi. C'est ce qui transforme des jeunes passionnés en adultes exemplaires.</p>
+                    </div>
+                    <div class="col-lg-5 d-flex flex-column flex-sm-row gap-2">
+                        <a href="{% url 'inscription' %}" class="btn btn-primary flex-grow-1 text-center py-2">
+                            Inscrire mon enfant
+                        </a>
+                        <a href="{% url 'staff' %}" class="btn btn-outline-secondary flex-grow-1 text-center py-2">
+                            Rencontrer le staff
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

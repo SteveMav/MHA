@@ -35,7 +35,7 @@
         {% endif %}
 
         <div class="announcement-card-actions">
-            <a href="{{ announcement.get_absolute_url }}" class="btn btn-outline-primary btn-sm rounded-pill">Lire l'annonce</a>
+            <a href="{{ announcement.get_absolute_url }}" class="btn btn-outline-primary btn-sm">Lire l'annonce</a>
 
             {% if user.is_staff %}
             <div class="staff-actions">

@@ -5,15 +5,15 @@
 {% block content %}
 <div class="auth-card" style="max-width: 600px;">
     <div class="text-center mb-4">
-        <h3 class="fw-bold text-primary">Inscription</h3>
-        <p class="text-muted">Rejoignez la famille Magic Hoops</p>
+        <h1 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: var(--secondary-color); margin: 0 0 6px;">Inscription</h1>
+        <p class="text-muted small mb-0">Rejoignez la famille Magic Hoops</p>
     </div>
 
     <form method="post">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-        <div class="alert alert-danger">
+        <div class="alert alert-danger py-2 small" style="border-radius: 6px;">
             {% for error in form.non_field_errors %}
             {{ error }}
             {% endfor %}
@@ -79,12 +79,12 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">S'inscrire</button>
+        <button type="submit" class="home-button" style="width: 100%; justify-content: center; min-height: 44px;">S'inscrire ↗</button>
     </form>
 
-    <div class="text-center mt-4">
-        <p class="small text-muted">Déjà membre ? <a href="{% url 'login' %}"
-                class="text-primary fw-bold text-decoration-none">Se connecter</a></p>
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="small text-muted mb-0">Déjà membre ? <a href="{% url 'login' %}"
+                class="home-link" style="font-size: 13px;">Se connecter ↗</a></p>
     </div>
 </div>
 {% endblock %}

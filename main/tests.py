@@ -15,22 +15,21 @@ class MainAppTests(TestCase):
         self.assertContains(response, 'id="schedule"')
         self.assertContains(response, 'id="coach"')
         self.assertContains(response, 'id="galerie"')
-        self.assertContains(response, 'id="mhaLightbox"')
+        self.assertContains(response, reverse("gallery:gallery_list"))
         # Verify method content
-        self.assertContains(response, "Former le joueur complet, pas seulement le scoreur.")
-        self.assertContains(response, "Le cadre fait la différence")
+        self.assertContains(response, "Apprendre le jeu.")
         self.assertContains(response, "Technique")
         self.assertContains(response, "Physique")
         self.assertContains(response, "Lecture du jeu")
         self.assertContains(response, "Mentalité")
         # Verify staff content
-        self.assertContains(response, "Bruno Lobaya Nkoy, alias Coach Magic.")
+        self.assertContains(response, "Bruno Lobaya Nkoy")
         # Verify programs
         self.assertContains(response, "Mini Hoops")
         self.assertContains(response, "Junior Hoops")
         self.assertContains(response, "Elite Hoops")
 
-    def test_homepage_shows_announcement_spotlight_when_announcement_exists(self):
+    def test_homepage_links_to_news_without_automatic_spotlight(self):
         from announcements.models import Annonce
         Annonce.objects.create(
             titre="Session Spéciale Découverte",
@@ -38,26 +37,39 @@ class MainAppTests(TestCase):
         )
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "announcement-spotlight-bar")
-        self.assertContains(response, "Session Spéciale Découverte")
+        self.assertContains(response, reverse("announcements:announcement_list"))
+        self.assertNotContains(response, "announcement-spotlight-bar")
+        self.assertNotContains(response, "Session Spéciale Découverte")
 
-    def test_homepage_shows_gallery_photos_when_photos_exist(self):
-        from gallery.models import GalleryAlbum, GalleryPhoto
-        from django.core.files.uploadedfile import SimpleUploadedFile
-        album = GalleryAlbum.objects.create(
-            titre="Tournoi Test",
-            est_publie=True
-        )
-        dummy_img = SimpleUploadedFile("test.jpg", b"dummy content", content_type="image/jpeg")
-        GalleryPhoto.objects.create(
-            album=album,
-            image=dummy_img,
-            titre="Photo Test Match"
-        )
+    def test_homepage_preserves_gallery_access_without_automatic_photo_feed(self):
         response = self.client.get(reverse('index'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "mha-lightbox-trigger")
-        self.assertContains(response, "Photo Test Match")
+        self.assertContains(response, reverse('gallery:gallery_list'))
+        self.assertContains(response, "Explorer la galerie")
+        self.assertNotContains(response, 'mha-lightbox-trigger')
+
+    def test_homepage_timetable_and_faq_do_not_contradict_each_other(self):
+        from main.models import Schedule
+        Schedule.objects.create(day='Mardi', start_time='10:00', end_time='11:30')
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Mardi')
+        self.assertContains(response, '10:00')
+        self.assertNotContains(response, 'samedi matin')
+        self.assertContains(response, 'rubrique Horaires et accès')
+
+    def test_homepage_styles_do_not_replace_other_page_styles(self):
+        home = self.client.get(reverse('index'))
+        programmes = self.client.get(reverse('programmes'))
+        self.assertContains(home, 'css/home.css')
+        self.assertNotContains(home, 'css/styles.css')
+        self.assertContains(programmes, 'css/styles.css')
+        self.assertNotContains(programmes, 'css/home.css')
+
+    def test_homepage_preserves_custom_editorial_hero(self):
+        from main.models import AcademyInfo
+        AcademyInfo.objects.create(hero_title='Un titre personnalisé', hero_subtitle='Un texte personnalisé.')
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Un titre personnalisé')
+        self.assertContains(response, 'Un texte personnalisé.')
 
     def test_methode_redirects_to_homepage_anchor(self):
         response = self.client.get(reverse('methode'))

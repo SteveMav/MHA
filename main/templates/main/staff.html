@@ -3,57 +3,66 @@
 
 {% block content %}
 <main class="page-shell">
-    <section class="subpage-hero compact-hero">
+    <section class="py-5" style="background: var(--surface-alt); border-bottom: 1px solid var(--line);">
         <div class="container">
+            <nav aria-label="Fil d'Ariane" class="mb-3">
+                <ol class="breadcrumb small mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Encadrement & Staff</li>
+                </ol>
+            </nav>
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                <span class="badge-poster-orange"><i class="bi bi-people-fill me-1"></i> Encadrement & Staff</span>
-                <span class="hero-kicker mb-0">Coachs certifiés</span>
+                <span class="badge" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">
+                    <i class="bi bi-people-fill me-1"></i> Encadrement & Staff
+                </span>
+                <span class="badge" style="background: rgba(12, 24, 41, 0.08); color: var(--secondary-color); border: 1px solid var(--line); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 600; font-size: 0.8rem;">
+                    Coachs certifiés
+                </span>
             </div>
-            <span class="brand-slogan-script mb-2">Formons les champions de demain !</span>
-            <h1>Une équipe d'encadrement engagée sur le terrain.</h1>
-            <p>La confiance des parents et des joueurs repose sur la présence, la régularité, la pédagogie positive et l'autorité bienveillante de nos coachs.</p>
+            <h1 class="h2 fw-bold text-secondary mb-2">Une équipe d'encadrement engagée sur le terrain</h1>
+            <p class="text-muted mb-0 lead fs-6">La confiance des parents et des joueurs repose sur la présence, la régularité, la pédagogie positive et l'autorité bienveillante de nos coachs.</p>
         </div>
     </section>
 
-    <!-- Ruban des Valeurs -->
-    <div class="values-ribbon-bar" aria-label="Valeurs">
+    <section class="py-5" style="background: var(--paper);">
         <div class="container">
-            <div class="values-ribbon-content">
-                <span><span class="star">★</span> TRAVAIL</span>
-                <span><span class="star">★</span> RESPECT</span>
-                <span><span class="star">★</span> SOLIDARITÉ</span>
-                <span><span class="star">★</span> PERSÉVÉRANCE</span>
-            </div>
-        </div>
-    </div>
-
-    <section class="section-block">
-        <div class="container">
-            <div class="staff-grid">
+            <div class="row g-4">
                 {% for member in staff_members %}
-                <article class="staff-card">
-                    <div class="staff-avatar">{{ member.name|slice:":1" }}</div>
-                    <span class="badge-age-pill">{{ member.role }}</span>
-                    <h2>{{ member.name }}</h2>
-                    <p>{{ member.bio }}</p>
-                </article>
+                <div class="col-md-6 col-lg-4">
+                    <article class="card border p-4 h-100 d-flex flex-column" style="border-radius: 8px; background: var(--surface); box-shadow: 0 1px 3px rgba(12, 24, 41, 0.05);">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div style="width: 48px; height: 48px; border-radius: 8px; background: var(--secondary-color); color: var(--primary-color); font-weight: 800; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                {{ member.name|slice:":1" }}
+                            </div>
+                            <div>
+                                <h2 class="h5 fw-bold text-secondary mb-0">{{ member.name }}</h2>
+                                <span class="badge" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.75rem; font-weight: 600;">
+                                    {{ member.role }}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="small text-muted mb-0 flex-grow-1" style="line-height: 1.6;">{{ member.bio }}</p>
+                    </article>
+                </div>
                 {% endfor %}
             </div>
 
             <!-- Contact direct staff -->
-            <div class="contact-panel mt-5">
-                <div>
-                    <span class="badge-poster-orange mb-2">Contact direct</span>
-                    <h2 class="section-heading mb-2">Poser une question au coach</h2>
-                    <p class="text-muted mb-0">Vous souhaitez inscrire votre enfant ou assister à un premier entraînement d'observation ? Échangez directement avec le responsable de l'académie.</p>
-                </div>
-                <div class="contact-actions">
-                    <a href="tel:+243900824429" class="btn btn-primary rounded-pill w-100">
-                        <i class="bi bi-telephone-fill me-1"></i> +243 900 824 429
-                    </a>
-                    <a href="mailto:info@magichoops.cd" class="btn btn-outline-primary rounded-pill w-100">
-                        <i class="bi bi-envelope-fill me-1"></i> info@magichoops.cd
-                    </a>
+            <div class="card border p-4 p-md-5 mt-5" style="border-radius: 8px; background: var(--surface);">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-7">
+                        <span class="badge mb-2" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700;">Contact direct</span>
+                        <h2 class="h4 fw-bold text-secondary mb-2">Poser une question au coach</h2>
+                        <p class="text-muted mb-0">Vous souhaitez inscrire votre enfant ou assister à un premier entraînement d'observation ? Échangez directement avec le responsable de l'académie.</p>
+                    </div>
+                    <div class="col-lg-5 d-flex flex-column flex-sm-row gap-2">
+                        <a href="tel:+243900824429" class="btn btn-primary flex-grow-1 text-center py-2">
+                            <i class="bi bi-telephone-fill me-1"></i> +243 900 824 429
+                        </a>
+                        <a href="mailto:info@magichoops.cd" class="btn btn-outline-secondary flex-grow-1 text-center py-2">
+                            <i class="bi bi-envelope-fill me-1"></i> info@magichoops.cd
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

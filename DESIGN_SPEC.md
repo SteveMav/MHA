@@ -1,5 +1,7 @@
 # Spécification Design & Implémentation : Magic Hoops Academy Kinshasa
 
+> **Mise à jour du 7 septembre 2026 :** pour la refonte de la landing, `DESIGN.md` est désormais la source de vérité pour le diagnostic, les tokens, la composition, les interactions, le responsive et les critères d'acceptation. Les prescriptions ci-dessous qui imposent des dégradés décoratifs, des ombres orange, des boutons pilules ou de grands arrondis sont remplacées sur cette surface. Le reste de ce fichier est conservé comme spécification antérieure et contexte des autres parcours, à réévaluer avant propagation. La refonte est spécifiée, pas encore implémentée.
+
 ## 1. Contexte & Identité Source
 Cette spécification traduit visuellement et techniquement l'affiche officielle de **Magic Hoops Academy** dans le code frontend du projet.
 Elle élimine tout "AI slop" (effets superflus, néons incohérents, cartes sans contenu) pour se concentrer sur l'ADN sportif, la lisibilité et l'ergonomie.

@@ -11,7 +11,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -20,21 +20,70 @@
 
     {% include 'main/navbar.html' %}
 
-    <div class="container py-5 mt-5">
+    <div class="container py-5 mt-4">
+        {% if user.is_staff or user.is_superuser %}
+        <!-- Hub de Gestion & Administration pour Staff -->
+        <div class="card border mb-4" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; overflow: hidden; box-shadow: 0 4px 16px rgba(12,24,41,.04);">
+            <div style="background: var(--surface-alt); padding: 18px 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <span class="home-slogan-badge" style="margin-bottom: 6px;">Accès Administrateur / Staff</span>
+                    <h2 style="font-family: var(--font-heading); font-size: 20px; font-weight: 700; margin: 0; color: var(--secondary-color);">Menu de Gestion de l'Académie</h2>
+                </div>
+                <a href="{% url 'admin_dashboard' %}" class="home-button" style="min-height: 40px; padding: 8px 16px; font-size: 13px;">
+                    Tableau de bord principal ↗
+                </a>
+            </div>
+            <div style="padding: clamp(16px, 3vw, 24px);">
+                <div class="admin-hub-grid">
+                    <a href="{% url 'admin_dashboard' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-speedometer2"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Tableau de bord</strong>
+                        <span class="text-muted" style="font-size: 12px;">Vue d'ensemble & métriques</span>
+                    </a>
+                    <a href="{% url 'admin_users_list' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-people-fill"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Utilisateurs & Abonnements</strong>
+                        <span class="text-muted" style="font-size: 12px;">Membres et validation</span>
+                    </a>
+                    <a href="{% url 'admin_announcements' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-megaphone-fill"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Annonces & Sessions</strong>
+                        <span class="text-muted" style="font-size: 12px;">Publier sessions et actus</span>
+                    </a>
+                    <a href="{% url 'admin_gallery' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-images"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Galerie Photos</strong>
+                        <span class="text-muted" style="font-size: 12px;">Gérer albums et clichés</span>
+                    </a>
+                    <a href="{% url 'admin_schedules' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-clock-fill"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Horaires d'entraînement</strong>
+                        <span class="text-muted" style="font-size: 12px;">Plannings sur le terrain</span>
+                    </a>
+                    <a href="{% url 'admin_site_content' %}" class="card border p-3 text-decoration-none admin-hub-card" style="border-radius: 8px; border-color: var(--line) !important; background: #ffffff; transition: transform .16s ease, border-color .16s ease;">
+                        <div style="font-size: 22px; color: var(--primary-color); margin-bottom: 6px;"><i class="bi bi-sliders"></i></div>
+                        <strong style="color: var(--secondary-color); font-size: 14px; display: block;">Contenu du site</strong>
+                        <span class="text-muted" style="font-size: 12px;">Piliers et textes officiels</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="row">
             <!-- Sidebar / User Card -->
             <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden text-center h-100">
-                    <div class="card-body p-5">
+                <div class="card border shadow-sm rounded-2 overflow-hidden text-center h-100" style="border-color: var(--line) !important;">
+                    <div class="card-body p-4 p-md-5">
                         <div class="position-relative d-inline-block mb-4">
                             {% if user.profile.photo %}
                             <img src="{{ user.profile.photo.url }}" alt="Profile Picture"
                                 class="rounded-circle img-thumbnail shadow-sm"
-                                style="width: 150px; height: 150px; object-fit: cover;">
+                                style="width: 130px; height: 130px; object-fit: cover;">
                             {% else %}
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto shadow-sm"
-                                style="width: 150px; height: 150px;">
-                                <i class="bi bi-person-fill text-secondary" style="font-size: 5rem;"></i>
+                                style="width: 130px; height: 130px;">
+                                <i class="bi bi-person-fill text-secondary" style="font-size: 4.5rem;"></i>
                             </div>
                             {% endif %}
                         </div>
@@ -42,10 +91,10 @@
                         <p class="text-muted mb-4">{{ user.email }}</p>
 
                         <div class="d-grid gap-2">
-                            <div class="p-3 bg-light rounded-3 text-start">
+                            <div class="p-3 bg-light rounded-2 text-start">
                                 <small class="text-muted d-block mb-1">Statut du compte</small>
                                 {% if user.is_staff or user.is_superuser %}
-                                <span class="badge bg-primary rounded-pill">
+                                <span class="badge bg-primary rounded-1">
                                     <i class="bi bi-shield-fill-check me-1"></i> {% if user.is_superuser %}Administrateur{% else %}Membre du Staff{% endif %}
                                 </span>
                                 <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">
@@ -53,29 +102,29 @@
                                 </small>
                                 {% else %}
                                     {% if subscription and subscription.statut == 'payé' %}
-                                    <span class="badge bg-success rounded-pill">Abonnement Actif</span>
+                                    <span class="badge bg-success rounded-1">Abonnement Actif</span>
                                     <small class="d-block mt-1 text-muted" style="font-size: 0.8rem;">Expire le {{
                                         subscription.date_fin|date:"d M Y" }}</small>
                                     {% elif subscription and subscription.statut == 'en_attente' %}
-                                    <span class="badge bg-warning text-dark rounded-pill">En attente de validation</span>
+                                    <span class="badge bg-warning text-dark rounded-1">En attente de validation</span>
                                     {% else %}
-                                    <span class="badge bg-danger rounded-pill">Abonnement Inactif/Expiré</span>
+                                    <span class="badge bg-danger rounded-1">Abonnement Inactif/Expiré</span>
                                     {% endif %}
                                 {% endif %}
                             </div>
-                            <div class="p-3 bg-light rounded-3 text-start">
+                            <div class="p-3 bg-light rounded-2 text-start">
                                 <small class="text-muted d-block mb-1">Membre depuis</small>
                                 <span class="fw-bold">{{ user.date_joined|date:"d M Y" }}</span>
                             </div>
 
                             {% if user.is_staff or user.is_superuser %}
                             <!-- Raccourci vers le portail gérant pour le personnel -->
-                            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary rounded-pill fw-bold shadow-sm mt-2">
-                                <i class="bi bi-speedometer2 me-2"></i> Espace Administration
+                            <a href="{% url 'admin_dashboard' %}" class="home-button mt-2" style="width: 100%; justify-content: center; min-height: 42px;">
+                                <i class="bi bi-speedometer2 me-2"></i> Espace Administration ↗
                             </a>
                             {% else %}
                             <!-- Subscription Button pour les membres joueurs -->
-                            <button type="button" class="btn btn-primary rounded-pill fw-bold shadow-sm mt-2"
+                            <button type="button" class="btn btn-primary fw-bold shadow-sm mt-2"
                                 data-bs-toggle="modal" data-bs-target="#subscriptionModal">
                                 <i class="bi bi-credit-card me-2"></i> Payer mon abonnement
                             </button>
@@ -87,11 +136,11 @@
 
             <!-- Update Form -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-header bg-white border-0 py-4 px-5">
+                <div class="card border shadow-sm rounded-2" style="border-color: var(--line) !important;">
+                    <div class="card-header bg-white border-bottom py-3 px-4 px-md-5" style="border-color: var(--line) !important;">
                         <h4 class="mb-0 fw-bold text-primary">Modifier mes informations</h4>
                     </div>
-                    <div class="card-body p-5">
+                    <div class="card-body p-4 p-md-5">
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             <input type="hidden" name="update_profile" value="1">
@@ -167,7 +216,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end mt-5">
-                                <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                                <button type="submit" class="btn btn-primary px-4 px-md-5 py-2 fw-bold shadow-sm">
                                     Enregistrer les modifications
                                 </button>
                             </div>
@@ -183,7 +232,7 @@
     <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-labelledby="subscriptionModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-content border shadow rounded-2" style="border-color: var(--line) !important;">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold" id="subscriptionModalLabel">Payer mon abonnement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -213,7 +262,7 @@
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2">
+                            <button type="submit" class="btn btn-primary fw-bold py-2">
                                 Confirmer le paiement
                             </button>
                         </div>

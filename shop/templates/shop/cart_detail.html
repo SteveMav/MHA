@@ -2,25 +2,25 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 bg-paper">
+<section class="py-5" style="background: var(--paper);">
     <div class="container">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small">
+            <ol class="breadcrumb small mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique</a></li>
                 <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Panier d'achat</li>
             </ol>
         </nav>
 
-        <h1 class="display-6 fw-extrabold text-secondary mb-4">
+        <h1 class="h3 fw-bold text-secondary mb-4">
             <i class="bi bi-cart3 text-primary me-2"></i> Votre Panier d'Achat
         </h1>
 
         {% if messages %}
         <div class="mb-4">
             {% for msg in messages %}
-            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show border" style="border-radius: 8px;" role="alert">
                 <i class="bi bi-info-circle-fill me-2"></i> {{ msg }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -32,7 +32,7 @@
         <div class="row g-4">
             <!-- Liste des articles du panier -->
             <div class="col-lg-8">
-                <div class="bg-white rounded-4 border shadow-sm p-4">
+                <div class="bg-white border shadow-sm p-4" style="border-radius: 8px;">
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead class="text-muted small text-uppercase">
@@ -49,7 +49,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="rounded-3 overflow-hidden me-3 border" style="width: 60px; height: 60px; flex-shrink: 0; background: var(--surface-alt);">
+                                            <div class="overflow-hidden me-3 border" style="width: 56px; height: 56px; border-radius: 6px; flex-shrink: 0; background: var(--surface-alt);">
                                                 {% if item.product.image_principale %}
                                                 <img src="{{ item.product.image_principale.url }}" alt="{{ item.product.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
                                                 {% else %}
@@ -63,7 +63,7 @@
                                                     </a>
                                                 </h5>
                                                 {% if item.variant_name %}
-                                                <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">
+                                                <span class="badge bg-light text-secondary border px-2 py-1 small" style="border-radius: 4px;">
                                                     {{ item.variant_name }}
                                                 </span>
                                                 {% endif %}
@@ -78,7 +78,7 @@
                                             {% csrf_token %}
                                             <input type="hidden" name="product_id" value="{{ item.product.id }}">
                                             <input type="hidden" name="variant_id" value="{{ item.variant_id|default:0 }}">
-                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="50" class="form-control form-control-sm text-center fw-bold" style="width: 55px;" onchange="this.form.submit()">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="50" class="form-control form-control-sm text-center fw-bold" style="width: 55px; border-radius: 6px;" onchange="this.form.submit()">
                                         </form>
                                     </td>
                                     <td>
@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
-                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary px-4">
                             <i class="bi bi-arrow-left me-1"></i> Continuer mes achats
                         </a>
                     </div>
@@ -109,7 +109,7 @@
 
             <!-- Récapitulatif de Commande -->
             <div class="col-lg-4">
-                <div class="bg-white rounded-4 border shadow-sm p-4 sticky-top" style="top: 100px;">
+                <div class="bg-white border shadow-sm p-4 sticky-top" style="border-radius: 8px; top: 100px;">
                     <h2 class="h5 fw-bold text-secondary mb-4 pb-2 border-bottom">
                         Récapitulatif de la commande
                     </h2>
@@ -127,14 +127,14 @@
                     <div class="pt-3 border-top mb-4">
                         <div class="d-flex justify-content-between align-items-baseline mb-1">
                             <span class="fw-bold fs-5 text-secondary">Total à payer :</span>
-                            <span class="display-6 fw-extrabold text-primary">{{ cart.get_total_price }} $</span>
+                            <span class="h3 fw-bold text-primary mb-0">{{ cart.get_total_price }} $</span>
                         </div>
                         <div class="text-end text-muted small">
                             Soit environ <strong class="text-secondary">{{ cart.formatted_cdf }}</strong>
                         </div>
                     </div>
 
-                    <a href="{% url 'shop:checkout' %}" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center">
+                    <a href="{% url 'shop:checkout' %}" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center">
                         Valider la commande <i class="bi bi-arrow-right ms-2"></i>
                     </a>
 
@@ -147,13 +147,13 @@
         </div>
         {% else %}
         <!-- Panier Vide -->
-        <div class="text-center py-5 bg-white rounded-4 border shadow-sm p-5 my-4">
+        <div class="text-center py-5 bg-white border shadow-sm p-5 my-4" style="border-radius: 8px;">
             <div class="text-muted mb-3">
-                <i class="bi bi-cart-x display-1 text-primary-subtle"></i>
+                <i class="bi bi-cart-x display-1 text-primary"></i>
             </div>
             <h3 class="fw-bold text-secondary mb-2">Votre panier est actuellement vide</h3>
             <p class="text-muted mb-4">Découvrez nos maillots officiels, t-shirts d'entraînement et accessoires de l'académie.</p>
-            <a href="{% url 'shop:product_list' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm fw-bold">
+            <a href="{% url 'shop:product_list' %}" class="btn btn-primary px-4 py-2 fw-bold">
                 <i class="bi bi-bag-plus me-2"></i> Découvrir la boutique
             </a>
         </div>

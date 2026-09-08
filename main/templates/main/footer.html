@@ -1,50 +1,36 @@
 {% load static %}
-<footer class="site-footer text-white py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <h5 class="text-primary mb-2">Magic Hoops Academy</h5>
-                <p class="brand-slogan-script text-white mb-2" style="font-size: 1.45rem;">Formons les champions de demain !</p>
-                <p class="small text-white-50">Académie de basketball d'excellence à Kinshasa pour jeunes basketteurs, familles et partenaires.</p>
-            </div>
-            <div class="col-lg-2 col-md-6">
-                <h6 class="text-white mb-3">Liens rapides</h6>
-                <ul class="list-unstyled small">
-                    <li><a href="{% url 'index' %}#home" class="text-white-50 text-decoration-none">Accueil</a></li>
-                    <li><a href="{% url 'index' %}#programmes" class="text-white-50 text-decoration-none">Programmes</a></li>
-                    <li><a href="{% url 'index' %}#methode" class="text-white-50 text-decoration-none">Méthode MHA</a></li>
-                    <li><a href="{% url 'index' %}#coach" class="text-white-50 text-decoration-none">Coach et staff</a></li>
-                    <li><a href="{% url 'gallery:gallery_list' %}" class="text-white-50 text-decoration-none">Galerie photos</a></li>
-                    <li><a href="{% url 'shop:product_list' %}" class="text-white-50 text-decoration-none">Boutique officielle</a></li>
-                    <li><a href="{% url 'announcements:announcement_list' %}" class="text-white-50 text-decoration-none">Sessions</a></li>
-                    <li><a href="{% url 'inscription' %}" class="text-white-50 text-decoration-none">Inscription</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <h6 class="text-white mb-3">Contact & Terrain</h6>
-                <ul class="list-unstyled small text-white-50">
-                    <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>Avenue de la Science n°5, Gombe, Kinshasa</li>
-                    <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i><a href="tel:+243900824429" class="text-white-50 text-decoration-none">+243 900 824 429</a></li>
-                    <li class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i><a href="mailto:info@magichoops.cd" class="text-white-50 text-decoration-none">info@magichoops.cd</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <h6 class="text-white mb-3">Horaires & Séances</h6>
-                <p class="small text-white-50 mb-2">Entraînements réguliers chaque mercredi et samedi sur notre terrain à la Gombe.</p>
-                <p class="small text-white-50 mb-3"><i class="bi bi-clock me-1 text-primary"></i>Présence requise 15 min avant le début.</p>
-                <a href="{% url 'inscription' %}" class="btn btn-primary btn-sm rounded-pill px-3">
-                    <i class="bi bi-person-plus-fill me-1"></i> Inscrire mon enfant
+<footer class="home-footer" aria-label="Pied de page">
+    <div class="home-wrap">
+        <div class="footer-main">
+            <div>
+                <a class="home-brand" href="{% url 'index' %}" style="color: #ffffff;">
+                    <img src="{% static 'images/mha_logo.jpeg' %}" alt="" width="48" height="48">
+                    <span>Magic Hoops<span class="brand-subtitle" style="color: #c1c9d3;">Academy · Kinshasa</span></span>
                 </a>
+                <p>Formons les champions de demain !</p>
             </div>
-        </div>
-        <div class="text-center my-4">
-            <div class="motto-strip">
-                <span class="star">★</span> TRAVAIL <span class="star">★</span> RESPECT <span class="star">★</span> SOLIDARITÉ <span class="star">★</span> PERSÉVÉRANCE
+            <div class="footer-contact">
+                <a href="tel:{{ academy_info.telephone|default:'+243900824429'|cut:' ' }}">{{ academy_info.telephone|default:"+243 900 824 429" }}</a>
+                <a href="mailto:{{ academy_info.email|default:'info@magichoops.cd' }}">{{ academy_info.email|default:"info@magichoops.cd" }}</a>
+                <p>{{ academy_info.adresse_terrain|default:"Avenue de la Science n°5, Gombe, Kinshasa" }}</p>
             </div>
+            <nav aria-label="Liens complémentaires">
+                <a href="{% url 'programmes' %}">Programmes ↗</a>
+                <a href="{% url 'gallery:gallery_list' %}">Galerie photos ↗</a>
+                <a href="{% url 'announcements:announcement_list' %}">Sessions & actualités ↗</a>
+                <a href="{% url 'shop:product_list' %}">Boutique officielle ↗</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">Mon espace membre ↗</a>
+                {% if user.is_staff %}<a href="{% url 'admin_dashboard' %}">Administration ↗</a>{% endif %}
+                {% else %}
+                <a href="{% url 'login' %}">Connexion membre ↗</a>
+                {% endif %}
+                <a href="{% url 'index' %}#schedule">Horaires et accès ↗</a>
+            </nav>
         </div>
-        <hr class="my-3 border-secondary">
-        <div class="text-center small text-white-50">
-            &copy; {% now "Y" %} Magic Hoops Academy Kinshasa. Tous droits réservés.
+        <div class="footer-bottom">
+            <small>© {% now "Y" %} Magic Hoops Academy</small>
+            <p>Travail · Respect · Solidarité · Persévérance</p>
         </div>
     </div>
 </footer>

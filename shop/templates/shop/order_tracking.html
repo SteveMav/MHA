@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 bg-paper">
+<section class="py-5" style="background: var(--paper);">
     <div class="container">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small">
+            <ol class="breadcrumb small mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique</a></li>
                 <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Suivi de commande</li>
@@ -15,12 +15,12 @@
 
         <div class="row justify-content-center">
             <div class="col-lg-7">
-                <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5 mb-4">
+                <div class="bg-white border shadow-sm p-4 p-md-5 mb-4" style="border-radius: 8px;">
                     <div class="text-center mb-4">
-                        <div class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-search fs-3"></i>
+                        <div class="text-primary mb-2">
+                            <i class="bi bi-search fs-2"></i>
                         </div>
-                        <h1 class="h3 fw-bold text-secondary mb-2">Suivre l'état de votre commande</h1>
+                        <h1 class="h4 fw-bold text-secondary mb-2">Suivre l'état de votre commande</h1>
                         <p class="text-muted small mb-0">Renseignez votre numéro de commande et votre numéro de téléphone pour voir l'état de préparation ou de retrait.</p>
                     </div>
 
@@ -33,7 +33,7 @@
                             <label class="form-label fw-semibold small text-secondary">Numéro de téléphone *</label>
                             {{ form.telephone }}
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-2 fw-bold">
                             <i class="bi bi-search me-2"></i> Vérifier le statut
                         </button>
                     </form>
@@ -41,15 +41,15 @@
 
                 {% if searched %}
                     {% if order %}
-                    <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5">
+                    <div class="bg-white border shadow-sm p-4 p-md-5" style="border-radius: 8px;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h2 class="h5 fw-bold text-secondary mb-0">Commande #{{ order.numero_commande }}</h2>
-                            <span class="badge {% if order.statut_commande == 'prete' or order.statut_commande == 'livree' %}bg-success{% else %}bg-primary{% endif %} rounded-pill px-3 py-2 fw-bold">
+                            <span class="badge {% if order.statut_commande == 'prete' or order.statut_commande == 'livree' %}bg-success{% else %}bg-primary text-white{% endif %} px-3 py-2 fw-bold" style="border-radius: 4px;">
                                 {{ order.get_statut_commande_display }}
                             </span>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 mb-3 small">
+                        <div class="p-3 bg-light rounded-2 mb-3 small border">
                             <div class="row g-2">
                                 <div class="col-6"><strong>Client :</strong> {{ order.nom_complet }}</div>
                                 <div class="col-6"><strong>Date :</strong> {{ order.date_creation|date:"d M Y" }}</div>
@@ -69,13 +69,13 @@
                         </ul>
 
                         <div class="text-center pt-2">
-                            <a href="{% url 'shop:order_confirmation' order.numero_commande %}" class="btn btn-outline-primary rounded-pill px-4">
+                            <a href="{% url 'shop:order_confirmation' order.numero_commande %}" class="btn btn-outline-secondary px-4">
                                 Voir le reçu complet
                             </a>
                         </div>
                     </div>
                     {% else %}
-                    <div class="alert alert-warning rounded-4 shadow-sm p-4 text-center">
+                    <div class="alert alert-warning border p-4 text-center" style="border-radius: 8px;">
                         <i class="bi bi-exclamation-triangle-fill fs-3 text-warning mb-2 d-block"></i>
                         <h4 class="h6 fw-bold mb-1">Aucune commande trouvée</h4>
                         <p class="small mb-0">Vérifiez l'exactitude de votre numéro de commande (ex: <code>MHA-XXXXXX</code>) et de votre numéro de téléphone.</p>

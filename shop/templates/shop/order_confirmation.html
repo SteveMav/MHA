@@ -2,49 +2,49 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 bg-paper">
+<section class="py-5" style="background: var(--paper);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <!-- En-tête Succès -->
-                <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5 text-center mb-4">
-                    <div class="bg-success-subtle text-success p-3 rounded-circle d-inline-flex mb-3">
+                <div class="bg-white border shadow-sm p-4 p-md-5 text-center mb-4" style="border-radius: 8px;">
+                    <div class="text-success mb-3">
                         <i class="bi bi-check-circle-fill display-4"></i>
                     </div>
-                    <h1 class="display-6 fw-extrabold text-secondary mb-2">
+                    <h1 class="h3 fw-bold text-secondary mb-2">
                         Commande Enregistrée avec Succès !
                     </h1>
                     <p class="text-muted lead fs-6 mb-3">
                         Merci pour votre confiance, <strong>{{ order.nom_complet }}</strong>. Votre commande porte le numéro :
                     </p>
-                    <div class="d-inline-block bg-primary-light text-primary border border-primary px-4 py-2 rounded-pill fw-bold fs-4 mb-4">
+                    <div class="d-inline-block px-3 py-2 fw-bold fs-5 mb-4" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 6px;">
                         {{ order.numero_commande }}
                     </div>
 
                     <!-- Bouton WhatsApp Officiel pour le Secrétariat -->
-                    <div class="p-3 bg-light rounded-4 border mb-4 text-start">
+                    <div class="p-3 bg-light border mb-4 text-start" style="border-radius: 8px;">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-whatsapp text-success fs-3 me-2"></i>
+                            <i class="bi bi-whatsapp text-success fs-4 me-2"></i>
                             <h2 class="h6 fw-bold text-secondary mb-0">Confirmation rapide sur WhatsApp</h2>
                         </div>
                         <p class="small text-muted mb-3">
                             Cliquez sur le bouton ci-dessous pour transmettre automatiquement les détails de votre commande au secrétariat Magic Hoops Academy et envoyer votre preuve de paiement.
                         </p>
-                        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center">
+                        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success btn-lg w-100 py-2 fw-bold d-flex align-items-center justify-content-center">
                             <i class="bi bi-whatsapp me-2 fs-5"></i> Envoyer au secrétariat WhatsApp MHA
                         </a>
                     </div>
                 </div>
 
                 <!-- Récapitulatif Reçu de Commande -->
-                <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5 mb-4">
+                <div class="bg-white border shadow-sm p-4 p-md-5 mb-4" style="border-radius: 8px;">
                     <div class="d-flex justify-content-between align-items-center pb-3 border-bottom mb-4">
                         <div>
                             <span class="text-muted small">Date de commande :</span>
                             <div class="fw-bold text-secondary">{{ order.date_creation|date:"d F Y à H:i" }}</div>
                         </div>
                         <div class="text-end">
-                            <span class="badge {% if order.statut_paiement == 'valide' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-2 fw-bold">
+                            <span class="badge {% if order.statut_paiement == 'valide' %}bg-success{% else %}bg-warning text-dark{% endif %} px-3 py-2 fw-bold" style="border-radius: 4px;">
                                 {{ order.get_statut_paiement_display }}
                             </span>
                         </div>
@@ -71,7 +71,7 @@
                                         <span class="text-muted small">{{ item.variante_label|default:"Standard" }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-light text-secondary border rounded-pill px-3 py-1 fw-bold">{{ item.quantite }}</span>
+                                        <span class="badge bg-light text-secondary border px-2 py-1 fw-bold" style="border-radius: 4px;">{{ item.quantite }}</span>
                                     </td>
                                     <td class="text-end fw-bold text-primary">
                                         {{ item.total_ligne_usd }} $
@@ -83,7 +83,7 @@
                                 <tr>
                                     <td colspan="3" class="fw-bold text-end">Total général :</td>
                                     <td class="text-end">
-                                        <div class="display-6 fw-bold text-primary" style="font-size: 1.5rem;">{{ order.total_usd }} $</div>
+                                        <div class="h4 fw-bold text-primary mb-0">{{ order.total_usd }} $</div>
                                         <div class="text-muted small">~ {{ order.formatted_cdf }}</div>
                                     </td>
                                 </tr>
@@ -113,10 +113,10 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center pt-4 border-top mt-4 flex-wrap gap-2">
-                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary px-4">
                             <i class="bi bi-bag-plus me-1"></i> Retour à la boutique
                         </a>
-                        <button onclick="window.print()" class="btn btn-outline-primary rounded-pill px-4">
+                        <button onclick="window.print()" class="btn btn-outline-primary px-4">
                             <i class="bi bi-printer me-1"></i> Imprimer le reçu
                         </button>
                     </div>

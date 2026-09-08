@@ -156,6 +156,12 @@ def get_featured_session():
 
 def index(request):
     schedules = Schedule.objects.all()
+    # Keep the homepage FAQ and its structured data aligned with the live timetable.
+    home_faqs = [dict(item) for item in FAQS]
+    home_faqs[-1]['answer'] = (
+        "Consultez les créneaux dans la rubrique Horaires et accès de cette page. "
+        "Contactez l'équipe pour confirmer le groupe adapté à votre enfant."
+    )
     recent_announcements = Annonce.objects.all()[:4]
     latest_announcement = Annonce.objects.order_by('-date_publication').first()
     featured_session = get_featured_session()
@@ -208,7 +214,7 @@ def index(request):
                     "text": item["answer"],
                 },
             }
-            for item in FAQS
+            for item in home_faqs
         ],
     }
 
@@ -252,8 +258,16 @@ def index(request):
         'programs': PROGRAMS,
         'method_pillars': active_method_pillars,
         'academy_info': academy_info,
+        'home_custom_title': (
+            academy_info.hero_title if academy_info and academy_info.hero_title !=
+            AcademyInfo._meta.get_field('hero_title').get_default() else ''
+        ),
+        'home_custom_subtitle': (
+            academy_info.hero_subtitle if academy_info and academy_info.hero_subtitle !=
+            AcademyInfo._meta.get_field('hero_subtitle').get_default() else ''
+        ),
         'staff_members': STAFF_MEMBERS,
-        'faqs': FAQS,
+        'faqs': home_faqs,
         'seo_title': "Magic Hoops Academy | Académie de Basket à Kinshasa (RDC) • Filles & Garçons",
         'seo_description': (
             "Académie de basketball de référence à Kinshasa (Gombe) pour enfants, filles et garçons "
@@ -520,4 +534,3 @@ def preview_500(request):
 def preview_400(request):
     """Route de test pour prévisualiser la page 400."""
     return render(request, '400.html')
-

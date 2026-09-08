@@ -5,7 +5,7 @@
 <style>
 .product-main-view {
     background: var(--surface);
-    border-radius: var(--radius-lg);
+    border-radius: 8px;
     border: 1px solid var(--line);
     overflow: hidden;
     position: relative;
@@ -25,9 +25,9 @@
     transition: transform 0.3s ease;
 }
 .product-thumb {
-    width: 70px;
-    height: 70px;
-    border-radius: var(--radius-sm);
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
     object-fit: cover;
     cursor: pointer;
     border: 2px solid transparent;
@@ -41,12 +41,12 @@
 }
 .size-pill-radio label {
     display: inline-block;
-    padding: 8px 18px;
+    padding: 6px 14px;
     border: 1.5px solid var(--line);
-    border-radius: var(--radius-pill);
+    border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     transition: all 0.2s ease;
     background: var(--surface);
     color: var(--secondary-color);
@@ -60,9 +60,9 @@
     border-color: var(--primary-color);
 }
 .qty-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -78,22 +78,22 @@
     border-color: var(--primary-color);
 }
 .qty-input {
-    width: 60px;
+    width: 56px;
     text-align: center;
     font-weight: bold;
     border: 1px solid var(--line);
-    border-radius: var(--radius-pill);
+    border-radius: 6px;
     background: white;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="py-4 bg-paper border-bottom">
+<section class="py-4 border-bottom" style="background: var(--paper);">
     <div class="container">
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small">
+            <ol class="breadcrumb small mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'index' %}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}" class="text-decoration-none text-muted">Boutique MHA</a></li>
                 {% if product.categorie %}
@@ -130,31 +130,31 @@
 
             <!-- Fiche Achat & Description -->
             <div class="col-lg-6">
-                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <div class="bg-white p-4 p-md-5 border shadow-sm" style="border-radius: 8px;">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         {% if product.categorie %}
-                        <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1 fw-bold small">
+                        <span class="badge" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700; font-size: 0.8rem;">
                             {{ product.categorie.nom }}
                         </span>
                         {% endif %}
 
                         {% if product.en_stock %}
-                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-bold small">
+                        <span class="badge bg-success-subtle text-success border px-2 py-1 small fw-bold" style="border-radius: 4px;">
                             <i class="bi bi-check-circle me-1"></i> En Stock
                         </span>
                         {% else %}
-                        <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 fw-bold small">
+                        <span class="badge bg-danger-subtle text-danger border px-2 py-1 small fw-bold" style="border-radius: 4px;">
                             <i class="bi bi-x-circle me-1"></i> Rupture de stock
                         </span>
                         {% endif %}
                     </div>
 
-                    <h1 class="display-6 fw-extrabold text-secondary mb-3">
+                    <h1 class="h3 fw-bold text-secondary mb-3">
                         {{ product.nom }}
                     </h1>
 
                     <div class="d-flex align-items-baseline gap-3 mb-4 pb-3 border-bottom">
-                        <div class="display-6 fw-bold text-primary">{{ product.prix_usd }} $</div>
+                        <div class="h3 fw-bold text-primary mb-0">{{ product.prix_usd }} $</div>
                         <div class="text-muted fw-semibold fs-6">~ {{ product.formatted_cdf }}</div>
                     </div>
 
@@ -191,7 +191,7 @@
 
                         {% if product.guide_tailles %}
                         <div class="collapse mb-4" id="guideTailles">
-                            <div class="p-3 bg-light rounded-3 small text-muted border">
+                            <div class="p-3 bg-light rounded-2 small text-muted border">
                                 <div class="fw-bold text-secondary mb-1"><i class="bi bi-info-circle me-1 text-primary"></i> Guide des tailles :</div>
                                 {{ product.guide_tailles|linebreaks }}
                             </div>
@@ -204,13 +204,13 @@
                                 <label class="form-label fw-bold text-secondary mb-1 small d-block">Quantité :</label>
                                 <div class="d-flex align-items-center gap-2">
                                     <button type="button" class="qty-btn" onclick="decrementQty()">&minus;</button>
-                                    <input type="number" name="quantity" id="productQty" value="1" min="1" max="50" class="qty-input py-2">
+                                    <input type="number" name="quantity" id="productQty" value="1" min="1" max="50" class="qty-input py-1">
                                     <button type="button" class="qty-btn" onclick="incrementQty()">&plus;</button>
                                 </div>
                             </div>
                             <div class="col">
                                 <label class="form-label d-none d-md-block mb-1">&nbsp;</label>
-                                <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 py-2 fw-bold d-flex align-items-center justify-content-center">
                                     <i class="bi bi-cart-plus-fill me-2 fs-5"></i> Ajouter au panier
                                 </button>
                             </div>
@@ -223,7 +223,7 @@
                         <p class="text-muted small mb-3">{{ product.description|linebreaks }}</p>
 
                         {% if product.details_matiere %}
-                        <div class="p-3 bg-paper rounded-3 border small mb-3">
+                        <div class="p-3 bg-paper rounded-2 border small mb-3">
                             <div class="fw-bold text-secondary mb-1"><i class="bi bi-patch-check-fill text-primary me-1"></i> Caractéristiques techniques :</div>
                             <div class="text-muted">{{ product.details_matiere }}</div>
                         </div>
@@ -245,11 +245,11 @@
 {% if related_products %}
 <section class="py-5 bg-white border-top">
     <div class="container">
-        <h3 class="h4 fw-bold text-secondary mb-4">Dans la même catégorie</h3>
+        <h3 class="h5 fw-bold text-secondary mb-4">Dans la même catégorie</h3>
         <div class="row g-4">
             {% for r_prod in related_products %}
             <div class="col-6 col-md-3">
-                <div class="card h-100 border rounded-4 overflow-hidden shadow-sm">
+                <div class="card h-100 border overflow-hidden shadow-sm" style="border-radius: 8px;">
                     <a href="{{ r_prod.get_absolute_url }}">
                         <div style="aspect-ratio: 1/1; overflow: hidden; background: var(--surface-alt);">
                             {% if r_prod.image_principale %}
@@ -267,7 +267,7 @@
                         </h5>
                         <div class="mt-auto pt-2 d-flex justify-content-between align-items-center border-top">
                             <span class="fw-bold text-primary">{{ r_prod.prix_usd }} $</span>
-                            <a href="{{ r_prod.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                            <a href="{{ r_prod.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">
                                 Voir
                             </a>
                         </div>

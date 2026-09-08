@@ -3,72 +3,64 @@
 
 {% block extra_head %}
 <style>
-.shop-hero {
-    background: radial-gradient(circle at 10% 20%, rgba(255, 94, 20, 0.16), transparent 45%),
-                radial-gradient(circle at 90% 80%, rgba(12, 24, 41, 0.14), transparent 50%),
-                var(--surface);
-    border-bottom: 1px solid var(--line);
-    padding: 3.5rem 0 2.5rem;
-}
-.product-card {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
+.shop-product-card {
+    background: #ffffff;
     border: 1px solid var(--line);
+    border-radius: 8px;
     overflow: hidden;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
-    height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
+.shop-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(12, 24, 41, 0.07);
     border-color: rgba(255, 94, 20, 0.35);
 }
-.product-img-wrapper {
+.shop-img-wrapper {
     position: relative;
     padding-top: 85%;
     overflow: hidden;
     background: var(--surface-alt);
 }
-.product-img {
+.shop-img {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.35s ease;
 }
-.product-card:hover .product-img {
-    transform: scale(1.06);
+.shop-product-card:hover .shop-img {
+    transform: scale(1.04);
 }
 .badge-product {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    font-size: 0.75rem;
+    top: 10px;
+    left: 10px;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 5px 12px;
-    border-radius: var(--radius-pill);
+    padding: 4px 8px;
+    border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.badge-nouveau { background: #28a745; color: white; }
+.badge-nouveau { background: #198754; color: white; }
 .badge-populaire { background: #ffc107; color: #0C1829; }
-.badge-officiel { background: var(--primary-color); color: white; }
+.badge-officiel { background: var(--primary-color); color: #0C1829; font-weight: 800; }
 .badge-limite { background: #6f42c1; color: white; }
 .badge-promo { background: #dc3545; color: white; }
 
 .price-tag-usd {
     font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 1.35rem;
+    font-weight: 800;
+    font-size: 1.25rem;
     color: var(--secondary-color);
 }
 .price-tag-cdf {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--muted);
     font-weight: 600;
 }
@@ -76,204 +68,179 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Boutique -->
-<section class="shop-hero">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
-                <span class="badge bg-primary text-white rounded-pill px-3 py-2 text-uppercase mb-3 fw-bold tracking-wide">
-                    <i class="bi bi-bag-check-fill me-1"></i> Équipements & Vêtements Officiels
-                </span>
-                <h1 class="display-5 fw-extrabold text-secondary mb-2">
-                    BOUTIQUE MAGIC HOOPS ACADEMY
+<main id="main-content">
+    <!-- En-tête & Filtres Boutique -->
+    <section class="home-wrap home-section" style="padding-bottom: 24px;">
+        <nav aria-label="Fil d'Ariane" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); flex-wrap: wrap;">
+                <a href="{% url 'index' %}" class="home-link" style="font-size: 13px; color: var(--muted);">Accueil</a>
+                <span>/</span>
+                <span style="color: var(--secondary-color); font-weight: 600;">Boutique officielle</span>
+            </div>
+        </nav>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <span class="home-slogan-badge">Équipements & Vêtements Officiels</span>
+                    <span style="font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em;">Kinshasa · Gombe</span>
+                </div>
+                <h1 style="font-family: var(--font-heading); font-size: clamp(32px, 4.5vw, 46px); font-weight: 800; line-height: 1.1; margin: 0 0 16px; letter-spacing: -.025em; color: var(--secondary-color);">
+                    Boutique Magic Hoops Academy.
                 </h1>
-                <p class="brand-slogan-script text-primary fs-3 mb-3">
-                    Portez les couleurs des champions de Kinshasa
-                </p>
-                <p class="text-muted lead fs-6 mb-0">
-                    Maillots officiels, tenues d'entraînement, sweats, ballons et accessoires certifiés MHA. Retrait immédiat au terrain à la Gombe ou livraison dans tout Kinshasa.
+                <p style="color: var(--muted); font-size: 16px; line-height: 1.6; margin: 0; max-width: 58ch;">
+                    Maillots officiels, tenues d'entraînement, sweats, ballons et accessoires certifiés MHA. Retrait au terrain à la Gombe ou livraison dans tout Kinshasa.
                 </p>
             </div>
-            <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
-                <div class="d-inline-flex align-items-center gap-3">
-                    <a href="{% url 'shop:cart_detail' %}" class="btn btn-primary rounded-pill px-4 py-3 shadow-sm d-flex align-items-center">
-                        <i class="bi bi-cart3 fs-5 me-2"></i>
-                        <span class="fw-bold">Mon Panier</span>
-                        <span class="badge bg-white text-primary rounded-pill ms-2 px-2 py-1">{{ cart_count|default:0 }}</span>
-                    </a>
-                    <a href="{% url 'shop:order_tracking' %}" class="btn btn-outline-secondary rounded-pill px-3 py-3">
-                        <i class="bi bi-search me-1"></i> Suivre commande
-                    </a>
-                </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding-top: 8px;">
+                <a href="{% url 'shop:cart_detail' %}" class="home-button" style="min-height: 44px; padding: 10px 18px;">
+                    <i class="bi bi-cart3 me-2"></i> Mon Panier ({{ cart_count|default:0 }})
+                </a>
+                <a href="{% url 'shop:order_tracking' %}" class="home-link" style="margin-left: 6px;">
+                    Suivre ma commande ↗
+                </a>
             </div>
         </div>
 
-        <!-- Filtres par rayons & Barre de recherche -->
-        <div class="row align-items-center mt-4 pt-3 border-top g-3">
-            <div class="col-lg-7">
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{% url 'shop:product_list' %}" class="btn {% if not selected_category %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-2 fw-semibold small">
-                        <i class="bi bi-grid-fill me-1"></i> Tous les articles
-                    </a>
-                    {% for cat in categories %}
-                    <a href="{% url 'shop:product_list' %}?cat={{ cat.slug }}" class="btn {% if selected_category.slug == cat.slug %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-2 fw-semibold small">
-                        <i class="bi {{ cat.icone_css }} me-1"></i> {{ cat.nom }} ({{ cat.active_products_count }})
-                    </a>
-                    {% endfor %}
-                </div>
+        <!-- Filtres par rayons & Recherche -->
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--line);">
+            <div class="gallery-category-bar" style="margin-bottom: 0;">
+                <a href="{% url 'shop:product_list' %}" class="gallery-filter-link {% if not selected_category %}active{% endif %}">
+                    Tous les articles
+                </a>
+                {% for cat in categories %}
+                <a href="{% url 'shop:product_list' %}?cat={{ cat.slug }}" class="gallery-filter-link {% if selected_category.slug == cat.slug %}active{% endif %}">
+                    {{ cat.nom }} ({{ cat.active_products_count }})
+                </a>
+                {% endfor %}
             </div>
-            <div class="col-lg-5">
-                <form method="GET" action="{% url 'shop:product_list' %}" class="d-flex gap-2">
-                    {% if selected_category %}
-                    <input type="hidden" name="cat" value="{{ selected_category.slug }}">
-                    {% endif %}
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" name="q" value="{{ search_query }}" class="form-control border-start-0 ps-0" placeholder="Rechercher maillot, ballon...">
-                    </div>
-                    <select name="sort" class="form-select w-auto" onchange="this.form.submit()">
-                        <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Tri standard</option>
-                        <option value="prix_asc" {% if sort_by == 'prix_asc' %}selected{% endif %}>Prix : Croissant</option>
-                        <option value="prix_desc" {% if sort_by == 'prix_desc' %}selected{% endif %}>Prix : Décroissant</option>
-                        <option value="nouveau" {% if sort_by == 'nouveau' %}selected{% endif %}>Nouveautés</option>
-                    </select>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- Catalogue Produits -->
-<section class="py-5 bg-paper">
-    <div class="container">
+            <form method="GET" action="{% url 'shop:product_list' %}" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                {% if selected_category %}
+                <input type="hidden" name="cat" value="{{ selected_category.slug }}">
+                {% endif %}
+                <div style="position: relative;">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Rechercher maillot, ballon..." style="padding: 8px 12px 8px 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: #ffffff; color: var(--secondary-color); width: 220px;">
+                    <i class="bi bi-search" style="position: absolute; left: 10px; top: 9px; font-size: 12px; color: var(--muted);"></i>
+                </div>
+                <select name="sort" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: #ffffff; color: var(--secondary-color);">
+                    <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Tri standard</option>
+                    <option value="prix_asc" {% if sort_by == 'prix_asc' %}selected{% endif %}>Prix : Croissant</option>
+                    <option value="prix_desc" {% if sort_by == 'prix_desc' %}selected{% endif %}>Prix : Décroissant</option>
+                    <option value="nouveau" {% if sort_by == 'nouveau' %}selected{% endif %}>Nouveautés</option>
+                </select>
+            </form>
+        </div>
+    </section>
+
+    <!-- Catalogue Produits -->
+    <section class="home-wrap" style="padding-bottom: 72px;">
         {% if messages %}
-        <div class="mb-4">
+        <div style="margin-bottom: 24px;">
             {% for msg in messages %}
-            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i> {{ msg }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div style="padding: 12px 16px; border-radius: 6px; border: 1px solid var(--line); background: #ffffff; font-size: 14px; margin-bottom: 8px;">
+                <i class="bi bi-info-circle-fill me-2" style="color: var(--primary-color);"></i> {{ msg }}
             </div>
             {% endfor %}
         </div>
         {% endif %}
 
         {% if selected_category or search_query %}
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
             <div>
                 {% if selected_category %}
-                <h2 class="h4 fw-bold text-secondary mb-0">Rayon : {{ selected_category.nom }}</h2>
+                <h2 style="font-family: var(--font-heading); font-size: 18px; font-weight: 700; margin: 0; color: var(--secondary-color);">Rayon : {{ selected_category.nom }}</h2>
                 {% endif %}
                 {% if search_query %}
-                <p class="text-muted small mb-0">Résultats de recherche pour « {{ search_query }} » ({{ products.count }} article{{ products.count|pluralize }})</p>
+                <p style="color: var(--muted); font-size: 14px; margin: 4px 0 0;">Résultats de recherche pour « {{ search_query }} » ({{ products.count }} article{{ products.count|pluralize }})</p>
                 {% endif %}
             </div>
-            <a href="{% url 'shop:product_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
-                <i class="bi bi-x-circle me-1"></i> Réinitialiser les filtres
+            <a href="{% url 'shop:product_list' %}" class="home-link" style="font-size: 13px;">
+                Réinitialiser les filtres ✕
             </a>
         </div>
         {% endif %}
 
         {% if products %}
-        <div class="row g-4">
+        <div class="shop-products-grid">
             {% for product in products %}
-            <div class="col-sm-6 col-md-4 col-lg-3">
-                <div class="product-card">
-                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
-                        <div class="product-img-wrapper">
-                            {% if product.image_principale %}
-                            <img src="{{ product.image_principale.url }}" alt="{{ product.nom }}" class="product-img" loading="lazy">
-                            {% else %}
-                            <img src="{% static 'images/basketball.jpeg' %}" alt="{{ product.nom }}" class="product-img" loading="lazy">
-                            {% endif %}
+            <article class="shop-product-card">
+                <a href="{{ product.get_absolute_url }}" class="shop-img-wrapper" style="display: block;">
+                    {% if product.image_principale %}
+                    <img src="{{ product.image_principale.url }}" alt="{{ product.nom }}" class="shop-img" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/basketball.jpeg' %}" alt="{{ product.nom }}" class="shop-img" loading="lazy">
+                    {% endif %}
 
-                            {% if product.badge %}
-                            <span class="badge-product badge-{{ product.badge }}">
-                                {{ product.get_badge_display }}
-                            </span>
-                            {% endif %}
+                    {% if product.badge %}
+                    <span class="badge-product badge-{{ product.badge }}">
+                        {{ product.get_badge_display }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+                    {% if product.categorie %}
+                    <span style="font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 6px;">
+                        {{ product.categorie.nom }}
+                    </span>
+                    {% endif %}
+
+                    <h3 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700; margin: 0 0 8px; line-height: 1.35; min-height: 2.7em;">
+                        <a href="{{ product.get_absolute_url }}" style="text-decoration: none; color: var(--secondary-color);">
+                            {{ product.nom }}
+                        </a>
+                    </h3>
+
+                    {% if product.details_matiere %}
+                    <p style="color: var(--muted); font-size: 13px; line-height: 1.4; margin: 0 0 16px;">
+                        {{ product.details_matiere|truncatechars:50 }}
+                    </p>
+                    {% endif %}
+
+                    <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <div class="price-tag-usd">{{ product.prix_usd }} $</div>
+                            <div class="price-tag-cdf">{{ product.formatted_cdf }}</div>
                         </div>
-                    </a>
-
-                    <div class="p-3 d-flex flex-column flex-grow-1">
-                        {% if product.categorie %}
-                        <span class="text-muted small mb-1" style="font-size: 0.78rem;">
-                            {{ product.categorie.nom }}
-                        </span>
-                        {% endif %}
-
-                        <h3 class="h6 fw-bold text-secondary mb-2" style="min-height: 2.4rem;">
-                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-secondary">
-                                {{ product.nom }}
-                            </a>
-                        </h3>
-
-                        {% if product.details_matiere %}
-                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.3;">
-                            {{ product.details_matiere|truncatechars:45 }}
-                        </p>
-                        {% endif %}
-
-                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="price-tag-usd">{{ product.prix_usd }} $</div>
-                                <div class="price-tag-cdf">{{ product.formatted_cdf }}</div>
-                            </div>
-                            <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
-                                Détails <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </div>
+                        <a href="{{ product.get_absolute_url }}" class="home-link" style="font-size: 13px;">
+                            Détails ↗
+                        </a>
                     </div>
                 </div>
-            </div>
+            </article>
             {% endfor %}
         </div>
         {% else %}
-        <div class="text-center py-5 bg-white rounded-4 border p-5">
-            <div class="text-primary mb-3">
-                <i class="bi bi-bag-x display-3"></i>
-            </div>
-            <h3 class="fw-bold text-secondary">Aucun article trouvé</h3>
-            <p class="text-muted mb-4">Nous n'avons trouvé aucun article correspondant à vos critères de recherche.</p>
-            <a href="{% url 'shop:product_list' %}" class="btn btn-primary rounded-pill px-4">
-                Voir tous les articles
+        <div class="home-empty-box">
+            <p style="font-size: 18px; font-weight: 700; color: var(--secondary-color); margin-bottom: 8px;">Aucun article trouvé</p>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Nous n'avons trouvé aucun article correspondant à vos critères de recherche.</p>
+            <a href="{% url 'shop:product_list' %}" class="home-button">
+                Voir tous les articles ↗
             </a>
         </div>
         {% endif %}
-    </div>
-</section>
+    </section>
 
-<!-- Informations Paiement & Réception Kinshasa -->
-<section class="py-5 bg-white border-top">
-    <div class="container">
-        <div class="row g-4 text-center">
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-flex mb-3">
-                        <i class="bi bi-phone-fill fs-3"></i>
-                    </div>
-                    <h4 class="h5 fw-bold text-secondary">Paiement Mobile Money</h4>
-                    <p class="text-muted small mb-0">Réglez facilement via M-Pesa, Orange Money, Airtel Money ou directement en espèces au terrain.</p>
-                </div>
+    <!-- Informations Paiement & Réception Kinshasa -->
+    <section class="home-wrap" style="border-top: 1px solid var(--line); padding-top: 56px; padding-bottom: 72px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            <div style="background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 28px;">
+                <span style="font-size: 24px; color: var(--primary-color); display: block; margin-bottom: 12px;">📱</span>
+                <h4 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--secondary-color);">Paiement Mobile Money</h4>
+                <p style="color: var(--muted); font-size: 14px; line-height: 1.55; margin: 0;">Réglez facilement via M-Pesa, Orange Money, Airtel Money ou directement en espèces au terrain.</p>
             </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-flex mb-3">
-                        <i class="bi bi-geo-alt-fill fs-3"></i>
-                    </div>
-                    <h4 class="h5 fw-bold text-secondary">Retrait Direct au Terrain</h4>
-                    <p class="text-muted small mb-0">Récupérez votre commande sans frais supplémentaires lors des séances à la Gombe (Av. de la Science n°5).</p>
-                </div>
+            <div style="background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 28px;">
+                <span style="font-size: 24px; color: var(--primary-color); display: block; margin-bottom: 12px;">📍</span>
+                <h4 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--secondary-color);">Retrait Direct au Terrain</h4>
+                <p style="color: var(--muted); font-size: 14px; line-height: 1.55; margin: 0;">Récupérez votre commande sans frais lors des séances d'entraînement à la Gombe (Av. de la Science n°5).</p>
             </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-flex mb-3">
-                        <i class="bi bi-patch-check-fill fs-3"></i>
-                    </div>
-                    <h4 class="h5 fw-bold text-secondary">Produits 100% Officiels MHA</h4>
-                    <p class="text-muted small mb-0">Textiles techniques haute qualité conçus pour résister à l'intensité de la pratique du basketball.</p>
-                </div>
+            <div style="background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 28px;">
+                <span style="font-size: 24px; color: var(--primary-color); display: block; margin-bottom: 12px;">🛡️</span>
+                <h4 style="font-family: var(--font-heading); font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--secondary-color);">Produits 100% Officiels MHA</h4>
+                <p style="color: var(--muted); font-size: 14px; line-height: 1.55; margin: 0;">Textiles techniques haute qualité conçus pour résister à l'intensité de la pratique du basketball.</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</main>
 {% endblock %}

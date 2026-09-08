@@ -1,106 +1,133 @@
+{% extends 'main/base_site.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="fr-CD">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% include 'main/seo_head.html' %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <script type="application/ld+json">{{ announcement_schema|safe }}</script>
-</head>
+{% block extra_head %}
+<script type="application/ld+json">{{ announcement_schema|safe }}</script>
+<style>
+.announcement-detail-header {
+    margin-bottom: 2rem;
+}
+.announcement-figure {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+}
+.announcement-figure img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    display: block;
+}
+.announcement-side-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(12, 24, 41, 0.04);
+}
+.announcement-side-panel h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+}
+.announcement-side-panel dl dt {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary-color);
+    margin-bottom: 0.2rem;
+}
+.announcement-side-panel dl dd {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
 
-<body>
+{% block content %}
+<main class="home-wrap home-section" style="padding-top: 36px; padding-bottom: 72px;">
+    <article class="announcement-detail">
+        <div style="margin-bottom: 24px;">
+            <a class="home-link" href="{% url 'announcements:announcement_list' %}">← Retour aux actualités</a>
+        </div>
 
-    {% include 'main/navbar.html' %}
-
-    <main class="page-shell">
-        <article class="announcement-detail">
-            <div class="container">
-                <nav aria-label="Fil d'Ariane" class="mb-4">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Accueil</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'announcements:announcement_list' %}">Actualités</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ announcement.titre }}</li>
-                    </ol>
-                </nav>
-
-                <div class="row g-5">
-                    <div class="col-lg-8">
-                        <header class="announcement-detail-header">
-                            <div class="announcement-meta">
-                                <span>{{ announcement.get_type_annonce_display }}</span>
-                                <time datetime="{{ announcement.date_publication|date:'c' }}">{{ announcement.date_publication|date:"d F Y à H:i" }}</time>
-                            </div>
-                            <h1>{{ announcement.titre }}</h1>
-                            {% if announcement.resume_seo %}
-                            <p class="lead text-muted">{{ announcement.resume_seo }}</p>
-                            {% endif %}
-                        </header>
-
-                        {% if announcement.image %}
-                        <figure class="announcement-figure">
-                            <img src="{{ announcement.image.url }}" alt="{{ announcement.titre }}">
-                        </figure>
+        <div class="row g-5">
+                <div class="col-lg-8">
+                    <header class="announcement-detail-header">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="badge" style="background: rgba(255, 94, 20, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 94, 20, 0.25); border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em;">
+                                {{ announcement.get_type_annonce_display }}
+                            </span>
+                            <time datetime="{{ announcement.date_publication|date:'c' }}" class="text-muted small fw-semibold">
+                                <i class="bi bi-clock me-1"></i> {{ announcement.date_publication|date:"d F Y à H:i" }}
+                            </time>
+                        </div>
+                        <h1 class="h2 fw-bold text-secondary mb-3">{{ announcement.titre }}</h1>
+                        {% if announcement.resume_seo %}
+                        <p class="lead fs-6 text-muted mb-0">{{ announcement.resume_seo }}</p>
                         {% endif %}
+                    </header>
 
-                        <div class="article-content">
-                            {{ announcement.message|linebreaks }}
-                        </div>
+                    {% if announcement.image %}
+                    <figure class="announcement-figure">
+                        <img src="{{ announcement.image.url }}" alt="{{ announcement.titre }}">
+                    </figure>
+                    {% endif %}
+
+                    <div class="article-content bg-white p-4 p-md-5 border" style="border-radius: 8px; line-height: 1.75; font-size: 1.02rem; color: var(--ink);">
+                        {{ announcement.message|linebreaks }}
                     </div>
-
-                    <aside class="col-lg-4">
-                        <div class="announcement-side-panel">
-                            <h2>Informations pratiques</h2>
-                            <dl>
-                                <div>
-                                    <dt>Publication</dt>
-                                    <dd>{{ announcement.date_publication|date:"d F Y" }}</dd>
-                                </div>
-                                {% if announcement.date_debut %}
-                                <div>
-                                    <dt>Début</dt>
-                                    <dd>{{ announcement.date_debut|date:"d F Y à H:i" }}</dd>
-                                </div>
-                                {% endif %}
-                                {% if announcement.date_fin %}
-                                <div>
-                                    <dt>Fin</dt>
-                                    <dd>{{ announcement.date_fin|date:"d F Y à H:i" }}</dd>
-                                </div>
-                                {% endif %}
-                                {% if announcement.lieu %}
-                                <div>
-                                    <dt>Lieu</dt>
-                                    <dd>{{ announcement.lieu }}</dd>
-                                </div>
-                                {% endif %}
-                                {% if announcement.auteur %}
-                                <div>
-                                    <dt>Publié par</dt>
-                                    <dd>{{ announcement.auteur.get_full_name|default:announcement.auteur.username }}</dd>
-                                </div>
-                                {% endif %}
-                            </dl>
-                            {% if announcement.inscription_url %}
-                            <a href="{{ announcement.inscription_url }}" class="btn btn-primary rounded-pill w-100 py-3" rel="noopener">S'inscrire ou demander une place</a>
-                            {% else %}
-                            <a href="mailto:info@magichoops.cd?subject={{ announcement.titre|urlencode }}" class="btn btn-primary rounded-pill w-100 py-3">Contacter l'académie</a>
-                            {% endif %}
-                            <a href="{% url 'announcements:announcement_list' %}" class="btn btn-outline-primary rounded-pill w-100 mt-3">Retour aux actualités</a>
-                        </div>
-                    </aside>
                 </div>
+
+                <aside class="col-lg-4">
+                    <div class="announcement-side-panel">
+                        <h2>Informations pratiques</h2>
+                        <dl class="mb-4">
+                            <div>
+                                <dt>Publication</dt>
+                                <dd>{{ announcement.date_publication|date:"d F Y" }}</dd>
+                            </div>
+                            {% if announcement.date_debut %}
+                            <div>
+                                <dt>Début</dt>
+                                <dd>{{ announcement.date_debut|date:"d F Y à H:i" }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if announcement.date_fin %}
+                            <div>
+                                <dt>Fin</dt>
+                                <dd>{{ announcement.date_fin|date:"d F Y à H:i" }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if announcement.lieu %}
+                            <div>
+                                <dt>Lieu</dt>
+                                <dd>{{ announcement.lieu }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if announcement.auteur %}
+                            <div>
+                                <dt>Publié par</dt>
+                                <dd>{{ announcement.auteur.get_full_name|default:announcement.auteur.username }}</dd>
+                            </div>
+                            {% endif %}
+                        </dl>
+                        {% if announcement.inscription_url %}
+                        <a href="{{ announcement.inscription_url }}" class="btn btn-primary w-100 mb-2 py-2" rel="noopener">S'inscrire ou réserver</a>
+                        {% else %}
+                        <a href="mailto:info@magichoops.cd?subject={{ announcement.titre|urlencode }}" class="btn btn-primary w-100 mb-2 py-2">Contacter l'académie</a>
+                        {% endif %}
+                        <a href="{% url 'announcements:announcement_list' %}" class="btn btn-outline-secondary w-100 py-2">Retour aux actualités</a>
+                    </div>
+                </aside>
             </div>
-        </article>
-    </main>
-
-    {% include 'main/footer.html' %}
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+    </article>
+</main>
+{% endblock %}
